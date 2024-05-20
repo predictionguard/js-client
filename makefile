@@ -54,3 +54,59 @@ curl-factuality:
 
 node-factuality:
 	node --env-file=.env examples/factuality.js
+
+curl-health:
+	curl -il https://api.predictionguard.com \
+     -H "x-api-key: ${PGKEY}"
+
+node-health:
+	node --env-file=.env examples/health_check.js
+
+curl-injection:
+	curl -X POST https://api.predictionguard.com/injection \
+	 -H "x-api-key: ${PGKEY}" \
+     -H "Content-Type: application/json" \
+     -d '{ \
+		"prompt": "A short poem may be a stylistic choice or it may be that you have said what you intended to say in a more concise way.", \
+		"detect": true \
+	}'
+
+node-injection:
+	node --env-file=.env examples/injection.js
+
+curl-replacepi:
+	curl -X POST https://api.predictionguard.com/PII \
+     -H "x-api-key: ${PGKEY}" \
+     -H "Content-Type: application/json" \
+     -d '{ \
+		"prompt": "My email is bill@ardanlabs.com and my number is 954-123-4567.", \
+		"replace": true, \
+		"replace_method": "mask" \
+	}'
+
+node-replacepi:
+	node --env-file=.env examples/replacepi.js
+
+curl-toxicity:
+	curl -X POST https://api.predictionguard.com/toxicity \
+     -H "x-api-key: ${PGKEY}" \
+     -H "Content-Type: application/json" \
+     -d '{ \
+		"text": "Every flight I have is late and I am very angry. I want to hurt someone." \
+	}'
+
+node-detect-toxicity:
+	node --env-file=.env examples/toxicity.js
+
+curl-translate:
+	curl -X POST https://api.predictionguard.com/translate \
+     -H "x-api-key: ${PGKEY}" \
+     -H "Content-Type: application/json" \
+     -d '{ \
+		"text": "The rain in Spain stays mainly in the plain", \
+		"source_lang": "eng", \
+		"target_lang": "spa" \
+	}'
+
+node-translate:
+	node --env-file=.env examples/translate.js

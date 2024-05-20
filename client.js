@@ -64,86 +64,58 @@ export default class Client {
         }
     }
 
-    // async Injection(prompt, detect) {
-    //     try {
-    //         const body = {
-    //             prompt: prompt,
-    //             detect: detect,
-    //         };
+    async Injection(prompt) {
+        try {
+            const body = {
+                prompt: prompt,
+                detect: true,
+            };
 
-    //         const result = await $.ajax({
-    //             type: 'post',
-    //             url: `${this.#url}/factuality`,
-    //             headers: {'x-api-key': this.#apiKey},
-    //             data: JSON.stringify(body),
-    //         });
+            return doPost(`${this.#url}/injection`, this.#apiKey, body);
+        } catch (e) {
+            return [null, e];
+        }
+    }
 
-    //         return [result, null];
-    //     } catch (e) {
-    //         return [null, parseError(e)];
-    //     }
-    // }
+    async ReplacePI(prompt, replaceMethod) {
+        try {
+            const body = {
+                prompt: prompt,
+                replace: true,
+                replace_method: replaceMethod,
+            };
 
-    // async ReplacePI(prompt, replaceMethod) {
-    //     try {
-    //         const body = {
-    //             prompt: prompt,
-    //             replace: replace,
-    //             replace_method: replaceMethod,
-    //         };
+            return doPost(`${this.#url}/PII`, this.#apiKey, body);
+        } catch (e) {
+            return [null, e];
+        }
+    }
 
-    //         const result = await $.ajax({
-    //             type: 'post',
-    //             url: `${this.#url}/PII`,
-    //             headers: {'x-api-key': this.#apiKey},
-    //             data: JSON.stringify(body),
-    //         });
+    async Toxicity(text) {
+        try {
+            const body = {
+                text: text,
+            };
 
-    //         return [result, null];
-    //     } catch (e) {
-    //         return [null, parseError(e)];
-    //     }
-    // }
+            return doPost(`${this.#url}/toxicity`, this.#apiKey, body);
+        } catch (e) {
+            return [null, e];
+        }
+    }
 
-    // async Toxicity(text) {
-    //     try {
-    //         const body = {
-    //             text: text,
-    //         };
+    async Translate(text, sourceLang, targetLang) {
+        try {
+            const body = {
+                text: text,
+                source_lang: sourceLang,
+                target_lang: targetLang,
+            };
 
-    //         const result = await $.ajax({
-    //             type: 'post',
-    //             url: `${this.#url}/toxicity`,
-    //             headers: {'x-api-key': this.#apiKey},
-    //             data: JSON.stringify(body),
-    //         });
-
-    //         return [result, null];
-    //     } catch (e) {
-    //         return [null, parseError(e)];
-    //     }
-    // }
-
-    // async Translate(text, sourceLang, targetLang) {
-    //     try {
-    //         const body = {
-    //             text: text,
-    //             source_lang: sourceLang,
-    //             target_lang: targetLang,
-    //         };
-
-    //         const result = await $.ajax({
-    //             type: 'post',
-    //             url: `${this.#url}/translate`,
-    //             headers: {'x-api-key': this.#apiKey},
-    //             data: JSON.stringify(body),
-    //         });
-
-    //         return [result, null];
-    //     } catch (e) {
-    //         return [null, parseError(e)];
-    //     }
-    // }
+            return doPost(`${this.#url}/translate`, this.#apiKey, body);
+        } catch (e) {
+            return [null, e];
+        }
+    }
 }
 
 // =============================================================================
@@ -167,11 +139,15 @@ async function doGet(url, apiKey) {
             }
         }
 
-        if (response == null) {
-            return [null, null];
-        }
+        const contextType = response.headers.get('content-type');
 
-        const result = await response.json();
+        var result;
+        switch (true) {
+            case contextType.startsWith('text/plain'):
+                result = await response.text();
+            case contextType.startsWith('application/json'):
+                result = await response.json();
+        }
 
         return [result, null];
     } catch (e) {
@@ -199,11 +175,15 @@ async function doPost(url, apiKey, body) {
             }
         }
 
-        if (response == null) {
-            return [null, null];
-        }
+        const contextType = response.headers.get('content-type');
 
-        const result = await response.json();
+        var result;
+        switch (true) {
+            case contextType.startsWith('text/plain'):
+                result = await response.text();
+            case contextType.startsWith('application/json'):
+                result = await response.json();
+        }
 
         return [result, null];
     } catch (e) {
