@@ -36,27 +36,20 @@ export default class Client {
         }
     }
 
-    // async Completions(model, maxTokens, temperature, prompt) {
-    //     try {
-    //         const body = {
-    //             model: model,
-    //             max_tokens: maxTokens,
-    //             temperature: temperature,
-    //             prompt: prompt,
-    //         };
+    async Completions(model, maxTokens, temperature, prompt) {
+        try {
+            const body = {
+                model: model,
+                max_tokens: maxTokens,
+                temperature: temperature,
+                prompt: prompt,
+            };
 
-    //         const result = await $.ajax({
-    //             type: 'post',
-    //             url: `${this.#url}/completions`,
-    //             headers: {'x-api-key': this.#apiKey},
-    //             data: JSON.stringify(body),
-    //         });
-
-    //         return [result, null];
-    //     } catch (e) {
-    //         return [null, parseError(e)];
-    //     }
-    // }
+            return doPost(`${this.#url}/completions`, this.#apiKey, body);
+        } catch (e) {
+            return [null, parseError(e)];
+        }
+    }
 
     // async Factuality(reference, text) {
     //     try {
