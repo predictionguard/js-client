@@ -2,11 +2,10 @@ SHELL_PATH = /bin/ash
 SHELL = $(if $(wildcard $(SHELL_PATH)),/bin/ash,/bin/bash)
 
 install:
-#	npm install node-fetch
-	npm i @types/node-fetch
+	npm i typescript node-fetch@3
 
-chat:
-	node --env-file=.env test.js
+compile-ts:
+	tsc
 
 # ==============================================================================
 # Examples
@@ -27,7 +26,7 @@ curl-chat:
 		"temperature": 1.1 \
 	}'
 
-node-chat:
+node-chat: compile-ts
 	node --env-file=.env examples/chat.js
 
 curl-comp:
@@ -41,7 +40,7 @@ curl-comp:
 		"temperature": 1.1 \
 	}'
 
-node-comp:
+node-comp: compile-ts
 	node --env-file=.env examples/completions.js
 
 curl-factuality:
@@ -53,14 +52,14 @@ curl-factuality:
 		"text": "The president of the united states can take a salary of one million dollars" \
 	}'
 
-node-factuality:
+node-factuality: compile-ts
 	node --env-file=.env examples/factuality.js
 
 curl-health:
 	curl -il https://api.predictionguard.com \
      -H "x-api-key: ${PGKEY}"
 
-node-health:
+node-health: compile-ts
 	node --env-file=.env examples/health_check.js
 
 curl-injection:
@@ -72,7 +71,7 @@ curl-injection:
 		"detect": true \
 	}'
 
-node-injection:
+node-injection: compile-ts
 	node --env-file=.env examples/injection.js
 
 curl-replacepi:
@@ -85,7 +84,7 @@ curl-replacepi:
 		"replace_method": "mask" \
 	}'
 
-node-replacepi:
+node-replacepi: compile-ts
 	node --env-file=.env examples/replacepi.js
 
 curl-toxicity:
@@ -96,7 +95,7 @@ curl-toxicity:
 		"text": "Every flight I have is late and I am very angry. I want to hurt someone." \
 	}'
 
-node-detect-toxicity:
+node-detect-toxicity: compile-ts
 	node --env-file=.env examples/toxicity.js
 
 curl-translate:
@@ -109,5 +108,5 @@ curl-translate:
 		"target_lang": "spa" \
 	}'
 
-node-translate:
+node-translate: compile-ts
 	node --env-file=.env examples/translate.js

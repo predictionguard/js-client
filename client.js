@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,12 +7,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const node_fetch_1 = __importDefault(require("node-fetch"));
-class Client {
+import fetch from 'node-fetch';
+export default class Client {
     // -------------------------------------------------------------------------
     constructor(url, apiKey) {
         this.url = url;
@@ -134,12 +129,11 @@ class Client {
         });
     }
 }
-exports.default = Client;
 // =============================================================================
 function doGet(url, apiKey) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield (0, node_fetch_1.default)(url, {
+            const response = yield fetch(url, {
                 method: 'get',
                 headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey },
             });
@@ -151,7 +145,7 @@ function doGet(url, apiKey) {
                         return [null, 'api understands the request but refuses to authorize it'];
                     default:
                         const result = yield response.json();
-                        return [null, result.error];
+                        return [null, result];
                 }
             }
             const contextType = response.headers.get('content-type');
@@ -172,7 +166,7 @@ function doGet(url, apiKey) {
 function doPost(url, apiKey, body) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield (0, node_fetch_1.default)(url, {
+            const response = yield fetch(url, {
                 method: 'post',
                 headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey },
                 body: JSON.stringify(body),
@@ -185,7 +179,7 @@ function doPost(url, apiKey, body) {
                         return [null, 'api understands the request but refuses to authorize it'];
                     default:
                         const result = yield response.json();
-                        return [null, result.error];
+                        return [null, result];
                 }
             }
             const contextType = response.headers.get('content-type');

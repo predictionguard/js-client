@@ -135,7 +135,7 @@ async function doGet(url: string, apiKey: string) {
                     return [null, 'api understands the request but refuses to authorize it'];
                 default:
                     const result = await response.json();
-                    return [null, result.error];
+                    return [null, result as Promise<any>];
             }
         }
 
@@ -171,7 +171,7 @@ async function doPost(url: string, apiKey: string, body: any) {
                     return [null, 'api understands the request but refuses to authorize it'];
                 default:
                     const result = await response.json();
-                    return [null, result.error];
+                    return [null, result as Promise<any>];
             }
         }
 
