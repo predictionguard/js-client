@@ -47,29 +47,22 @@ export default class Client {
 
             return doPost(`${this.#url}/completions`, this.#apiKey, body);
         } catch (e) {
-            return [null, parseError(e)];
+            return [null, e];
         }
     }
 
-    // async Factuality(reference, text) {
-    //     try {
-    //         const body = {
-    //             reference: reference,
-    //             text: text,
-    //         };
+    async Factuality(reference, text) {
+        try {
+            const body = {
+                reference: reference,
+                text: text,
+            };
 
-    //         const result = await $.ajax({
-    //             type: 'post',
-    //             url: `${this.#url}/factuality`,
-    //             headers: {'x-api-key': this.#apiKey},
-    //             data: JSON.stringify(body),
-    //         });
-
-    //         return [result, null];
-    //     } catch (e) {
-    //         return [null, parseError(e)];
-    //     }
-    // }
+            return doPost(`${this.#url}/factuality`, this.#apiKey, body);
+        } catch (e) {
+            return [null, e];
+        }
+    }
 
     // async Injection(prompt, detect) {
     //     try {
