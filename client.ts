@@ -26,7 +26,7 @@ export module client {
                     method: 'get',
                     headers: {'Content-Type': 'application/json', 'x-api-key': this.apiKey},
                 });
-        
+
                 if (response.status != 200) {
                     switch (response.status) {
                         case 404:
@@ -38,9 +38,9 @@ export module client {
                             return [null, result as Promise<any>];
                     }
                 }
-        
+
                 const contextType = response.headers.get('content-type');
-        
+
                 var result;
                 switch (true) {
                     case contextType?.startsWith('text/plain'):
@@ -48,13 +48,13 @@ export module client {
                     case contextType?.startsWith('application/json'):
                         result = await response.json();
                 }
-        
+
                 return [result, null];
             } catch (e) {
                 return [null, e];
             }
         }
-        
+
         async DoPost(endpoint: string, body: any): Promise<[any, any]> {
             try {
                 const response = await fetch(`${this.url}/${endpoint}`, {
@@ -62,7 +62,7 @@ export module client {
                     headers: {'Content-Type': 'application/json', 'x-api-key': this.apiKey},
                     body: JSON.stringify(body),
                 });
-        
+
                 if (response.status != 200) {
                     switch (response.status) {
                         case 404:
@@ -74,9 +74,9 @@ export module client {
                             return [null, result as Promise<Error>];
                     }
                 }
-        
+
                 const contextType = response.headers.get('content-type');
-        
+
                 var result;
                 switch (true) {
                     case contextType?.startsWith('text/plain'):
@@ -84,33 +84,18 @@ export module client {
                     case contextType?.startsWith('application/json'):
                         result = await response.json();
                 }
-        
-                return [result as Promise<any>, null];
-            } catch (e) {
-                return [null, e];
-            }
-        } 
-        
-        // ---------------------------------------------------------------------
 
-        async HealthCheck() {
-            try {
-                return this.DoGet('');
+                return [result as Promise<any>, null];
             } catch (e) {
                 return [null, e];
             }
         }
 
-        async Completions(model: string, maxTokens: number, temperature: number, prompt: string) {
-            try {
-                const body = {
-                    model: model,
-                    max_tokens: maxTokens,
-                    temperature: temperature,
-                    prompt: prompt,
-                };
+        // ---------------------------------------------------------------------
 
-                return this.DoPost('completions', body);
+        async HealthCheck() {
+            try {
+                return this.DoGet('');
             } catch (e) {
                 return [null, e];
             }
@@ -123,7 +108,7 @@ export module client {
                     text: text,
                 };
 
-                return this.DoPost('factuality',body);
+                return this.DoPost('factuality', body);
             } catch (e) {
                 return [null, e];
             }

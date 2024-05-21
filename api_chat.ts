@@ -1,4 +1,4 @@
-import client from './client.js';
+import client from './client.ts';
 
 export module chat {
     export interface Message {
@@ -23,15 +23,15 @@ export module chat {
     // -------------------------------------------------------------------------
 
     export class Client extends client.Client {
-        async Chat(model: string, maxTokens: number, temperature: number, messages: Message[]): Promise<[Chat, client.Error|null]> {
+        async Chat(model: string, maxTokens: number, temperature: number, messages: Message[]): Promise<[Chat, client.Error | null]> {
             const zeroChat: Chat = {
-                id: "",
-                object: "",
+                id: '',
+                object: '',
                 created: 0,
-                model: "",
+                model: '',
                 choices: [],
             };
-        
+
             try {
                 const body = {
                     model: model,
