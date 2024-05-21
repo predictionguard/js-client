@@ -5,7 +5,7 @@ const client = new api.Client('https://api.predictionguard.com', process.env.PGK
 async function Completions() {
     var [result, err] = await client.Completion.Do('Neural-Chat-7B', 1000, 1.0, 'Will I lose my hair');
     if (err != null) {
-        console.log('ERROR:' + err);
+        console.log('ERROR:' + err.error);
         return;
     }
 

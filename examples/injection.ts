@@ -7,7 +7,7 @@ async function Injection() {
 
     var [result, err] = await client.Injection.Do(prompt);
     if (err != null) {
-        console.log('ERROR:' + err);
+        console.log('ERROR:' + err.error);
         return;
     }
 

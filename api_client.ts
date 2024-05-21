@@ -31,8 +31,10 @@ export module client {
                     switch (response.status) {
                         case 404:
                             return [null, {error: 'url not found'}];
+
                         case 401:
                             return [null, {error: 'api understands the request but refuses to authorize it'}];
+
                         default:
                             const result = await response.json();
                             return [null, result as Error];
@@ -45,8 +47,11 @@ export module client {
                 switch (true) {
                     case contextType?.startsWith('text/plain'):
                         result = await response.text();
+                        break;
+
                     case contextType?.startsWith('application/json'):
                         result = await response.json();
+                        break;
                 }
 
                 return [result, null];
@@ -67,8 +72,10 @@ export module client {
                     switch (response.status) {
                         case 404:
                             return [null, {error: 'url not found'}];
+
                         case 401:
                             return [null, {error: 'api understands the request but refuses to authorize it'}];
+
                         default:
                             const result = await response.json();
                             return [null, result as Error];
@@ -81,8 +88,11 @@ export module client {
                 switch (true) {
                     case contextType?.startsWith('text/plain'):
                         result = await response.text();
+                        break;
+
                     case contextType?.startsWith('application/json'):
                         result = await response.json();
+                        break;
                 }
 
                 return [result, null];

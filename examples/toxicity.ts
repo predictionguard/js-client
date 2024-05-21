@@ -7,7 +7,7 @@ async function Toxicity() {
 
     var [result, err] = await client.Toxicity.Do(text);
     if (err != null) {
-        console.log('ERROR:' + err);
+        console.log('ERROR:' + err.error);
         return;
     }
 

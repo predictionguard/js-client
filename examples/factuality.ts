@@ -9,7 +9,7 @@ async function Factuality() {
 
     var [result, err] = await client.Factuality.Do(fact, text);
     if (err != null) {
-        console.log('ERROR:' + err);
+        console.log('ERROR:' + err.error);
         return;
     }
 

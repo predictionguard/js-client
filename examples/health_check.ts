@@ -5,7 +5,7 @@ const client = new api.Client('https://api.predictionguard.com', process.env.PGK
 async function HealthCheck() {
     var [result, err] = await client.HealthCheck.Do();
     if (err != null) {
-        console.log('ERROR:' + err);
+        console.log('ERROR:' + err.error);
         return;
     }
 

@@ -8,7 +8,7 @@ async function ReplacePI() {
 
     var [result, err] = await client.ReplacePI.Do(prompt, resplaceMethod);
     if (err != null) {
-        console.log('ERROR:' + err);
+        console.log('ERROR:' + err.error);
         return;
     }
 

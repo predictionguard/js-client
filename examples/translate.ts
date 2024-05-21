@@ -7,7 +7,7 @@ async function Translate() {
 
     var [result, err] = await client.Translate.Do(text, 'eng', 'spa');
     if (err != null) {
-        console.log('ERROR:' + err);
+        console.log('ERROR:' + err.error);
         return;
     }
 

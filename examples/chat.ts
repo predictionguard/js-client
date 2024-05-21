@@ -13,7 +13,7 @@ async function Chat() {
 
     var [result, err] = await cln.Chat.Do('Neural-Chat-7B', 1000, 1.1, messages);
     if (err != null) {
-        console.log('ERROR:' + err);
+        console.log('ERROR:' + err.error);
         return;
     }
 
