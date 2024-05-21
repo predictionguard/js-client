@@ -1,9 +1,10 @@
-import client from './api_client.ts';
+import client from '../dist/api_client.js';
 
 export module health {
     /** Client provides access to the health apis. */
     export class Client extends client.Client {
-        async Do(): Promise<[string, client.Error | null]> {
+        /** HealthCheck validates the PG API Service is available. */
+        async HealthCheck(): Promise<[string, client.Error | null]> {
             const zero: string = '';
 
             try {

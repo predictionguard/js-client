@@ -1,9 +1,9 @@
-import api from '../api.ts';
+import health from '../dist/api_health.js';
 
-const client = new api.Client('https://api.predictionguard.com', process.env.PGKEY as string);
+const client = new health.Client('https://api.predictionguard.com', process.env.PGKEY as string);
 
 async function HealthCheck() {
-    var [result, err] = await client.HealthCheck.Do();
+    var [result, err] = await client.HealthCheck();
     if (err != null) {
         console.log('ERROR:' + err.error);
         return;

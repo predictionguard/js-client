@@ -1,4 +1,4 @@
-import client from './api_client.ts';
+import client from '../dist/api_client.js';
 
 export module toxicity {
     /** Check represents the result for the toxicity call. */
@@ -20,8 +20,8 @@ export module toxicity {
 
     /** Client provides access to the toxicity api. */
     export class Client extends client.Client {
-        /** Do checks the toxicity of a given text. */
-        async Do(text: string): Promise<[Toxicity, client.Error | null]> {
+        /** Toxicity checks the toxicity of a given text. */
+        async Toxicity(text: string): Promise<[Toxicity, client.Error | null]> {
             const zero: Toxicity = {
                 id: '',
                 object: '',

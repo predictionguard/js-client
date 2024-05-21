@@ -1,4 +1,4 @@
-import client from './api_client.ts';
+import client from '../dist/api_client.js';
 
 export module factuality {
     /** Check represents the result for the factuality call. */
@@ -20,8 +20,8 @@ export module factuality {
 
     /** Client provides access to the factuality api. */
     export class Client extends client.Client {
-        /** Do checks the factuality of a given text compared to a reference. */
-        async Do(reference: string, text: string): Promise<[Factuality, client.Error | null]> {
+        /** Factuality checks the factuality of a given text compared to a reference. */
+        async Factuality(reference: string, text: string): Promise<[Factuality, client.Error | null]> {
             const zero: Factuality = {
                 id: '',
                 object: '',
