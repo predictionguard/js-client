@@ -12,7 +12,7 @@ export module chat {
         status: string;
     }
 
-    export interface Response {
+    export interface Chat {
         id: string;
         object: string;
         created: number;
@@ -23,8 +23,8 @@ export module chat {
     // -------------------------------------------------------------------------
 
     export class Client extends client.Client {
-        async Chat(model: string, maxTokens: number, temperature: number, messages: Message[]): Promise<[Response, client.Error|null]> {
-            const zeroChat: Response = {
+        async Chat(model: string, maxTokens: number, temperature: number, messages: Message[]): Promise<[Chat, client.Error|null]> {
+            const zeroChat: Chat = {
                 id: "",
                 object: "",
                 created: 0,
@@ -45,7 +45,7 @@ export module chat {
                     return [zeroChat, err];
                 }
 
-                return [chat as Response, null];
+                return [chat as Chat, null];
             } catch (e) {
                 return [zeroChat, {error: JSON.stringify(e)}];
             }
