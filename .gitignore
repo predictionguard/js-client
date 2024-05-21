@@ -1,3 +1,7 @@
+# Only want to keep TS files
+*.js
+examples/*.js
+
 # Logs
 logs
 *.log
