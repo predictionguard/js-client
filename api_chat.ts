@@ -1,9 +1,10 @@
 import client from './api_client.ts';
+import api from './api.ts';
 
 export module chat {
     /** Message represents the role of the sender and the content to process. */
     export interface Message {
-        role: string;
+        role: api.Role;
         content: string;
     }
 
@@ -19,20 +20,21 @@ export module chat {
         id: string;
         object: string;
         created: number;
-        model: string;
+        model: api.Model;
         choices: Choice[];
     }
 
     // -------------------------------------------------------------------------
 
+    /** Client provides access to the chat apis. */
     export class Client extends client.Client {
         /** Do generates chat completions based on a conversation history. */
-        async Do(model: string, maxTokens: number, temperature: number, messages: Message[]): Promise<[Chat, client.Error | null]> {
+        async Do(model: api.Model, maxTokens: number, temperature: number, messages: Message[]): Promise<[Chat, client.Error | null]> {
             const zero: Chat = {
                 id: '',
                 object: '',
                 created: 0,
-                model: '',
+                model: api.Model.NeuralChat7B,
                 choices: [],
             };
 

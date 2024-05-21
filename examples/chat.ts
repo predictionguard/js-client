@@ -6,18 +6,18 @@ const cln = new api.Client('https://api.predictionguard.com', process.env.PGKEY 
 async function Chat() {
     const messages: chat.Message[] = [
         {
-            role: 'user',
+            role: api.Role.User,
             content: 'How do you feel about the world in general',
         },
     ];
 
-    var [result, err] = await cln.Chat.Do('Neural-Chat-7B', 1000, 1.1, messages);
+    var [result, err] = await cln.Chat.Do(api.Model.NeuralChat7B, 1000, 1.1, messages);
     if (err != null) {
         console.log('ERROR:' + err.error);
         return;
     }
 
-    console.log('RESULT:' + result.choices[0].message.content);
+    console.log('RESULT:' + result.model + ': ' + result.choices[0].message.content);
 }
 
 Chat();

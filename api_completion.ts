@@ -1,4 +1,5 @@
 import client from './api_client.ts';
+import api from './api.ts';
 
 export module completion {
     /** Choice represents a choice for the completion call. */
@@ -6,7 +7,7 @@ export module completion {
         text: string;
         index: number;
         status: string;
-        model: string;
+        model: api.Model;
     }
 
     /** Completion represents the result for the completion call. */
@@ -19,9 +20,10 @@ export module completion {
 
     // -------------------------------------------------------------------------
 
+    /** Client provides access to the completion api. */
     export class Client extends client.Client {
         /** Do retrieve text completions based on the provided input. */
-        async Do(model: string, maxTokens: number, temperature: number, prompt: string): Promise<[Completion, client.Error | null]> {
+        async Do(model: api.Model, maxTokens: number, temperature: number, prompt: string): Promise<[Completion, client.Error | null]> {
             const zero: Completion = {
                 id: '',
                 object: '',

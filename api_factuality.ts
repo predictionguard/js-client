@@ -18,6 +18,7 @@ export module factuality {
 
     // -------------------------------------------------------------------------
 
+    /** Client provides access to the factuality api. */
     export class Client extends client.Client {
         /** Do checks the factuality of a given text compared to a reference. */
         async Do(reference: string, text: string): Promise<[Factuality, client.Error | null]> {

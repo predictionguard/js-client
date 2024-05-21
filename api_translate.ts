@@ -1,4 +1,5 @@
 import client from './api_client.ts';
+import api from './api.ts';
 
 export module translate {
     /** Translation represents the result for the translate call. */
@@ -22,9 +23,10 @@ export module translate {
 
     // -------------------------------------------------------------------------
 
+    /** Client provides access to the translate api. */
     export class Client extends client.Client {
         /** Translate converts text from one language to another. */
-        async Do(text: string, sourceLang: string, targetLang: string): Promise<[Translate, client.Error | null]> {
+        async Do(text: string, sourceLang: api.Language, targetLang: api.Language): Promise<[Translate, client.Error | null]> {
             const zero: Translate = {
                 id: '',
                 object: '',

@@ -18,6 +18,7 @@ export module injection {
 
     // -------------------------------------------------------------------------
 
+    /** Client provides access to the injection api. */
     export class Client extends client.Client {
         /** Do detects potential prompt injection attacks in a given prompt. */
         async Do(prompt: string): Promise<[Injection, client.Error | null]> {

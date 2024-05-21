@@ -18,6 +18,7 @@ export module toxicity {
 
     // -------------------------------------------------------------------------
 
+    /** Client provides access to the toxicity api. */
     export class Client extends client.Client {
         /** Do checks the toxicity of a given text. */
         async Do(text: string): Promise<[Toxicity, client.Error | null]> {

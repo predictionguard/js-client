@@ -1,6 +1,7 @@
 import client from './api_client.ts';
 
 export module health {
+    /** Client provides access to the health apis. */
     export class Client extends client.Client {
         async Do(): Promise<[string, client.Error | null]> {
             const zero: string = '';

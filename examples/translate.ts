@@ -4,8 +4,10 @@ const client = new api.Client('https://api.predictionguard.com', process.env.PGK
 
 async function Translate() {
     const text = 'The rain in Spain stays mainly in the plain';
+    const sourceLang = api.Language.English;
+    const targetLang = api.Language.Spanish;
 
-    var [result, err] = await client.Translate.Do(text, 'eng', 'spa');
+    var [result, err] = await client.Translate.Do(text, sourceLang, targetLang);
     if (err != null) {
         console.log('ERROR:' + err.error);
         return;
