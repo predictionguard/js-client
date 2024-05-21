@@ -7,6 +7,7 @@ export module client {
 
     // -------------------------------------------------------------------------
 
+    /** Client provides access to make raw http request calls. */
     export class Client {
         private url;
         private apiKey;
@@ -20,6 +21,7 @@ export module client {
 
         // ---------------------------------------------------------------------
 
+        /** RawDoGet performs a raw GET call. */
         async RawDoGet(endpoint: string): Promise<[any, Error | null]> {
             try {
                 const response = await fetch(`${this.url}/${endpoint}`, {
@@ -60,6 +62,7 @@ export module client {
             }
         }
 
+        /** RawDoPost performs a raw POST call. */
         async RawDoPost(endpoint: string, body: any): Promise<[any, Error | null]> {
             try {
                 const response = await fetch(`${this.url}/${endpoint}`, {
