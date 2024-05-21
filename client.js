@@ -8,127 +8,144 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import fetch from 'node-fetch';
-export default class Client {
+export var client;
+(function (client) {
     // -------------------------------------------------------------------------
-    constructor(url, apiKey) {
-        this.url = url;
-        this.apiKey = apiKey;
-    }
-    // -------------------------------------------------------------------------
-    HealthCheck() {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                return doGet(`${this.url}`, this.apiKey);
-            }
-            catch (e) {
-                return [null, e];
-            }
-        });
-    }
-    Chat(model, maxTokens, temperature, messages) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const body = {
-                    model: model,
-                    max_tokens: maxTokens,
-                    temperature: temperature,
-                    messages: messages,
+    class Client {
+        // -------------------------------------------------------------------------
+        constructor(url, apiKey) {
+            this.url = url;
+            this.apiKey = apiKey;
+        }
+        // -------------------------------------------------------------------------
+        HealthCheck() {
+            return __awaiter(this, void 0, void 0, function* () {
+                try {
+                    return doGet(`${this.url}`, this.apiKey);
+                }
+                catch (e) {
+                    return [null, e];
+                }
+            });
+        }
+        Chat(model, maxTokens, temperature, messages) {
+            return __awaiter(this, void 0, void 0, function* () {
+                const zeroChat = {
+                    id: "",
+                    object: "",
+                    created: 0,
+                    model: "",
+                    choices: [],
                 };
-                return doPost(`${this.url}/chat/completions`, this.apiKey, body);
-            }
-            catch (e) {
-                return [null, e];
-            }
-        });
+                try {
+                    const body = {
+                        model: model,
+                        max_tokens: maxTokens,
+                        temperature: temperature,
+                        messages: messages,
+                    };
+                    const [chat, err] = yield doPost(`${this.url}/chat/completions`, this.apiKey, body);
+                    if (err != null) {
+                        return [zeroChat, err];
+                    }
+                    return [chat, null];
+                }
+                catch (e) {
+                    return [zeroChat, { error: JSON.stringify(e) }];
+                }
+            });
+        }
+        Completions(model, maxTokens, temperature, prompt) {
+            return __awaiter(this, void 0, void 0, function* () {
+                try {
+                    const body = {
+                        model: model,
+                        max_tokens: maxTokens,
+                        temperature: temperature,
+                        prompt: prompt,
+                    };
+                    return doPost(`${this.url}/completions`, this.apiKey, body);
+                }
+                catch (e) {
+                    return [null, e];
+                }
+            });
+        }
+        Factuality(reference, text) {
+            return __awaiter(this, void 0, void 0, function* () {
+                try {
+                    const body = {
+                        reference: reference,
+                        text: text,
+                    };
+                    return doPost(`${this.url}/factuality`, this.apiKey, body);
+                }
+                catch (e) {
+                    return [null, e];
+                }
+            });
+        }
+        Injection(prompt) {
+            return __awaiter(this, void 0, void 0, function* () {
+                try {
+                    const body = {
+                        prompt: prompt,
+                        detect: true,
+                    };
+                    return doPost(`${this.url}/injection`, this.apiKey, body);
+                }
+                catch (e) {
+                    return [null, e];
+                }
+            });
+        }
+        ReplacePI(prompt, replaceMethod) {
+            return __awaiter(this, void 0, void 0, function* () {
+                try {
+                    const body = {
+                        prompt: prompt,
+                        replace: true,
+                        replace_method: replaceMethod,
+                    };
+                    return doPost(`${this.url}/PII`, this.apiKey, body);
+                }
+                catch (e) {
+                    return [null, e];
+                }
+            });
+        }
+        Toxicity(text) {
+            return __awaiter(this, void 0, void 0, function* () {
+                try {
+                    const body = {
+                        text: text,
+                    };
+                    return doPost(`${this.url}/toxicity`, this.apiKey, body);
+                }
+                catch (e) {
+                    return [null, e];
+                }
+            });
+        }
+        Translate(text, sourceLang, targetLang) {
+            return __awaiter(this, void 0, void 0, function* () {
+                try {
+                    const body = {
+                        text: text,
+                        source_lang: sourceLang,
+                        target_lang: targetLang,
+                    };
+                    return doPost(`${this.url}/translate`, this.apiKey, body);
+                }
+                catch (e) {
+                    return [null, e];
+                }
+            });
+        }
     }
-    Completions(model, maxTokens, temperature, prompt) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const body = {
-                    model: model,
-                    max_tokens: maxTokens,
-                    temperature: temperature,
-                    prompt: prompt,
-                };
-                return doPost(`${this.url}/completions`, this.apiKey, body);
-            }
-            catch (e) {
-                return [null, e];
-            }
-        });
-    }
-    Factuality(reference, text) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const body = {
-                    reference: reference,
-                    text: text,
-                };
-                return doPost(`${this.url}/factuality`, this.apiKey, body);
-            }
-            catch (e) {
-                return [null, e];
-            }
-        });
-    }
-    Injection(prompt) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const body = {
-                    prompt: prompt,
-                    detect: true,
-                };
-                return doPost(`${this.url}/injection`, this.apiKey, body);
-            }
-            catch (e) {
-                return [null, e];
-            }
-        });
-    }
-    ReplacePI(prompt, replaceMethod) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const body = {
-                    prompt: prompt,
-                    replace: true,
-                    replace_method: replaceMethod,
-                };
-                return doPost(`${this.url}/PII`, this.apiKey, body);
-            }
-            catch (e) {
-                return [null, e];
-            }
-        });
-    }
-    Toxicity(text) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const body = {
-                    text: text,
-                };
-                return doPost(`${this.url}/toxicity`, this.apiKey, body);
-            }
-            catch (e) {
-                return [null, e];
-            }
-        });
-    }
-    Translate(text, sourceLang, targetLang) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const body = {
-                    text: text,
-                    source_lang: sourceLang,
-                    target_lang: targetLang,
-                };
-                return doPost(`${this.url}/translate`, this.apiKey, body);
-            }
-            catch (e) {
-                return [null, e];
-            }
-        });
-    }
-}
+    client.Client = Client;
+})(client || (client = {}));
+export default client;
 // =============================================================================
 function doGet(url, apiKey) {
     return __awaiter(this, void 0, void 0, function* () {

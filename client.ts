@@ -1,122 +1,164 @@
 import fetch from 'node-fetch';
 
-export default class Client {
-    private url;
-    private apiKey;
+export module client {
+    export interface Error {
+        error: string;
+    }
 
-    // -------------------------------------------------------------------------
+    export interface ChatMessage {
+        role: string;
+        content: string;
+    }
 
-    constructor(url: string, apiKey: string) {
-        this.url = url;
-        this.apiKey = apiKey;
+    export interface ChatChoice {
+        index: number;
+        message: ChatMessage;
+        status: string;
+    }
+
+    export interface Chat {
+        id: string;
+        object: string;
+        created: number;
+        model: string;
+        choices: ChatChoice[];
     }
 
     // -------------------------------------------------------------------------
 
-    async HealthCheck() {
-        try {
-            return doGet(`${this.url}`, this.apiKey);
-        } catch (e) {
-            return [null, e];
+    export class Client {
+        private url;
+        private apiKey;
+
+        // -------------------------------------------------------------------------
+
+        constructor(url: string, apiKey: string) {
+            this.url = url;
+            this.apiKey = apiKey;
         }
-    }
 
-    async Chat(model: string, maxTokens: number, temperature: number, messages: any) {
-        try {
-            const body = {
-                model: model,
-                max_tokens: maxTokens,
-                temperature: temperature,
-                messages: messages,
-            };
+        // -------------------------------------------------------------------------
 
-            return doPost(`${this.url}/chat/completions`, this.apiKey, body);
-        } catch (e) {
-            return [null, e];
+        async HealthCheck() {
+            try {
+                return doGet(`${this.url}`, this.apiKey);
+            } catch (e) {
+                return [null, e];
+            }
         }
-    }
 
-    async Completions(model: string, maxTokens: number, temperature: number, prompt: string) {
-        try {
-            const body = {
-                model: model,
-                max_tokens: maxTokens,
-                temperature: temperature,
-                prompt: prompt,
+        async Chat(model: string, maxTokens: number, temperature: number, messages: ChatMessage[]): Promise<[Chat, Error|null]> {
+            const zeroChat: Chat = {
+                id: "",
+                object: "",
+                created: 0,
+                model: "",
+                choices: [],
             };
+        
+            try {
+                const body = {
+                    model: model,
+                    max_tokens: maxTokens,
+                    temperature: temperature,
+                    messages: messages,
+                };
 
-            return doPost(`${this.url}/completions`, this.apiKey, body);
-        } catch (e) {
-            return [null, e];
+                const [chat, err] = await doPost(`${this.url}/chat/completions`, this.apiKey, body);
+                if (err != null) {
+                    return [zeroChat, err];
+                }
+
+                return [chat as Chat, null];
+            } catch (e) {
+                return [zeroChat, {error: JSON.stringify(e)}];
+            }
         }
-    }
 
-    async Factuality(reference: string, text: string) {
-        try {
-            const body = {
-                reference: reference,
-                text: text,
-            };
+        async Completions(model: string, maxTokens: number, temperature: number, prompt: string) {
+            try {
+                const body = {
+                    model: model,
+                    max_tokens: maxTokens,
+                    temperature: temperature,
+                    prompt: prompt,
+                };
 
-            return doPost(`${this.url}/factuality`, this.apiKey, body);
-        } catch (e) {
-            return [null, e];
+                return doPost(`${this.url}/completions`, this.apiKey, body);
+            } catch (e) {
+                return [null, e];
+            }
         }
-    }
 
-    async Injection(prompt: string) {
-        try {
-            const body = {
-                prompt: prompt,
-                detect: true,
-            };
+        async Factuality(reference: string, text: string) {
+            try {
+                const body = {
+                    reference: reference,
+                    text: text,
+                };
 
-            return doPost(`${this.url}/injection`, this.apiKey, body);
-        } catch (e) {
-            return [null, e];
+                return doPost(`${this.url}/factuality`, this.apiKey, body);
+            } catch (e) {
+                return [null, e];
+            }
         }
-    }
 
-    async ReplacePI(prompt: string, replaceMethod: string) {
-        try {
-            const body = {
-                prompt: prompt,
-                replace: true,
-                replace_method: replaceMethod,
-            };
+        async Injection(prompt: string) {
+            try {
+                const body = {
+                    prompt: prompt,
+                    detect: true,
+                };
 
-            return doPost(`${this.url}/PII`, this.apiKey, body);
-        } catch (e) {
-            return [null, e];
+                return doPost(`${this.url}/injection`, this.apiKey, body);
+            } catch (e) {
+                return [null, e];
+            }
         }
-    }
 
-    async Toxicity(text: string) {
-        try {
-            const body = {
-                text: text,
-            };
+        async ReplacePI(prompt: string, replaceMethod: string) {
+            try {
+                const body = {
+                    prompt: prompt,
+                    replace: true,
+                    replace_method: replaceMethod,
+                };
 
-            return doPost(`${this.url}/toxicity`, this.apiKey, body);
-        } catch (e) {
-            return [null, e];
+                return doPost(`${this.url}/PII`, this.apiKey, body);
+            } catch (e) {
+                return [null, e];
+            }
         }
-    }
 
-    async Translate(text: string, sourceLang: string, targetLang: string) {
-        try {
-            const body = {
-                text: text,
-                source_lang: sourceLang,
-                target_lang: targetLang,
-            };
+        async Toxicity(text: string) {
+            try {
+                const body = {
+                    text: text,
+                };
 
-            return doPost(`${this.url}/translate`, this.apiKey, body);
-        } catch (e) {
-            return [null, e];
+                return doPost(`${this.url}/toxicity`, this.apiKey, body);
+            } catch (e) {
+                return [null, e];
+            }
+        }
+
+        async Translate(text: string, sourceLang: string, targetLang: string) {
+            try {
+                const body = {
+                    text: text,
+                    source_lang: sourceLang,
+                    target_lang: targetLang,
+                };
+
+                return doPost(`${this.url}/translate`, this.apiKey, body);
+            } catch (e) {
+                return [null, e];
+            }
         }
     }
 }
+
+export default client;
 
 // =============================================================================
 
@@ -155,7 +197,7 @@ async function doGet(url: string, apiKey: string) {
     }
 }
 
-async function doPost(url: string, apiKey: string, body: any) {
+async function doPost(url: string, apiKey: string, body: any): Promise<[any, any]> {
     try {
         const response = await fetch(url, {
             method: 'post',
@@ -171,7 +213,7 @@ async function doPost(url: string, apiKey: string, body: any) {
                     return [null, 'api understands the request but refuses to authorize it'];
                 default:
                     const result = await response.json();
-                    return [null, result as Promise<any>];
+                    return [null, result as Promise<Error>];
             }
         }
 
@@ -185,7 +227,7 @@ async function doPost(url: string, apiKey: string, body: any) {
                 result = await response.json();
         }
 
-        return [result, null];
+        return [result as Promise<any>, null];
     } catch (e) {
         return [null, e];
     }
