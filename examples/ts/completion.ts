@@ -1,4 +1,4 @@
-import completion from '../dist/api_completion.js';
+import completion from '../../dist/api_completion.js';
 
 const client = new completion.Client('https://api.predictionguard.com', process.env.PGKEY as string);
 

@@ -27,8 +27,11 @@ curl-chat:
 		"temperature": 1.1 \
 	}'
 
-node-chat:
-	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/chat.ts
+ts-chat:
+	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/ts/chat.ts
+
+js-chat:
+	node --env-file=.env examples/js/chat.js
 
 curl-comp:
 	curl -il -X POST https://api.predictionguard.com/completions \
@@ -41,8 +44,11 @@ curl-comp:
 		"temperature": 1.1 \
 	}'
 
-node-comp:
-	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/completion.ts
+ts-comp:
+	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/ts/completion.ts
+
+js-comp:
+	node --env-file=.env examples/ts/completion.js
 
 curl-factuality:
 	curl -X POST https://api.predictionguard.com/factuality \
@@ -53,15 +59,21 @@ curl-factuality:
 		"text": "The president of the united states can take a salary of one million dollars" \
 	}'
 
-node-factuality:
-	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/factuality.ts
+ts-factuality:
+	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/ts/factuality.ts
+
+js-factuality:
+	node --env-file=.env examples/js/factuality.ts
 
 curl-health:
 	curl -il https://api.predictionguard.com \
      -H "x-api-key: ${PGKEY}"
 
-node-health:
-	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/health_check.ts
+ts-health:
+	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/ts/health_check.ts
+
+js-health:
+	node --env-file=.env examples/js/health_check.js
 
 curl-injection:
 	curl -X POST https://api.predictionguard.com/injection \
@@ -72,8 +84,11 @@ curl-injection:
 		"detect": true \
 	}'
 
-node-injection:
-	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/injection.ts
+ts-injection:
+	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/ts/injection.ts
+
+js-injection:
+	node --env-file=.env examples/js/injection.js
 
 curl-replacepi:
 	curl -X POST https://api.predictionguard.com/PII \
@@ -85,8 +100,11 @@ curl-replacepi:
 		"replace_method": "mask" \
 	}'
 
-node-replacepi:
-	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/replacepi.ts
+ts-replacepi:
+	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/ts/replacepi.ts
+
+js-replacepi:
+	node --env-file=.env examples/js/replacepi.js
 
 curl-toxicity:
 	curl -X POST https://api.predictionguard.com/toxicity \
@@ -96,8 +114,11 @@ curl-toxicity:
 		"text": "Every flight I have is late and I am very angry. I want to hurt someone." \
 	}'
 
-node-detect-toxicity:
-	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/toxicity.ts
+ts-toxicity:
+	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/ts/toxicity.ts
+
+js-toxicity:
+	node --env-file=.env examples/js/toxicity.js
 
 curl-translate:
 	curl -X POST https://api.predictionguard.com/translate \
@@ -109,5 +130,8 @@ curl-translate:
 		"target_lang": "spa" \
 	}'
 
-node-translate:
-	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/translate.ts
+ts-translate:
+	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/tstranslate.ts
+
+js-translate:
+	node --env-file=.env examples/jstranslate.js
