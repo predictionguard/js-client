@@ -1,4 +1,4 @@
-import client from './client.ts';
+import client from './api_client.ts';
 
 export module chat {
     export interface Message {
@@ -23,7 +23,7 @@ export module chat {
     // -------------------------------------------------------------------------
 
     export class Client extends client.Client {
-        async Chat(model: string, maxTokens: number, temperature: number, messages: Message[]): Promise<[Chat, client.Error | null]> {
+        async Do(model: string, maxTokens: number, temperature: number, messages: Message[]): Promise<[Chat, client.Error | null]> {
             const zeroChat: Chat = {
                 id: '',
                 object: '',
@@ -40,7 +40,7 @@ export module chat {
                     messages: messages,
                 };
 
-                const [chat, err] = await this.DoPost('chat/completions', body);
+                const [chat, err] = await this.RawDoPost('chat/completions', body);
                 if (err != null) {
                     return [zeroChat, err];
                 }

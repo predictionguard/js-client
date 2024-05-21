@@ -1,10 +1,8 @@
-import client from './client.ts';
+import client from './api_client.ts';
 
 export module completion {
-    // -------------------------------------------------------------------------
-
     export class Client extends client.Client {
-        async Completions(model: string, maxTokens: number, temperature: number, prompt: string) {
+        async Do(model: string, maxTokens: number, temperature: number, prompt: string) {
             try {
                 const body = {
                     model: model,
@@ -13,7 +11,7 @@ export module completion {
                     prompt: prompt,
                 };
 
-                return this.DoPost('completions', body);
+                return this.RawDoPost('completions', body);
             } catch (e) {
                 return [null, e];
             }

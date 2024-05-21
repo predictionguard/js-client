@@ -1,7 +1,7 @@
+import api from '../api.ts';
 import chat from '../api_chat.ts';
 
-// Construct the client to have access to the prediction guard API.
-const cln = new chat.Client('https://api.predictionguard.com', process.env.PGKEY as string);
+const cln = new api.Client('https://api.predictionguard.com', process.env.PGKEY as string);
 
 async function Chat() {
     const messages: chat.Message[] = [
@@ -11,7 +11,7 @@ async function Chat() {
         },
     ];
 
-    var [result, err] = await cln.Chat('Neural-Chat-7B', 1000, 1.1, messages);
+    var [result, err] = await cln.Chat.Do('Neural-Chat-7B', 1000, 1.1, messages);
     if (err != null) {
         console.log('ERROR:' + err);
         return;

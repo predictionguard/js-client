@@ -1,13 +1,12 @@
-import Client from '../client.js';
+import api from '../api.ts';
 
-// Construct the client to have access to the prediction guard API.
-const client = new Client('https://api.predictionguard.com', process.env.PGKEY);
+const client = new api.Client('https://api.predictionguard.com', process.env.PGKEY as string);
 
 async function ReplacePI() {
     const prompt = 'My email is bill@ardanlabs.com and my number is 954-123-4567.';
     const resplaceMethod = 'mask';
 
-    var [result, err] = await client.ReplacePI(prompt, resplaceMethod);
+    var [result, err] = await client.ReplacePI.Do(prompt, resplaceMethod);
     if (err != null) {
         console.log('ERROR:' + err);
         return;
