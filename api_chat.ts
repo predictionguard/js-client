@@ -1,17 +1,20 @@
 import client from './api_client.ts';
 
 export module chat {
+    /** Message represents the role of the sender and the content to process. */
     export interface Message {
         role: string;
         content: string;
     }
 
+    /** Choice represents a choice for the chat call. */
     export interface Choice {
         index: number;
         message: Message;
         status: string;
     }
 
+    /** Chat represents the result for the chat call. */
     export interface Chat {
         id: string;
         object: string;
@@ -23,8 +26,9 @@ export module chat {
     // -------------------------------------------------------------------------
 
     export class Client extends client.Client {
+        /** Do generates chat completions based on a conversation history. */
         async Do(model: string, maxTokens: number, temperature: number, messages: Message[]): Promise<[Chat, client.Error | null]> {
-            const zeroChat: Chat = {
+            const zero: Chat = {
                 id: '',
                 object: '',
                 created: 0,
@@ -40,14 +44,14 @@ export module chat {
                     messages: messages,
                 };
 
-                const [chat, err] = await this.RawDoPost('chat/completions', body);
+                const [result, err] = await this.RawDoPost('chat/completions', body);
                 if (err != null) {
-                    return [zeroChat, err];
+                    return [zero, err];
                 }
 
-                return [chat as Chat, null];
+                return [result as Chat, null];
             } catch (e) {
-                return [zeroChat, {error: JSON.stringify(e)}];
+                return [zero, {error: JSON.stringify(e)}];
             }
         }
     }
