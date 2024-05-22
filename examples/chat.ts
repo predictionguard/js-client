@@ -1,4 +1,4 @@
-import chat from '../../dist/api_chat.js';
+import chat from '../src/api_chat.js';
 
 const client = new chat.Client('https://api.predictionguard.com', process.env.PGKEY as string);
 

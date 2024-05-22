@@ -13,24 +13,29 @@ To access the API, contact us [here](https://www.predictionguard.com/getting-sta
 
 ### Usage
 
-```js
-import injection from 'api_injection.js';
+```typescript
+import chat from '../src/api_chat.js';
 
-const client = new injection.Client('https://api.predictionguard.com', process.env.PGKEY);
+const client = new chat.Client('https://api.predictionguard.com', process.env.PGKEY as string);
 
-async function Injection() {
-    const prompt = 'A short poem may be a stylistic choice or it may be that you have said what you intended to say in a more concise way.';
+async function Chat() {
+    const messages: chat.Message[] = [
+        {
+            role: chat.Role.User,
+            content: 'How do you feel about the world in general',
+        },
+    ];
 
-    var [result, err] = await client.Injection(prompt);
+    var [result, err] = await client.Chat(chat.Model.NeuralChat7B, 1000, 1.1, messages);
     if (err != null) {
         console.log('ERROR:' + err.error);
         return;
     }
 
-    console.log('RESULT:' + result.checks[0].probability);
+    console.log('RESULT:' + result.model + ': ' + result.choices[0].message.content);
 }
 
-Injection();
+Chat();
 ```
 Take a look at the `examples` directory for more examples.
 

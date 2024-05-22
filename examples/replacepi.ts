@@ -1,6 +1,6 @@
-import replacepi from '../../dist/api_replacepi.js';
+import replacepi from '../src/api_replacepi.js';
 
-const client = new replacepi.Client('https://api.predictionguard.com', process.env.PGKEY);
+const client = new replacepi.Client('https://api.predictionguard.com', process.env.PGKEY as string);
 
 async function ReplacePI() {
     const prompt = 'My email is bill@ardanlabs.com and my number is 954-123-4567.';

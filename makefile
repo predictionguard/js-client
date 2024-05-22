@@ -27,10 +27,7 @@ curl-chat:
 	}'
 
 ts-chat:
-	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/ts/chat.ts
-
-js-chat:
-	node --env-file=.env examples/js/chat.js
+	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/chat.ts
 
 curl-comp:
 	curl -il -X POST https://api.predictionguard.com/completions \
@@ -44,10 +41,7 @@ curl-comp:
 	}'
 
 ts-comp:
-	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/ts/completion.ts
-
-js-comp:
-	node --env-file=.env examples/ts/completion.js
+	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/completion.ts
 
 curl-factuality:
 	curl -X POST https://api.predictionguard.com/factuality \
@@ -59,20 +53,14 @@ curl-factuality:
 	}'
 
 ts-factuality:
-	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/ts/factuality.ts
-
-js-factuality:
-	node --env-file=.env examples/js/factuality.ts
+	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/factuality.ts
 
 curl-health:
 	curl -il https://api.predictionguard.com \
      -H "x-api-key: ${PGKEY}"
 
 ts-health:
-	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/ts/health_check.ts
-
-js-health:
-	node --env-file=.env examples/js/health_check.js
+	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/health_check.ts
 
 curl-injection:
 	curl -X POST https://api.predictionguard.com/injection \
@@ -84,10 +72,7 @@ curl-injection:
 	}'
 
 ts-injection:
-	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/ts/injection.ts
-
-js-injection:
-	node --env-file=.env examples/js/injection.js
+	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/injection.ts
 
 curl-replacepi:
 	curl -X POST https://api.predictionguard.com/PII \
@@ -100,10 +85,7 @@ curl-replacepi:
 	}'
 
 ts-replacepi:
-	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/ts/replacepi.ts
-
-js-replacepi:
-	node --env-file=.env examples/js/replacepi.js
+	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/replacepi.ts
 
 curl-toxicity:
 	curl -X POST https://api.predictionguard.com/toxicity \
@@ -114,10 +96,7 @@ curl-toxicity:
 	}'
 
 ts-toxicity:
-	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/ts/toxicity.ts
-
-js-toxicity:
-	node --env-file=.env examples/js/toxicity.js
+	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/toxicity.ts
 
 curl-translate:
 	curl -X POST https://api.predictionguard.com/translate \
@@ -130,7 +109,4 @@ curl-translate:
 	}'
 
 ts-translate:
-	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/tstranslate.ts
-
-js-translate:
-	node --env-file=.env examples/jstranslate.js
+	node --env-file=.env --no-deprecation --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));' examples/translate.ts

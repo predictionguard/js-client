@@ -1,4 +1,4 @@
-import health from '../../dist/api_health.js';
+import health from '../src/api_health.js';
 
 const client = new health.Client('https://api.predictionguard.com', process.env.PGKEY as string);
 

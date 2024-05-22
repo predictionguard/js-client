@@ -1,4 +1,4 @@
-import injection from '../../dist/api_injection.js';
+import injection from '../src/api_injection.js';
 
 const client = new injection.Client('https://api.predictionguard.com', process.env.PGKEY as string);
 
