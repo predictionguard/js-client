@@ -1,4 +1,4 @@
-import client from '../dist/api_client.js';
+import client from './api_client.js';
 export declare namespace health {
     /** Client provides access to the health apis. */
     class Client extends client.Client {
@@ -7,4 +7,3 @@ export declare namespace health {
     }
 }
 export default health;
-//# sourceMappingURL=api_health.d.ts.map

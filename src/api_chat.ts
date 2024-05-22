@@ -1,4 +1,4 @@
-import client from '../dist/api_client.js';
+import client from './api_client.js';
 
 export module chat {
     /** Models represents the set of models that can be used. */

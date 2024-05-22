@@ -1,4 +1,4 @@
-import client from '../dist/api_client.js';
+import client from './api_client.js';
 export declare namespace translate {
     /** Languages represents the set of languages that can be used. */
     enum Language {
@@ -98,4 +98,3 @@ export declare namespace translate {
     }
 }
 export default translate;
-//# sourceMappingURL=api_translate.d.ts.map

@@ -14,4 +14,3 @@ export declare namespace client {
     }
 }
 export default client;
-//# sourceMappingURL=api_client.d.ts.map

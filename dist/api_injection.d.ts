@@ -1,4 +1,4 @@
-import client from '../dist/api_client.js';
+import client from './api_client.js';
 export declare namespace injection {
     /** Check represents the result for the injection call. */
     interface Check {
@@ -20,4 +20,3 @@ export declare namespace injection {
     }
 }
 export default injection;
-//# sourceMappingURL=api_injection.d.ts.map

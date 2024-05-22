@@ -1,4 +1,4 @@
-import client from '../dist/api_client.js';
+import client from './api_client.js';
 export declare namespace completion {
     /** Models represents the set of models that can be used. */
     enum Model {
@@ -30,4 +30,3 @@ export declare namespace completion {
     }
 }
 export default completion;
-//# sourceMappingURL=api_completion.d.ts.map

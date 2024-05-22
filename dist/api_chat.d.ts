@@ -1,4 +1,4 @@
-import client from '../dist/api_client.js';
+import client from './api_client.js';
 export declare namespace chat {
     /** Models represents the set of models that can be used. */
     enum Model {
@@ -40,4 +40,3 @@ export declare namespace chat {
     }
 }
 export default chat;
-//# sourceMappingURL=api_chat.d.ts.map

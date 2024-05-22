@@ -1,4 +1,4 @@
-import client from '../dist/api_client.js';
+import client from './api_client.js';
 export declare namespace factuality {
     /** Check represents the result for the factuality call. */
     interface Check {
@@ -20,4 +20,3 @@ export declare namespace factuality {
     }
 }
 export default factuality;
-//# sourceMappingURL=api_factuality.d.ts.map

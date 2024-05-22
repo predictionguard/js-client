@@ -5,7 +5,6 @@ install:
 	npm i typescript ts-node node-fetch@3
 
 compile-ts:
-	rm ./dist/*
 	tsc
 
 # ==============================================================================

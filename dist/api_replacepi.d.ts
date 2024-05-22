@@ -1,4 +1,4 @@
-import client from '../dist/api_client.js';
+import client from './api_client.js';
 export declare namespace replacepi {
     /** ReplaceMethod represents the set of replace methods that can be used. */
     enum ReplaceMethod {
@@ -28,4 +28,3 @@ export declare namespace replacepi {
     }
 }
 export default replacepi;
-//# sourceMappingURL=api_replacepi.d.ts.map

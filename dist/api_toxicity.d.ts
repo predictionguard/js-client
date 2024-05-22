@@ -1,4 +1,4 @@
-import client from '../dist/api_client.js';
+import client from './api_client.js';
 export declare namespace toxicity {
     /** Check represents the result for the toxicity call. */
     interface Check {
@@ -20,4 +20,3 @@ export declare namespace toxicity {
     }
 }
 export default toxicity;
-//# sourceMappingURL=api_toxicity.d.ts.map
