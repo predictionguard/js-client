@@ -1,9 +1,9 @@
 version: 2
+orbs:
+  node: circleci/node@22.2   
 jobs:
-  build:
-    docker:
-      - image: cimg/node:22.2.0
-    resource_class: medium
+  test:
+    executor: node/default
     steps:
       - checkout
       - run:
@@ -14,7 +14,7 @@ jobs:
       - run:
           name: Install packages
           command: |
-              npm i typescript js-node node-fetch@3
+              sudo npm i typescript js-node node-fetch@3
       - run:
           name: Run tsc
           command: |
