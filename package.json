@@ -6,7 +6,9 @@
     "license": "Apache 2.0",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
-    "prepublish": "tsc",
+    "scripts": {
+        "prepublish": "tsc"
+    },
     "dependencies": {
         "@types/node-fetch": "^2.6.11",
         "node-fetch": "^3.3.2",
