@@ -9,6 +9,7 @@
         "src/api_replacepi.ts",
         "src/api_toxicity.ts",
         "src/api_translate.ts",
+        "src/index.ts"
   ],
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */
