@@ -45,7 +45,7 @@ export module client {
 
                 const contextType = response.headers.get('content-type');
 
-                var result;
+                let result;
                 switch (true) {
                     case contextType?.startsWith('text/plain'):
                         result = await response.text();
@@ -87,7 +87,7 @@ export module client {
 
                 const contextType = response.headers.get('content-type');
 
-                var result;
+                let result;
                 switch (true) {
                     case contextType?.startsWith('text/plain'):
                         result = await response.text();

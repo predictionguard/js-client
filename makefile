@@ -2,8 +2,8 @@ SHELL_PATH = /bin/ash
 SHELL = $(if $(wildcard $(SHELL_PATH)),/bin/ash,/bin/bash)
 
 install:
-	npm i -g typescript
-	npm i node-fetch@3
+	npm i -g typescript eslint
+	npm i node-fetch@3 typescript-eslint
 
 compile-ts:
 	tsc
@@ -17,6 +17,10 @@ outdated:
 
 update:
 	npm update
+
+test:
+	tsc
+	eslint .
 
 # ==============================================================================
 # Examples

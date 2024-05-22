@@ -62,6 +62,28 @@ You can find the Prediction Guard API docs on the Prediction Guard website.
 
 Once you have your api key you can use the `makefile` to run curl commands for the different api endpoints. For example, `make curl-injection` will connect to the injection endpoint and return the injection response. The `makefile` also allows you to run the different examples such as `make js-injection` to run the Go injection example.
 
+** Running The Project**
+
+You will need to node before you can run the project. You can follow this [link](https://nodejs.org/en/download/package-manager) or use [brew](https://formulae.brew.sh/formula/node) which is what I do.
+
+After you clone the repo and install node, run the install command inside the root of the project folder.
+
+```
+$ make install
+```
+
+Then run the test command to make sure everything is working.
+
+```
+$ make test
+```
+
+Finally you can try running one of the JS examples.
+
+```
+$ make js-chat
+```
+
 #### Licensing
 
 ```
