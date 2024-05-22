@@ -6,3 +6,11 @@ jobs:
     resource_class: medium
     steps:
       - checkout
+      - run:
+          name: Install packages
+          command: |
+              npm i typescript js-node node-fetch@3
+      - run:
+          name: Run tsc
+          command: |
+              tsc
