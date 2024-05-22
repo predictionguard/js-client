@@ -1,7 +1,14 @@
-import client from './api_client.ts';
-import api from './api.ts';
+import client from './api_client.js';
 
 export module replacepi {
+    /** ReplaceMethod represents the set of replace methods that can be used. */
+    export enum ReplaceMethod {
+        Random = 'random',
+        Fake = 'fake',
+        Category = 'category',
+        Mask = 'mask',
+    }
+
     /** Check represents the result for the pii call. */
     export interface Check {
         new_prompt: string;
@@ -23,7 +30,7 @@ export module replacepi {
     export class Client extends client.Client {
         /** ReplacePI replaces personal information such as names, SSNs, and
          * emails in a given text. */
-        async Do(prompt: string, replaceMethod: api.ReplaceMethod): Promise<[ReplacePI, client.Error | null]> {
+        async ReplacePI(prompt: string, replaceMethod: ReplaceMethod): Promise<[ReplacePI, client.Error | null]> {
             const zero: ReplacePI = {
                 id: '',
                 object: '',

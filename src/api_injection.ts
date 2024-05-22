@@ -1,4 +1,4 @@
-import client from './api_client.ts';
+import client from './api_client.js';
 
 export module injection {
     /** Check represents the result for the injection call. */
@@ -20,8 +20,8 @@ export module injection {
 
     /** Client provides access to the injection api. */
     export class Client extends client.Client {
-        /** Do detects potential prompt injection attacks in a given prompt. */
-        async Do(prompt: string): Promise<[Injection, client.Error | null]> {
+        /** Injection detects potential prompt injection attacks in a given prompt. */
+        async Injection(prompt: string): Promise<[Injection, client.Error | null]> {
             const zero: Injection = {
                 id: '',
                 object: '',

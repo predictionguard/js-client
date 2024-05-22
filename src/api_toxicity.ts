@@ -1,15 +1,15 @@
-import client from './api_client.ts';
+import client from './api_client.js';
 
-export module factuality {
-    /** Check represents the result for the factuality call. */
+export module toxicity {
+    /** Check represents the result for the toxicity call. */
     export interface Check {
         score: number;
         index: number;
         status: string;
     }
 
-    /** Factuality represents the result for the factuality call. */
-    export interface Factuality {
+    /** Toxicity represents the result for the toxicity call. */
+    export interface Toxicity {
         id: string;
         object: string;
         created: number;
@@ -18,11 +18,11 @@ export module factuality {
 
     // -------------------------------------------------------------------------
 
-    /** Client provides access to the factuality api. */
+    /** Client provides access to the toxicity api. */
     export class Client extends client.Client {
-        /** Do checks the factuality of a given text compared to a reference. */
-        async Do(reference: string, text: string): Promise<[Factuality, client.Error | null]> {
-            const zero: Factuality = {
+        /** Toxicity checks the toxicity of a given text. */
+        async Toxicity(text: string): Promise<[Toxicity, client.Error | null]> {
+            const zero: Toxicity = {
                 id: '',
                 object: '',
                 created: 0,
@@ -31,16 +31,15 @@ export module factuality {
 
             try {
                 const body = {
-                    reference: reference,
                     text: text,
                 };
 
-                const [result, err] = await this.RawDoPost('factuality', body);
+                const [result, err] = await this.RawDoPost('toxicity', body);
                 if (err != null) {
                     return [zero, err];
                 }
 
-                return [result as Factuality, null];
+                return [result as Toxicity, null];
             } catch (e) {
                 return [zero, {error: JSON.stringify(e)}];
             }
@@ -48,4 +47,4 @@ export module factuality {
     }
 }
 
-export default factuality;
+export default toxicity;
