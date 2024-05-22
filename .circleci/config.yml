@@ -1,21 +1,17 @@
-version: 2
+version: '2.1'
 orbs:
-  node: circleci/node@22.2   
+  node: circleci/node@22.2
 jobs:
   test:
-    executor: node/default
+    executor:
+      name: node/default
+      tag: '13.14'
     steps:
       - checkout
+      - node/install-packages
       - run:
-          name: Check versions
-          command: |
-              node -v
-              npm -v
-      - run:
-          name: Install packages
-          command: |
-              sudo npm i typescript js-node node-fetch@3
-      - run:
-          name: Run tsc
-          command: |
-              tsc
+          command: npm run test
+workflows:
+  test_my_app:
+    jobs:
+      - test
