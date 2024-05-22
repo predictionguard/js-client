@@ -1,5 +1,9 @@
 # Prediction Guard JS Client
 
+[![CircleCI](https://dl.circleci.com/status-badge/img/circleci/Cy6tWW4wpE69Ftb8vdTAN9/5WXNdoLm44kpG8i27QSZtA/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/circleci/Cy6tWW4wpE69Ftb8vdTAN9/5WXNdoLm44kpG8i27QSZtA/tree/main)
+
+[![npm version](https://img.shields.io/npm/v/predictionguard.svg)](https://www.npmjs.com/package/predictionguard)
+
 Copyright 2024 Prediction Guard
 bill@predictionguard.com
 
