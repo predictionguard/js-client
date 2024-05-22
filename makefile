@@ -7,6 +7,10 @@ install:
 compile-ts:
 	tsc
 
+publish:
+	npm login
+	npm publish
+
 # ==============================================================================
 # Examples
 

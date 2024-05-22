@@ -9,6 +9,9 @@
     "scripts": {
         "prepublish": "tsc"
     },
+    "files": [
+        "dist/*"
+    ],
     "dependencies": {
         "@types/node-fetch": "^2.6.11",
         "node-fetch": "^3.3.2",
