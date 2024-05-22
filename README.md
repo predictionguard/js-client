@@ -5,7 +5,7 @@ bill@predictionguard.com
 
 ### Description
 
-This Module provides functionality developed to simplify interfacing with [Prediction Guard API](https://www.predictionguard.com/) in JavaScript.
+This package provides functionality developed to simplify interfacing with [Prediction Guard API](https://www.predictionguard.com/) in JavaScript.
 
 ### Requirements
 
@@ -13,8 +13,16 @@ To access the API, contact us [here](https://www.predictionguard.com/getting-sta
 
 ### Usage
 
+**Install Package**
+
+```
+    $ npm i predictionguard
+```
+
+**Code Example**
+
 ```typescript
-import chat from '../src/api_chat.js';
+import {chat} from 'predictionguard';
 
 const client = new chat.Client('https://api.predictionguard.com', process.env.PGKEY as string);
 
