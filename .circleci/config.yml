@@ -11,6 +11,10 @@ jobs:
               node -v
               npm -v
       - run:
+          name: Set registry
+          command: |
+              npm config set registry http://registry.npmjs.org
+      - run:
           name: Install dependencies
           command: |
-              npm i typescript js-node node-fetch@3
+              npm i typescript node-fetch@3
