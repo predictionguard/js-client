@@ -11,6 +11,9 @@ publish:
 	npm login
 	npm publish
 
+outdated:
+	npm outdated
+
 # ==============================================================================
 # Examples
 
