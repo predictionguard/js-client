@@ -1,6 +1,6 @@
-import factuality from '../src/api_factuality.js';
+import factuality from '../dist/api_factuality.js';
 
-const client = new factuality.Client('https://api.predictionguard.com', process.env.PGKEY as string);
+const client = new factuality.Client('https://api.predictionguard.com', process.env.PGKEY);
 
 async function Factuality() {
     const fact =

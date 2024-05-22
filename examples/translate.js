@@ -1,6 +1,6 @@
-import translate from '../src/api_translate.js';
+import translate from '../dist/api_translate.js';
 
-const client = new translate.Client('https://api.predictionguard.com', process.env.PGKEY as string);
+const client = new translate.Client('https://api.predictionguard.com', process.env.PGKEY);
 
 async function Translate() {
     const text = 'The rain in Spain stays mainly in the plain';
