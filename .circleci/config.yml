@@ -10,6 +10,7 @@ jobs:
           name: Install NVM
           command: |
               curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+      - run:
           name: Install Node
           command: |
               nvm install 22
