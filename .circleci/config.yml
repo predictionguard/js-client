@@ -1,17 +1,16 @@
-version: '2.1'
-orbs:
-  node: circleci/node@5.2.0
+version: 2
 jobs:
-  test:
-    executor:
-      name: node/default
-      tag: '13.14'
+  build:
+    docker:
+      - image: cimg/node:22.2.0
     steps:
       - checkout
-      - node/install-packages
       - run:
-          command: npm run test
-workflows:
-  test_my_app:
-    jobs:
-      - test
+          name: Check versions
+          command: |
+              node -v
+              npm -v
+      - run:
+          name: Install dependencies
+          command: |
+              npm i typescript js-node node-fetch@3
