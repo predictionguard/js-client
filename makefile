@@ -2,7 +2,8 @@ SHELL_PATH = /bin/ash
 SHELL = $(if $(wildcard $(SHELL_PATH)),/bin/ash,/bin/bash)
 
 install:
-	npm i typescript ts-node node-fetch@3
+	npm i -global typescript
+	npm i node-fetch@3
 
 compile-ts:
 	tsc
@@ -13,6 +14,9 @@ publish:
 
 outdated:
 	npm outdated
+
+update:
+	npm update
 
 # ==============================================================================
 # Examples
