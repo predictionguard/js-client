@@ -1,19 +1,16 @@
 version: 2
 jobs:
   build:
-    machine:
-      image: ubuntu-2004:current
+    docker:
+      - image: cimg/node:22.2.0
     resource_class: medium
     steps:
       - checkout
       - run:
-          name: Install NVM
+          name: Check versions
           command: |
-              curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-      - run:
-          name: Install Node
-          command: |
-              nvm install 22
+              node -v
+              npm -v
       - run:
           name: Install packages
           command: |
