@@ -3,6 +3,7 @@
     "name": "predictionguard",
     "author": "Prediction Guard",
     "version": "0.1.0",
+    "license": "Apache 2.0",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "prepublish": "tsc",
