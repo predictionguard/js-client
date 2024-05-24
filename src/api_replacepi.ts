@@ -9,6 +9,8 @@ export module replacepi {
         Mask = 'mask',
     }
 
+    // -------------------------------------------------------------------------
+
     /** Check represents the result for the pii call. */
     export interface Check {
         new_prompt: string;

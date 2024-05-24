@@ -3,13 +3,15 @@ import client from './api_client.js';
 export module completion {
     /** Models represents the set of models that can be used. */
     export enum Model {
-        MetaLlama38BInstruct = 'Meta-Llama-38B-Instruct',
+        Hermes2ProLlama38B = 'Hermes-2-Pro-Llama-3-8B',
         NousHermesLlama213B = 'Nous-Hermes-Llama-213B',
         Hermes2ProMistral7B = 'Hermes-2-Pro-Mistral-7B',
         NeuralChat7B = 'Neural-Chat-7B',
         Yi34BChat = 'Yi-34B-Chat',
         DeepseekCoder67BInstruct = 'deepseek-coder-6.7b-instruct',
     }
+
+    // -------------------------------------------------------------------------
 
     /** Choice represents a choice for the completion call. */
     export interface Choice {
