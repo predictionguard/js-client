@@ -2,8 +2,9 @@ SHELL_PATH = /bin/ash
 SHELL = $(if $(wildcard $(SHELL_PATH)),/bin/ash,/bin/bash)
 
 install:
-	npm i -g typescript eslint
-	npm i node-fetch@3 typescript-eslint
+	npm i -g typescript eslint mocha
+	npm i node-fetch@3 
+	npm i --save-dev typescript-eslint mockttp
 
 compile-ts:
 	tsc
