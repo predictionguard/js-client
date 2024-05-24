@@ -76,6 +76,8 @@ export module translate {
         Vietnamese = 'vie',
     }
 
+    // -------------------------------------------------------------------------
+
     /** Translation represents the result for the translate call. */
     export interface Translation {
         score: number;

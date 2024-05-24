@@ -3,7 +3,7 @@ import client from './api_client.js';
 export module chat {
     /** Models represents the set of models that can be used. */
     export enum Model {
-        MetaLlama38BInstruct = 'Meta-Llama-38B-Instruct',
+        Hermes2ProLlama38B = 'Hermes-2-Pro-Llama-3-8B',
         NousHermesLlama213B = 'Nous-Hermes-Llama-213B',
         Hermes2ProMistral7B = 'Hermes-2-Pro-Mistral-7B',
         NeuralChat7B = 'Neural-Chat-7B',
@@ -13,8 +13,9 @@ export module chat {
 
     /** Role represents the set of roles that can be used. */
     export enum Role {
-        User = 'user',
         Assistant = 'assistant',
+        User = 'user',
+        System = 'system',
     }
 
     // -------------------------------------------------------------------------
