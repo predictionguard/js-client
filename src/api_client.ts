@@ -37,6 +37,9 @@ export module client {
                         case 401:
                             return [null, {error: 'api understands the request but refuses to authorize it'}];
 
+                        case 503:
+                            return [null, {error: 'service unavilable'}];
+
                         default:
                             const result = await response.json();
                             return [null, result as Error];
@@ -78,6 +81,9 @@ export module client {
 
                         case 401:
                             return [null, {error: 'api understands the request but refuses to authorize it'}];
+
+                        case 503:
+                            return [null, {error: 'service unavilable'}];
 
                         default:
                             const result = await response.json();

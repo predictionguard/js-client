@@ -19,9 +19,11 @@ outdated:
 update:
 	npm update
 
+.PHONY: test
 test:
 	tsc
-	eslint .
+	npm run lint
+	npm run test
 
 # ==============================================================================
 # Examples

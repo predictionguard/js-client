@@ -8,7 +8,8 @@
     "types": "./dist/index.d.ts",
     "scripts": {
         "prepublish": "tsc",
-        "test": "mocha"
+        "lint": "eslint .",
+        "test": "mocha test --no-deprecation"
     },
     "files": [
         "dist/*"

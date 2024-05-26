@@ -17,10 +17,14 @@ jobs:
 	            sudo npm i node-fetch@3 
 	            sudo npm i --save-dev typescript-eslint mockttp
       - run:
-          name: Build distribution
+          name: Prepublish
           command: |
-              tsc
+              npm run prepublish
       - run:
           name: Linter
           command: |
-              eslint .
+              npm run lint
+      - run:
+          name: Tests
+          command: |
+              npm run test
