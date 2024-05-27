@@ -34,8 +34,11 @@ export module client {
                         case 404:
                             return [null, {error: 'url not found'}];
 
-                        case 401:
+                        case 403:
                             return [null, {error: 'api understands the request but refuses to authorize it'}];
+
+                        case 503:
+                            return [null, {error: 'service unavilable'}];
 
                         default:
                             const result = await response.json();
@@ -76,8 +79,11 @@ export module client {
                         case 404:
                             return [null, {error: 'url not found'}];
 
-                        case 401:
+                        case 403:
                             return [null, {error: 'api understands the request but refuses to authorize it'}];
+
+                        case 503:
+                            return [null, {error: 'service unavilable'}];
 
                         default:
                             const result = await response.json();
