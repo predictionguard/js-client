@@ -14,8 +14,8 @@ jobs:
           name: Install dependencies
           command: |
               sudo npm i -g typescript eslint mocha
-	            sudo npm i node-fetch@3 
-	            sudo npm i --save-dev typescript-eslint mockttp
+              sudo npm i node-fetch@3
+              sudo npm i --save-dev typescript-eslint mockttp
       - run:
           name: Prepublish
           command: |
