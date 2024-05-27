@@ -106,7 +106,11 @@ describe('Test_Client', () => {
         });
     });
 
+    // ---------------------------------------------------------------------
+
     after(() => proxy.stop());
+
+    // ---------------------------------------------------------------------
 
     it('chat-basic', async () => {
         await testChatBasic();
@@ -116,28 +120,64 @@ describe('Test_Client', () => {
         await testChatBadkey();
     });
 
+    // ---------------------------------------------------------------------
+
     it('completion-basic', async () => {
         await testCompletionBasic();
     });
+
+    it('completion-badkey', async () => {
+        await testCompletionBadkey();
+    });
+
+    // ---------------------------------------------------------------------
 
     it('factuality-basic', async () => {
         await testFactualityBasic();
     });
 
-    it('injection-basic', async () => {
-        await testInjectionBaic();
+    it('factuality-badkey', async () => {
+        await testFactualityBadkey();
     });
+
+    // ---------------------------------------------------------------------
+
+    it('injection-basic', async () => {
+        await testInjectionBasic();
+    });
+
+    it('injection-badkey', async () => {
+        await testInjectionBadkey();
+    });
+
+    // ---------------------------------------------------------------------
 
     it('replacePI-basic', async () => {
         await testReplacePIBasic();
     });
 
+    it('replacePI-badkey', async () => {
+        await testReplacePIBadkey();
+    });
+
+    // ---------------------------------------------------------------------
+
     it('toxicity-basic', async () => {
         await testToxicityBasic();
     });
 
+    it('toxicity-badkey', async () => {
+        await testToxicityBadkey();
+    });
+
+    // ---------------------------------------------------------------------
+
     it('translate-basic', async () => {
         await testTranslateBasic();
+    });
+
+    it('translate-badkey', async () => {
+        await testTranslateBadkey();
     });
 });
 
@@ -241,6 +281,22 @@ async function testCompletionBasic() {
     assert.equal(got, exp);
 }
 
+async function testCompletionBadkey() {
+    const client = new completion.Client('http://localhost:8080', '');
+
+    var [_, err] = await client.Completion(completion.Model.NeuralChat7B, 1000, 1.0, 'Will I lose my hair');
+    if (err == null) {
+        assert.fail("didn't get an error");
+    }
+
+    const got = JSON.stringify(err);
+    const exp = JSON.stringify({
+        error: 'api understands the request but refuses to authorize it',
+    });
+
+    assert.equal(got, exp);
+}
+
 // =============================================================================
 
 const factualityResp = {
@@ -274,6 +330,26 @@ async function testFactualityBasic() {
     assert.equal(got, exp);
 }
 
+async function testFactualityBadkey() {
+    const client = new factuality.Client('http://localhost:8080', '');
+
+    const fact =
+        'The President shall receive in full for his services during the term for which he shall have been elected compensation in the aggregate amount of 400,000 a year, to be paid monthly, and in addition an expense allowance of 50,000 to assist in defraying expenses relating to or resulting from the discharge of his official duties. Any unused amount of such expense allowance shall revert to the Treasury pursuant to section 1552 of title 31, United States Code. No amount of such expense allowance shall be included in the gross income of the President. He shall be entitled also to the use of the furniture and other effects belonging to the United States and kept in the Executive Residence at the White House.';
+    const text = 'The president of the united states can take a salary of one million dollars';
+
+    var [_, err] = await client.Factuality(fact, text);
+    if (err == null) {
+        assert.fail("didn't get an error");
+    }
+
+    const got = JSON.stringify(err);
+    const exp = JSON.stringify({
+        error: 'api understands the request but refuses to authorize it',
+    });
+
+    assert.equal(got, exp);
+}
+
 // =============================================================================
 
 const injectionResp = {
@@ -289,7 +365,7 @@ const injectionResp = {
     ],
 };
 
-async function testInjectionBaic() {
+async function testInjectionBasic() {
     const client = new injection.Client('http://localhost:8080', 'any key');
 
     const prompt = 'A short poem may be a stylistic choice or it may be that you have said what you intended to say in a more concise way.';
@@ -301,6 +377,24 @@ async function testInjectionBaic() {
 
     const got = JSON.stringify(result);
     const exp = JSON.stringify(injectionResp);
+
+    assert.equal(got, exp);
+}
+
+async function testInjectionBadkey() {
+    const client = new injection.Client('http://localhost:8080', '');
+
+    const prompt = 'A short poem may be a stylistic choice or it may be that you have said what you intended to say in a more concise way.';
+
+    var [result, err] = await client.Injection(prompt);
+    if (err == null) {
+        assert.fail("didn't get an error");
+    }
+
+    const got = JSON.stringify(err);
+    const exp = JSON.stringify({
+        error: 'api understands the request but refuses to authorize it',
+    });
 
     assert.equal(got, exp);
 }
@@ -337,6 +431,25 @@ async function testReplacePIBasic() {
     assert.equal(got, exp);
 }
 
+async function testReplacePIBadkey() {
+    const client = new replacepi.Client('http://localhost:8080', '');
+
+    const prompt = 'My email is bill@ardanlabs.com and my number is 954-123-4567.';
+    const resplaceMethod = replacepi.ReplaceMethod.Mask;
+
+    var [_, err] = await client.ReplacePI(prompt, resplaceMethod);
+    if (err == null) {
+        assert.fail("didn't get an error");
+    }
+
+    const got = JSON.stringify(err);
+    const exp = JSON.stringify({
+        error: 'api understands the request but refuses to authorize it',
+    });
+
+    assert.equal(got, exp);
+}
+
 // =============================================================================
 
 const toxicityResp = {
@@ -364,6 +477,24 @@ async function testToxicityBasic() {
 
     const got = JSON.stringify(result);
     const exp = JSON.stringify(toxicityResp);
+
+    assert.equal(got, exp);
+}
+
+async function testToxicityBadkey() {
+    const client = new toxicity.Client('http://localhost:8080', '');
+
+    const text = 'Every flight I have is late and I am very angry. I want to hurt someone.';
+
+    var [_, err] = await client.Toxicity(text);
+    if (err == null) {
+        assert.fail("didn't get an error");
+    }
+
+    const got = JSON.stringify(err);
+    const exp = JSON.stringify({
+        error: 'api understands the request but refuses to authorize it',
+    });
 
     assert.equal(got, exp);
 }
@@ -419,6 +550,26 @@ async function testTranslateBasic() {
 
     const got = JSON.stringify(result);
     const exp = JSON.stringify(translateResp);
+
+    assert.equal(got, exp);
+}
+
+async function testTranslateBadkey() {
+    const client = new translate.Client('http://localhost:8080', '');
+
+    const text = 'The rain in Spain stays mainly in the plain';
+    const sourceLang = translate.Language.English;
+    const targetLang = translate.Language.Spanish;
+
+    var [_, err] = await client.Translate(text, sourceLang, targetLang);
+    if (err == null) {
+        assert.fail("didn't get an error");
+    }
+
+    const got = JSON.stringify(err);
+    const exp = JSON.stringify({
+        error: 'api understands the request but refuses to authorize it',
+    });
 
     assert.equal(got, exp);
 }
