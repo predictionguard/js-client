@@ -112,6 +112,10 @@ describe('Test_Client', () => {
         await testChatBasic();
     });
 
+    it('chat-badkey', async () => {
+        await testChatBadkey();
+    });
+
     it('completion-basic', async () => {
         await testCompletionBasic();
     });
@@ -175,6 +179,29 @@ async function testChatBasic() {
 
     const got = JSON.stringify(result);
     const exp = JSON.stringify(chatResp);
+
+    assert.equal(got, exp);
+}
+
+async function testChatBadkey() {
+    const client = new chat.Client('http://localhost:8080', '');
+
+    const messages = [
+        {
+            role: chat.Role.User,
+            content: 'How do you feel about the world in general',
+        },
+    ];
+
+    var [_, err] = await client.Chat(chat.Model.NeuralChat7B, 1000, 1.1, messages);
+    if (err == null) {
+        assert.fail("didn't get an error");
+    }
+
+    const got = JSON.stringify(err);
+    const exp = JSON.stringify({
+        error: 'api understands the request but refuses to authorize it',
+    });
 
     assert.equal(got, exp);
 }
