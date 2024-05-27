@@ -233,7 +233,7 @@ async function testChatBadkey() {
         },
     ];
 
-    var [_, err] = await client.Chat(chat.Model.NeuralChat7B, 1000, 1.1, messages);
+    var [, err] = await client.Chat(chat.Model.NeuralChat7B, 1000, 1.1, messages);
     if (err == null) {
         assert.fail("didn't get an error");
     }
@@ -284,7 +284,7 @@ async function testCompletionBasic() {
 async function testCompletionBadkey() {
     const client = new completion.Client('http://localhost:8080', '');
 
-    var [_, err] = await client.Completion(completion.Model.NeuralChat7B, 1000, 1.0, 'Will I lose my hair');
+    var [, err] = await client.Completion(completion.Model.NeuralChat7B, 1000, 1.0, 'Will I lose my hair');
     if (err == null) {
         assert.fail("didn't get an error");
     }
@@ -337,7 +337,7 @@ async function testFactualityBadkey() {
         'The President shall receive in full for his services during the term for which he shall have been elected compensation in the aggregate amount of 400,000 a year, to be paid monthly, and in addition an expense allowance of 50,000 to assist in defraying expenses relating to or resulting from the discharge of his official duties. Any unused amount of such expense allowance shall revert to the Treasury pursuant to section 1552 of title 31, United States Code. No amount of such expense allowance shall be included in the gross income of the President. He shall be entitled also to the use of the furniture and other effects belonging to the United States and kept in the Executive Residence at the White House.';
     const text = 'The president of the united states can take a salary of one million dollars';
 
-    var [_, err] = await client.Factuality(fact, text);
+    var [, err] = await client.Factuality(fact, text);
     if (err == null) {
         assert.fail("didn't get an error");
     }
@@ -386,7 +386,7 @@ async function testInjectionBadkey() {
 
     const prompt = 'A short poem may be a stylistic choice or it may be that you have said what you intended to say in a more concise way.';
 
-    var [result, err] = await client.Injection(prompt);
+    var [, err] = await client.Injection(prompt);
     if (err == null) {
         assert.fail("didn't get an error");
     }
@@ -437,7 +437,7 @@ async function testReplacePIBadkey() {
     const prompt = 'My email is bill@ardanlabs.com and my number is 954-123-4567.';
     const resplaceMethod = replacepi.ReplaceMethod.Mask;
 
-    var [_, err] = await client.ReplacePI(prompt, resplaceMethod);
+    var [, err] = await client.ReplacePI(prompt, resplaceMethod);
     if (err == null) {
         assert.fail("didn't get an error");
     }
@@ -486,7 +486,7 @@ async function testToxicityBadkey() {
 
     const text = 'Every flight I have is late and I am very angry. I want to hurt someone.';
 
-    var [_, err] = await client.Toxicity(text);
+    var [, err] = await client.Toxicity(text);
     if (err == null) {
         assert.fail("didn't get an error");
     }
@@ -561,7 +561,7 @@ async function testTranslateBadkey() {
     const sourceLang = translate.Language.English;
     const targetLang = translate.Language.Spanish;
 
-    var [_, err] = await client.Translate(text, sourceLang, targetLang);
+    var [, err] = await client.Translate(text, sourceLang, targetLang);
     if (err == null) {
         assert.fail("didn't get an error");
     }
