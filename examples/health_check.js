@@ -1,6 +1,6 @@
-import health from '../dist/api_health.js';
+import * as pg from '../dist/index.js';
 
-const client = new health.Client('https://api.predictionguard.com', process.env.PGKEY);
+const client = new pg.health.Client('https://api.predictionguard.com', process.env.PGKEY);
 
 async function HealthCheck() {
     var [result, err] = await client.HealthCheck();

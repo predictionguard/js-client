@@ -62,7 +62,7 @@ curl-chat-sse:
 		"stream": true \
 	}'
 
-js-chat-sse:
+js-chat-sse: compile-ts
 	node --env-file=.env examples/chat_sse.js
 
 curl-comp:
