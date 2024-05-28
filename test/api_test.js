@@ -1,6 +1,6 @@
 import mockServer from 'mockttp';
 import assert from 'assert';
-import {chat, completion, factuality, injection, replacepi, toxicity, translate} from '../dist/index.js';
+import * as pg from '../dist/index.js';
 
 const proxy = mockServer.getLocal({
     cors: false,
@@ -203,16 +203,16 @@ const chatResp = {
 };
 
 async function testChatBasic() {
-    const client = new chat.Client('http://localhost:8080', 'any key');
+    const client = new pg.chat.Client('http://localhost:8080', 'any key');
 
     const messages = [
         {
-            role: chat.Role.User,
+            role: pg.chat.Role.User,
             content: 'How do you feel about the world in general',
         },
     ];
 
-    var [result, err] = await client.Chat(chat.Model.NeuralChat7B, 1000, 1.1, messages);
+    var [result, err] = await client.Chat(pg.chat.Model.NeuralChat7B, 1000, 1.1, messages);
     if (err != null) {
         assert.fail('ERROR:' + err.error);
     }
@@ -224,16 +224,16 @@ async function testChatBasic() {
 }
 
 async function testChatBadkey() {
-    const client = new chat.Client('http://localhost:8080', '');
+    const client = new pg.chat.Client('http://localhost:8080', '');
 
     const messages = [
         {
-            role: chat.Role.User,
+            role: pg.chat.Role.User,
             content: 'How do you feel about the world in general',
         },
     ];
 
-    var [, err] = await client.Chat(chat.Model.NeuralChat7B, 1000, 1.1, messages);
+    var [, err] = await client.Chat(pg.chat.Model.NeuralChat7B, 1000, 1.1, messages);
     if (err == null) {
         assert.fail("didn't get an error");
     }
@@ -268,9 +268,9 @@ const completionResp = {
 };
 
 async function testCompletionBasic() {
-    const client = new completion.Client('http://localhost:8080', 'any key');
+    const client = new pg.completion.Client('http://localhost:8080', 'any key');
 
-    var [result, err] = await client.Completion(completion.Model.NeuralChat7B, 1000, 1.0, 'Will I lose my hair');
+    var [result, err] = await client.Completion(pg.completion.Model.NeuralChat7B, 1000, 1.0, 'Will I lose my hair');
     if (err != null) {
         assert.fail('ERROR:' + err.error);
     }
@@ -282,9 +282,9 @@ async function testCompletionBasic() {
 }
 
 async function testCompletionBadkey() {
-    const client = new completion.Client('http://localhost:8080', '');
+    const client = new pg.completion.Client('http://localhost:8080', '');
 
-    var [, err] = await client.Completion(completion.Model.NeuralChat7B, 1000, 1.0, 'Will I lose my hair');
+    var [, err] = await client.Completion(pg.completion.Model.NeuralChat7B, 1000, 1.0, 'Will I lose my hair');
     if (err == null) {
         assert.fail("didn't get an error");
     }
@@ -313,7 +313,7 @@ const factualityResp = {
 };
 
 async function testFactualityBasic() {
-    const client = new factuality.Client('http://localhost:8080', 'any key');
+    const client = new pg.factuality.Client('http://localhost:8080', 'any key');
 
     const fact =
         'The President shall receive in full for his services during the term for which he shall have been elected compensation in the aggregate amount of 400,000 a year, to be paid monthly, and in addition an expense allowance of 50,000 to assist in defraying expenses relating to or resulting from the discharge of his official duties. Any unused amount of such expense allowance shall revert to the Treasury pursuant to section 1552 of title 31, United States Code. No amount of such expense allowance shall be included in the gross income of the President. He shall be entitled also to the use of the furniture and other effects belonging to the United States and kept in the Executive Residence at the White House.';
@@ -331,7 +331,7 @@ async function testFactualityBasic() {
 }
 
 async function testFactualityBadkey() {
-    const client = new factuality.Client('http://localhost:8080', '');
+    const client = new pg.factuality.Client('http://localhost:8080', '');
 
     const fact =
         'The President shall receive in full for his services during the term for which he shall have been elected compensation in the aggregate amount of 400,000 a year, to be paid monthly, and in addition an expense allowance of 50,000 to assist in defraying expenses relating to or resulting from the discharge of his official duties. Any unused amount of such expense allowance shall revert to the Treasury pursuant to section 1552 of title 31, United States Code. No amount of such expense allowance shall be included in the gross income of the President. He shall be entitled also to the use of the furniture and other effects belonging to the United States and kept in the Executive Residence at the White House.';
@@ -366,7 +366,7 @@ const injectionResp = {
 };
 
 async function testInjectionBasic() {
-    const client = new injection.Client('http://localhost:8080', 'any key');
+    const client = new pg.injection.Client('http://localhost:8080', 'any key');
 
     const prompt = 'A short poem may be a stylistic choice or it may be that you have said what you intended to say in a more concise way.';
 
@@ -382,7 +382,7 @@ async function testInjectionBasic() {
 }
 
 async function testInjectionBadkey() {
-    const client = new injection.Client('http://localhost:8080', '');
+    const client = new pg.injection.Client('http://localhost:8080', '');
 
     const prompt = 'A short poem may be a stylistic choice or it may be that you have said what you intended to say in a more concise way.';
 
@@ -415,12 +415,11 @@ const replacePIResp = {
 };
 
 async function testReplacePIBasic() {
-    const client = new replacepi.Client('http://localhost:8080', 'any key');
+    const client = new pg.replacepi.Client('http://localhost:8080', 'any key');
 
     const prompt = 'My email is bill@ardanlabs.com and my number is 954-123-4567.';
-    const resplaceMethod = replacepi.ReplaceMethod.Mask;
 
-    var [result, err] = await client.ReplacePI(prompt, resplaceMethod);
+    var [result, err] = await client.ReplacePI(prompt, pg.replacepi.ReplaceMethod.Mask);
     if (err != null) {
         assert.fail('ERROR:' + err.error);
     }
@@ -432,12 +431,11 @@ async function testReplacePIBasic() {
 }
 
 async function testReplacePIBadkey() {
-    const client = new replacepi.Client('http://localhost:8080', '');
+    const client = new pg.replacepi.Client('http://localhost:8080', '');
 
     const prompt = 'My email is bill@ardanlabs.com and my number is 954-123-4567.';
-    const resplaceMethod = replacepi.ReplaceMethod.Mask;
 
-    var [, err] = await client.ReplacePI(prompt, resplaceMethod);
+    var [, err] = await client.ReplacePI(prompt, pg.replacepi.ReplaceMethod.Mask);
     if (err == null) {
         assert.fail("didn't get an error");
     }
@@ -466,7 +464,7 @@ const toxicityResp = {
 };
 
 async function testToxicityBasic() {
-    const client = new toxicity.Client('http://localhost:8080', 'any key');
+    const client = new pg.toxicity.Client('http://localhost:8080', 'any key');
 
     const text = 'Every flight I have is late and I am very angry. I want to hurt someone.';
 
@@ -482,7 +480,7 @@ async function testToxicityBasic() {
 }
 
 async function testToxicityBadkey() {
-    const client = new toxicity.Client('http://localhost:8080', '');
+    const client = new pg.toxicity.Client('http://localhost:8080', '');
 
     const text = 'Every flight I have is late and I am very angry. I want to hurt someone.';
 
@@ -537,11 +535,11 @@ const translateResp = {
 };
 
 async function testTranslateBasic() {
-    const client = new translate.Client('http://localhost:8080', 'any key');
+    const client = new pg.translate.Client('http://localhost:8080', 'any key');
 
     const text = 'The rain in Spain stays mainly in the plain';
-    const sourceLang = translate.Language.English;
-    const targetLang = translate.Language.Spanish;
+    const sourceLang = pg.translate.Language.English;
+    const targetLang = pg.translate.Language.Spanish;
 
     var [result, err] = await client.Translate(text, sourceLang, targetLang);
     if (err != null) {
@@ -555,11 +553,11 @@ async function testTranslateBasic() {
 }
 
 async function testTranslateBadkey() {
-    const client = new translate.Client('http://localhost:8080', '');
+    const client = new pg.translate.Client('http://localhost:8080', '');
 
     const text = 'The rain in Spain stays mainly in the plain';
-    const sourceLang = translate.Language.English;
-    const targetLang = translate.Language.Spanish;
+    const sourceLang = pg.translate.Language.English;
+    const targetLang = pg.translate.Language.Spanish;
 
     var [, err] = await client.Translate(text, sourceLang, targetLang);
     if (err == null) {

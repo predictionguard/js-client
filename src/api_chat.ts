@@ -1,4 +1,5 @@
 import client from './api_client.js';
+import * as sse from 'fetch-sse';
 
 export module chat {
     /** Models represents the set of models that can be used. */
@@ -44,10 +45,35 @@ export module chat {
 
     // -------------------------------------------------------------------------
 
+    /** SSEDelta represents content for the sse call. */
+    export interface SSEDelta {
+        content: string;
+    }
+
+    /** SSEChoice represents a choice for the sse call.  */
+    export interface SSEChoice {
+        index: number;
+        delta: SSEDelta;
+        generated_text: string;
+        logprobs: number;
+        finish_reason: string;
+    }
+
+    /** ChatSSE represents the result for the sse call. */
+    export interface ChatSSE {
+        id: string;
+        object: string;
+        created: number;
+        Model: Model;
+        choices: SSEChoice[];
+    }
+
+    // -------------------------------------------------------------------------
+
     /** Client provides access to the chat apis. */
     export class Client extends client.Client {
         /** chat generates chat completions based on a conversation history. */
-        async Chat(model: Model, maxTokens: number, temperature: number, messages: Message[]): Promise<[Chat, client.Error | null]> {
+        async Chat(model: Model, input: Message[], maxTokens: number, temperature: number): Promise<[Chat, client.Error | null]> {
             const zero: Chat = {
                 id: '',
                 object: '',
@@ -61,7 +87,7 @@ export module chat {
                     model: model,
                     max_tokens: maxTokens,
                     temperature: temperature,
-                    messages: messages,
+                    messages: input,
                 };
 
                 const [result, err] = await this.RawDoPost('chat/completions', body);
@@ -72,6 +98,36 @@ export module chat {
                 return [result as Chat, null];
             } catch (e) {
                 return [zero, {error: JSON.stringify(e)}];
+            }
+        }
+
+        /** ChatSSE generates chat completions based on a conversation history. */
+        async ChatSSE(model: Model, input: Message[], maxTokens: number, temperature: number, onMessage: (event: ChatSSE | null, err: client.Error | null) => void): Promise<client.Error | null> {
+            try {
+                const body = {
+                    model: model,
+                    max_tokens: maxTokens,
+                    temperature: temperature,
+                    messages: input,
+                    stream: true,
+                };
+
+                const f = function (event: sse.ServerSentEvent | null, err: client.Error | null) {
+                    if (event == null) {
+                        return;
+                    }
+
+                    onMessage(JSON.parse(event.data) as ChatSSE, err);
+                };
+
+                const err = await this.RawDoSSEPost('chat/completions', body, f);
+                if (err != null) {
+                    return err;
+                }
+
+                return null;
+            } catch (e) {
+                return {error: JSON.stringify(e)};
             }
         }
     }

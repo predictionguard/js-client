@@ -3,7 +3,7 @@ SHELL = $(if $(wildcard $(SHELL_PATH)),/bin/ash,/bin/bash)
 
 install:
 	npm i -g typescript eslint mocha
-	npm i node-fetch@3 
+	npm i node-fetch@3 fetch-sse
 	npm i --save-dev typescript-eslint mockttp
 
 compile-ts:
@@ -46,6 +46,24 @@ curl-chat:
 
 js-chat: compile-ts
 	node --env-file=.env examples/chat.js
+
+curl-chat-sse:
+	curl -il -X POST https://api.predictionguard.com/chat/completions \
+     -H "x-api-key: ${PGKEY}" \
+     -H "Content-Type: application/json" \
+     -d '{ \
+		"model": "Neural-Chat-7B", \
+		"messages": [ \
+			{ \
+			"role": "user", \
+			"content": "How do you feel about the world in general" \
+			} \
+		], \
+		"stream": true \
+	}'
+
+js-chat-sse: compile-ts
+	node --env-file=.env examples/chat_sse.js
 
 curl-comp:
 	curl -il -X POST https://api.predictionguard.com/completions \

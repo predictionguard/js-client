@@ -1,11 +1,11 @@
-import translate from '../dist/api_translate.js';
+import * as pg from '../dist/index.js';
 
-const client = new translate.Client('https://api.predictionguard.com', process.env.PGKEY);
+const client = new pg.translate.Client('https://api.predictionguard.com', process.env.PGKEY);
 
 async function Translate() {
     const text = 'The rain in Spain stays mainly in the plain';
-    const sourceLang = translate.Language.English;
-    const targetLang = translate.Language.Spanish;
+    const sourceLang = pg.translate.Language.English;
+    const targetLang = pg.translate.Language.Spanish;
 
     var [result, err] = await client.Translate(text, sourceLang, targetLang);
     if (err != null) {
