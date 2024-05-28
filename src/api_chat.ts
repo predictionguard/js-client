@@ -72,7 +72,11 @@ export module chat {
 
     /** Client provides access to the chat apis. */
     export class Client extends client.Client {
-        /** chat generates chat completions based on a conversation history. */
+        /**
+         * Chat generates chat completions based on a conversation history.
+         * @param {Model} model - The title of the book.
+         * @param {Message[]} input - The author of the book.
+         * */
         async Chat(model: Model, input: Message[], maxTokens: number, temperature: number): Promise<[Chat, client.Error | null]> {
             const zero: Chat = {
                 id: '',

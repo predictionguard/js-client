@@ -2,7 +2,7 @@ SHELL_PATH = /bin/ash
 SHELL = $(if $(wildcard $(SHELL_PATH)),/bin/ash,/bin/bash)
 
 install:
-	npm i -g typescript eslint mocha
+	npm i -g typescript eslint mocha typedoc
 	npm i node-fetch@3 fetch-sse
 	npm i --save-dev typescript-eslint mockttp
 
@@ -12,6 +12,9 @@ compile-ts:
 publish:
 	npm login
 	npm publish
+
+docs:
+	typedoc src/index.ts
 
 outdated:
 	npm outdated
