@@ -13,8 +13,10 @@ publish:
 	npm login
 	npm publish
 
+.PHONY: docs
 docs:
 	typedoc src/index.ts
+	open -a "Google Chrome" docs/index.html
 
 outdated:
 	npm outdated
