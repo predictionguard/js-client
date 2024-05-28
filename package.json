@@ -2,19 +2,21 @@
     "type": "module",
     "name": "predictionguard",
     "author": "Prediction Guard",
-    "version": "0.7.0",
+    "version": "0.8.0",
     "license": "Apache 2.0",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "scripts": {
         "prepublish": "tsc",
         "lint": "eslint .",
-        "test": "mocha test --no-deprecation"
+        "test": "mocha test --no-deprecation",
+        "docs": "typedoc src/index.ts"
     },
     "files": [
         "dist/*",
-        "src/*",
-        "examples/*"
+        "docs/*",
+        "examples/*",
+        "src/*"
     ],
     "dependencies": {
         "fetch-sse": "^1.0.23",
