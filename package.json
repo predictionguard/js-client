@@ -2,7 +2,7 @@
     "type": "module",
     "name": "predictionguard",
     "author": "Prediction Guard",
-    "version": "0.6.0",
+    "version": "0.7.0",
     "license": "Apache 2.0",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
@@ -12,7 +12,9 @@
         "test": "mocha test --no-deprecation"
     },
     "files": [
-        "dist/*"
+        "dist/*",
+        "src/*",
+        "examples/*"
     ],
     "dependencies": {
         "fetch-sse": "^1.0.23",
