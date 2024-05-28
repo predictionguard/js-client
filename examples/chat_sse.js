@@ -3,14 +3,14 @@ import chat from '../dist/api_chat.js';
 const client = new chat.Client('https://api.predictionguard.com', process.env.PGKEY);
 
 async function ChatSSE() {
-    const messages = [
+    const input = [
         {
             role: chat.Role.User,
             content: 'How do you feel about the world in general',
         },
     ];
 
-    const f = function (event, err) {
+    const onMessage = function (event, err) {
         if (err != null) {
             if (err.error == 'EOF') {
                 return;
@@ -25,7 +25,7 @@ async function ChatSSE() {
         }
     };
 
-    var err = await client.ChatSSE(chat.Model.NeuralChat7B, 1000, 1.1, messages, f);
+    var err = await client.ChatSSE(chat.Model.NeuralChat7B, input, 1000, 1.1, onMessage);
     if (err != null) {
         console.log('ERROR:' + err.error);
         return;

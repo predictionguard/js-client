@@ -45,15 +45,15 @@ export module chat {
 
     // -------------------------------------------------------------------------
 
-    /** ChatSSEDelta represents content for the sse call. */
-    export interface ChatSSEDelta {
+    /** SSEDelta represents content for the sse call. */
+    export interface SSEDelta {
         content: string;
     }
 
-    /** ChatSSEChoice represents a choice for the sse call.  */
-    export interface ChatSSEChoice {
+    /** SSEChoice represents a choice for the sse call.  */
+    export interface SSEChoice {
         index: number;
-        delta: ChatSSEDelta;
+        delta: SSEDelta;
         generated_text: string;
         logprobs: number;
         finish_reason: string;
@@ -65,7 +65,7 @@ export module chat {
         object: string;
         created: number;
         Model: Model;
-        choices: ChatSSEChoice[];
+        choices: SSEChoice[];
     }
 
     // -------------------------------------------------------------------------
@@ -73,7 +73,7 @@ export module chat {
     /** Client provides access to the chat apis. */
     export class Client extends client.Client {
         /** chat generates chat completions based on a conversation history. */
-        async Chat(model: Model, maxTokens: number, temperature: number, messages: Message[]): Promise<[Chat, client.Error | null]> {
+        async Chat(model: Model, input: Message[], maxTokens: number, temperature: number): Promise<[Chat, client.Error | null]> {
             const zero: Chat = {
                 id: '',
                 object: '',
@@ -87,7 +87,7 @@ export module chat {
                     model: model,
                     max_tokens: maxTokens,
                     temperature: temperature,
-                    messages: messages,
+                    messages: input,
                 };
 
                 const [result, err] = await this.RawDoPost('chat/completions', body);
@@ -102,13 +102,13 @@ export module chat {
         }
 
         /** ChatSSE generates chat completions based on a conversation history. */
-        async ChatSSE(model: Model, maxTokens: number, temperature: number, messages: Message[], onMessage: (event: ChatSSE | null, err: client.Error | null) => void): Promise<client.Error | null> {
+        async ChatSSE(model: Model, input: Message[], maxTokens: number, temperature: number, onMessage: (event: ChatSSE | null, err: client.Error | null) => void): Promise<client.Error | null> {
             try {
                 const body = {
                     model: model,
                     max_tokens: maxTokens,
                     temperature: temperature,
-                    messages: messages,
+                    messages: input,
                     stream: true,
                 };
 
