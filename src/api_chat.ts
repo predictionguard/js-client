@@ -1,4 +1,5 @@
 import client from './api_client.js';
+import * as sse from 'fetch-sse';
 
 export module chat {
     /** Models represents the set of models that can be used. */
@@ -72,6 +73,28 @@ export module chat {
                 return [result as Chat, null];
             } catch (e) {
                 return [zero, {error: JSON.stringify(e)}];
+            }
+        }
+
+        /** ChatSSE generates chat completions based on a conversation history. */
+        async ChatSSE(model: Model, maxTokens: number, temperature: number, messages: Message[], onMessage: (event: sse.ServerSentEvent | null, err: client.Error | null) => void): Promise<client.Error | null> {
+            try {
+                const body = {
+                    model: model,
+                    max_tokens: maxTokens,
+                    temperature: temperature,
+                    messages: messages,
+                    stream: true,
+                };
+
+                const err = await this.RawDoSSEPost('chat/completions', body, onMessage);
+                if (err != null) {
+                    return err;
+                }
+
+                return null;
+            } catch (e) {
+                return {error: JSON.stringify(e)};
             }
         }
     }
