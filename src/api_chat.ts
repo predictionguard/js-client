@@ -45,6 +45,31 @@ export module chat {
 
     // -------------------------------------------------------------------------
 
+    /** ChatSSEDelta represents content for the sse call. */
+    export interface ChatSSEDelta {
+        content: string;
+    }
+
+    /** ChatSSEChoice represents a choice for the sse call.  */
+    export interface ChatSSEChoice {
+        index: number;
+        delta: ChatSSEDelta;
+        generated_text: string;
+        logprobs: number;
+        finish_reason: string;
+    }
+
+    /** ChatSSE represents the result for the sse call. */
+    export interface ChatSSE {
+        id: string;
+        object: string;
+        created: number;
+        Model: Model;
+        choices: ChatSSEChoice[];
+    }
+
+    // -------------------------------------------------------------------------
+
     /** Client provides access to the chat apis. */
     export class Client extends client.Client {
         /** chat generates chat completions based on a conversation history. */
@@ -77,7 +102,7 @@ export module chat {
         }
 
         /** ChatSSE generates chat completions based on a conversation history. */
-        async ChatSSE(model: Model, maxTokens: number, temperature: number, messages: Message[], onMessage: (event: sse.ServerSentEvent | null, err: client.Error | null) => void): Promise<client.Error | null> {
+        async ChatSSE(model: Model, maxTokens: number, temperature: number, messages: Message[], onMessage: (event: ChatSSE | null, err: client.Error | null) => void): Promise<client.Error | null> {
             try {
                 const body = {
                     model: model,
@@ -87,7 +112,15 @@ export module chat {
                     stream: true,
                 };
 
-                const err = await this.RawDoSSEPost('chat/completions', body, onMessage);
+                const f = function (event: sse.ServerSentEvent | null, err: client.Error | null) {
+                    if (event == null) {
+                        return;
+                    }
+
+                    onMessage(JSON.parse(event.data) as ChatSSE, err);
+                };
+
+                const err = await this.RawDoSSEPost('chat/completions', body, f);
                 if (err != null) {
                     return err;
                 }

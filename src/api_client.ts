@@ -129,7 +129,7 @@ export module client {
                             return;
                         }
 
-                        onMessage(JSON.parse(event.data), null);
+                        onMessage(event, null);
                     },
 
                     onOpen: async (res) => {
