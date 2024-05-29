@@ -16,6 +16,8 @@ publish:
 .PHONY: docs
 docs:
 	typedoc --disableSources src/index.ts
+
+show-docs: docs
 	open -a "Google Chrome" docs/index.html
 
 outdated:
