@@ -1,11 +1,9 @@
 import client from './api_client.js';
 import * as sse from 'fetch-sse';
 
+/** chat provides support for the chat endpoints. */
 export module chat {
-    /**
-     * Model represents the set of models that can be used.
-     * @public
-     */
+    /** Model represents the set of models that can be used. */
     export enum Model {
         Hermes2ProLlama38B = 'Hermes-2-Pro-Llama-3-8B',
         NousHermesLlama213B = 'Nous-Hermes-Llama-213B',
@@ -15,45 +13,30 @@ export module chat {
         DeepseekCoder67BInstruct = 'deepseek-coder-6.7b-instruct',
     }
 
-    /**
-     * Role represents the set of roles that can be used.
-     * @public
-     */
+    /** Role represents the set of roles that a sender can represent themselves
+     * as. */
     export enum Role {
-        /** Assistant represents an assistant who is responding. */
         Assistant = 'assistant',
-
-        /** User represents a user who is responding. */
         User = 'user',
-
-        /** System represents a system who is responding. */
         System = 'system',
     }
 
     // -------------------------------------------------------------------------
 
-    /**
-     * Message represents the role of the sender and the content to process.
-     * @public
-     *
-     * @remarks - Message is used as an input and output parameter.
-     */
+    /** Message represents an object that contains the content and a role. It
+     * can be used for input and returned as part of the response. */
     export interface Message {
-        /** content represents the content to be processed or returned. */
+        /** content represents the content of the message. */
         content: string;
 
-        /** role represents the context of the person providing or responding to the content. */
+        /** role represents the role of the sender (user or assistant). */
         role: Role;
     }
 
-    /**
-     * Choice represents a choice for the chat call.
-     * @public
-     *
-     * @remarks - Choice is used in the Chat type as part of the chat response.
-     */
+    /** Choice represents an object that contains a result choice. */
     export interface Choice {
-        /** index represents the index position from the collection of choices. */
+        /** index represents the index position from the collection of
+         * choices. */
         index: number;
 
         /** message represents one of many possible responses to choose from. */
@@ -63,56 +46,44 @@ export module chat {
         status: string;
     }
 
-    /**
-     * Chat represents the result for the chat call.
-     * @public
-     *
-     * @remarks - Chat is the response from the Chat API call.
-     */
+    /** Chat represents an object that contains the result for the chat call. */
     export interface Chat {
-        /** id represents a unique identifier for the response. */
+        /** id represents a unique identifier for the chat completion. */
         id: string;
 
-        /** object represent the type of response document. */
+        /** object represent the type of the chat completion document. */
         object: string;
 
-        /** created represents the raw unix time of the response. */
+        /** created represents the unix timestamp for when the chat completion
+         * was created. */
         created: number;
 
-        /** model represents the model used for the request. */
+        /** model represents the model used for generating completions. */
         model: Model;
 
         /** choices represents the collection of choices to choose from. */
         choices: Choice[];
 
-        /** createdDate converts the raw unix time into a JS Date. */
+        /** createdDate converts the created unix timestamp into a JS Date. */
         createdDate(): Date;
     }
 
     // -------------------------------------------------------------------------
 
-    /**
-     * SSEDelta represents content for the sse call.
-     * @public
-     *
-     * @remarks - SSEDelta is used in the ChatSSE type as part of the chat response.
-     */
+    /** SSEDelta represents an object that contains the content. */
     export interface SSEDelta {
-        /** content represents the partial resulting content for a given choice. */
+        /** content represents the content of the message. */
         content: string;
     }
 
-    /**
-     * SSEChoice represents a choice for the sse call.
-     * @public
-     *
-     * @remarks - SSEChoice is used in the ChatSSE type as part of the chat response.
-     */
+    /** SSEChoice represents an object that contains a result choice. */
     export interface SSEChoice {
-        /** index represents the index position from the collection of choices. */
+        /** index represents the index position from the collection of
+         * choices. */
         index: number;
 
-        /** delta represents the partial resulting content for a given choice. */
+        /** delta represents the partial resulting content for a given
+         * choice. */
         delta: SSEDelta;
 
         /** generated_text represents the final completed chat response. */
@@ -125,48 +96,72 @@ export module chat {
         finish_reason: string;
     }
 
-    /**
-     * ChatSSE represents the result for the sse call.
-     * @public
-     *
-     * @remarks - ChatSSE is the response from the ChatSSE API call.
-     */
+    /** ChatSSE represents an object that contains the result for the chatSSE
+     * call. */
     export interface ChatSSE {
-        /** id represents a unique identifier for the response. */
+        /** id represents a unique identifier for the chat completion. */
         id: string;
 
-        /** object represent the type of response document. */
+        /** object represent the type of the chat completion document. */
         object: string;
 
-        /** created represents the raw unix time of the response. */
+        /** created represents the unix timestamp for when the chat completion
+         * was created. */
         created: number;
 
-        /** model represents the model used for the request. */
+        /** model represents the model used for generating completions. */
         model: Model;
 
         /** choices represents the collection of choices to choose from. */
         choices: SSEChoice[];
 
-        /** createdDate converts the raw unix time into a JS Date. */
+        /** createdDate converts the created unix timestamp into a JS Date. */
         createdDate(): Date;
     }
 
     // -------------------------------------------------------------------------
 
-    /**
-     * Client provides access to the chat apis.
-     * @public
-     *
-     * @remarks - Client provides methods to make Chat related client calls.
-     */
+    /** Client provides APIs to access the Chat endpoints. */
     export class Client extends client.Client {
-        /**
-         * Chat generates a response based on a chat conversation.
-         * @param {Model} model - model represents the model to use for the request.
-         * @param {Message[]} input - input represents the data to process for the request.
-         * @param {number} maxTokens - inpmaxTokensut represents the maximum number of words to return.
-         * @param {number} temperature - temperature represents the controlling factor of randomness.
-         * @returns - A chat respose or error.
+        /** Chat generates chat completions based on a conversation history.
+         *
+         * @example
+         * ```
+         * import * as pg from 'predictionguard';
+         *
+         * const client = new pg.chat.Client('https://api.predictionguard.com', process.env.PGKEY);
+         *
+         * async function Chat() {
+         *     const input = [
+         *         {
+         *             role: pg.chat.Role.User,
+         *             content: 'How do you feel about the world in general',
+         *         },
+         *     ];
+         *
+         *     var [result, err] = await client.Chat(pg.chat.Model.NeuralChat7B, input, 1000, 1.1);
+         *     if (err != null) {
+         *         console.log('ERROR:' + err.error);
+         *         return;
+         *     }
+         *
+         *     console.log('RESULT:' + result.model + ': ' + result.choices[0].message.content);
+         * }
+         *
+         * Chat();
+         * ```
+         *
+         * @param {Model} model - model represents the model to use for the
+         * request.
+         * @param {Message[]} input - input represents the conversation history
+         * with roles (user, assistant) and messages.
+         * @param {number} maxTokens - maxTokens represents the maximum number
+         * of tokens in the generated completion.
+         * @param {number} temperature - temperature represents the parameter
+         * for controlling randomness in completions.
+         *
+         * @returns - A Promise with a chat object and an error object if the
+         * error is not null.
          */
         async Chat(model: Model, input: Message[], maxTokens: number, temperature: number): Promise<[Chat, client.Error | null]> {
             const zero: Chat = {
@@ -204,14 +199,61 @@ export module chat {
             }
         }
 
-        /**
-         * ChatSSE generates response chunks based on a chat conversation.
-         * @param {Model} model - model represents the model to use for the request.
-         * @param {Message[]} input - input represents the data to process for the request.
-         * @param {number} maxTokens - inpmaxTokensut represents the maximum number of words to return.
-         * @param {number} temperature - temperature represents the controlling factor of randomness.
-         * @param {(event: ChatSSE | null, err: client.Error | null) => void} onMessage - onMessage represents a function that is called with chat results.
-         * @returns - A chat respose or error.
+        /** ChatSSE generates a stream of chat completions based on a
+         * conversation history.
+         *
+         * @example
+         * ```
+         * import * as pg from 'predictionguard';
+         *
+         * const client = new pg.chat.Client('https://api.predictionguard.com', process.env.PGKEY);
+         *
+         * async function ChatSSE() {
+         *     const input = [
+         *         {
+         *             role: pg.chat.Role.User,
+         *             content: 'How do you feel about the world in general',
+         *         },
+         *     ];
+         *
+         *     const onMessage = function (event, err) {
+         *         if (err != null) {
+         *             if (err.error == 'EOF') {
+         *                 return;
+         *             }
+         *             console.log(err);
+         *         }
+         *
+         *         for (const choice of event.choices) {
+         *             if (choice.delta.hasOwnProperty('content')) {
+         *                 process.stdout.write(choice.delta.content);
+         *             }
+         *         }
+         *     };
+         *
+         *     var err = await client.ChatSSE(pg.chat.Model.NeuralChat7B, input, 1000, 1.1, onMessage);
+         *     if (err != null) {
+         *         console.log('ERROR:' + err.error);
+         *         return;
+         *     }
+         * }
+         *
+         * ChatSSE();
+         * ```
+         *
+         * @param {Model} model - model represents the model to use for the
+         * request.
+         * @param {Message[]} input - input represents the conversation history
+         * with roles (user, assistant) and messages.
+         * @param {number} maxTokens - maxTokens represents the maximum number
+         * of tokens in the generated completion.
+         * @param {number} temperature - temperature represents the parameter
+         * for controlling randomness in completions.
+         * @param {(event: ChatSSE | null, err: client.Error | null) => void} onMessage -
+         * onMessage represents a function that will receive the stream of chat
+         * results.
+         *
+         * @returns - A Promise with an error object if the error is not null.
          */
         async ChatSSE(model: Model, input: Message[], maxTokens: number, temperature: number, onMessage: (event: ChatSSE | null, err: client.Error | null) => void): Promise<client.Error | null> {
             try {
