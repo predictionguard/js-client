@@ -3,7 +3,8 @@ import * as pg from '../dist/index.js';
 const client = new pg.toxicity.Client('https://api.predictionguard.com', process.env.PGKEY);
 
 async function Toxicity() {
-    const text = 'Every flight I have is late and I am very angry. I want to hurt someone.';
+    const text = `Every flight I have is late and I am very angry. I want to
+    hurt someone.`;
 
     var [result, err] = await client.Toxicity(text);
     if (err != null) {

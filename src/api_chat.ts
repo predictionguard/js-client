@@ -48,17 +48,17 @@ export module chat {
 
     /** Chat represents an object that contains the result for the chat call. */
     export interface Chat {
-        /** id represents a unique identifier for the chat completion. */
+        /** id represents a unique identifier for the chat. */
         id: string;
 
-        /** object represent the type of the chat completion document. */
+        /** object represent the type of the chat document. */
         object: string;
 
-        /** created represents the unix timestamp for when the chat completion
-         * was created. */
+        /** created represents the unix timestamp for when the chat was
+         * created. */
         created: number;
 
-        /** model represents the model used for generating completions. */
+        /** model represents the model used for generating the result. */
         model: Model;
 
         /** choices represents the collection of choices to choose from. */
@@ -99,17 +99,17 @@ export module chat {
     /** ChatSSE represents an object that contains the result for the chatSSE
      * call. */
     export interface ChatSSE {
-        /** id represents a unique identifier for the chat completion. */
+        /** id represents a unique identifier for the chat. */
         id: string;
 
-        /** object represent the type of the chat completion document. */
+        /** object represent the type of the chat document. */
         object: string;
 
-        /** created represents the unix timestamp for when the chat completion
-         * was created. */
+        /** created represents the unix timestamp for when the chat was
+         * created. */
         created: number;
 
-        /** model represents the model used for generating completions. */
+        /** model represents the model used for generating the result. */
         model: Model;
 
         /** choices represents the collection of choices to choose from. */
@@ -121,7 +121,7 @@ export module chat {
 
     // -------------------------------------------------------------------------
 
-    /** Client provides APIs to access the Chat endpoints. */
+    /** Client provides APIs to access the chat endpoints. */
     export class Client extends client.Client {
         /** Chat generates chat completions based on a conversation history.
          *
@@ -132,14 +132,17 @@ export module chat {
          * const client = new pg.chat.Client('https://api.predictionguard.com', process.env.PGKEY);
          *
          * async function Chat() {
+         *     const model = pg.chat.Model.NeuralChat7B;
          *     const input = [
          *         {
          *             role: pg.chat.Role.User,
          *             content: 'How do you feel about the world in general',
          *         },
          *     ];
+         *     const maxTokens = 1000;
+         *     const temperature = 1.1;
          *
-         *     var [result, err] = await client.Chat(pg.chat.Model.NeuralChat7B, input, 1000, 1.1);
+         *     var [result, err] = await client.Chat(model, input, maxTokens, temperature);
          *     if (err != null) {
          *         console.log('ERROR:' + err.error);
          *         return;
@@ -156,12 +159,12 @@ export module chat {
          * @param {Message[]} input - input represents the conversation history
          * with roles (user, assistant) and messages.
          * @param {number} maxTokens - maxTokens represents the maximum number
-         * of tokens in the generated completion.
+         * of tokens in the generated chat.
          * @param {number} temperature - temperature represents the parameter
-         * for controlling randomness in completions.
+         * for controlling randomness in generated chat.
          *
-         * @returns - A Promise with a chat object and an error object if the
-         * error is not null.
+         * @returns - A Promise with a Chat object and a client.Error object if
+         * the error is not null.
          */
         async Chat(model: Model, input: Message[], maxTokens: number, temperature: number): Promise<[Chat, client.Error | null]> {
             const zero: Chat = {
@@ -204,17 +207,20 @@ export module chat {
          *
          * @example
          * ```
-         * import * as pg from 'predictionguard';
+         * import * as pg from '../dist/index.js';
          *
          * const client = new pg.chat.Client('https://api.predictionguard.com', process.env.PGKEY);
          *
          * async function ChatSSE() {
+         *     const model = pg.chat.Model.NeuralChat7B;
          *     const input = [
          *         {
          *             role: pg.chat.Role.User,
          *             content: 'How do you feel about the world in general',
          *         },
          *     ];
+         *     const maxTokens = 1000;
+         *     const temperature = 1.1;
          *
          *     const onMessage = function (event, err) {
          *         if (err != null) {
@@ -231,7 +237,7 @@ export module chat {
          *         }
          *     };
          *
-         *     var err = await client.ChatSSE(pg.chat.Model.NeuralChat7B, input, 1000, 1.1, onMessage);
+         *     var err = await client.ChatSSE(model, input, maxTokens, temperature, onMessage);
          *     if (err != null) {
          *         console.log('ERROR:' + err.error);
          *         return;
@@ -246,14 +252,15 @@ export module chat {
          * @param {Message[]} input - input represents the conversation history
          * with roles (user, assistant) and messages.
          * @param {number} maxTokens - maxTokens represents the maximum number
-         * of tokens in the generated completion.
+         * of tokens in the generated chat.
          * @param {number} temperature - temperature represents the parameter
-         * for controlling randomness in completions.
+         * for controlling randomness in the generated chat.
          * @param {(event: ChatSSE | null, err: client.Error | null) => void} onMessage -
          * onMessage represents a function that will receive the stream of chat
          * results.
          *
-         * @returns - A Promise with an error object if the error is not null.
+         * @returns - A Promise with a client.Error object if the error is not
+         * null.
          */
         async ChatSSE(model: Model, input: Message[], maxTokens: number, temperature: number, onMessage: (event: ChatSSE | null, err: client.Error | null) => void): Promise<client.Error | null> {
             try {

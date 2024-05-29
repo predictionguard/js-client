@@ -3,12 +3,15 @@ import * as pg from '../dist/index.js';
 const client = new pg.chat.Client('https://api.predictionguard.com', process.env.PGKEY);
 
 async function ChatSSE() {
+    const model = pg.chat.Model.NeuralChat7B;
     const input = [
         {
             role: pg.chat.Role.User,
             content: 'How do you feel about the world in general',
         },
     ];
+    const maxTokens = 1000;
+    const temperature = 1.1;
 
     const onMessage = function (event, err) {
         if (err != null) {
@@ -25,7 +28,7 @@ async function ChatSSE() {
         }
     };
 
-    var err = await client.ChatSSE(pg.chat.Model.NeuralChat7B, input, 1000, 1.1, onMessage);
+    var err = await client.ChatSSE(model, input, maxTokens, temperature, onMessage);
     if (err != null) {
         console.log('ERROR:' + err.error);
         return;

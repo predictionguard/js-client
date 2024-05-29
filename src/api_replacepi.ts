@@ -32,7 +32,7 @@ export module replacepi {
     export class Client extends client.Client {
         /** ReplacePI replaces personal information such as names, SSNs, and
          * emails in a given text. */
-        async ReplacePI(prompt: string, replaceMethod: ReplaceMethod): Promise<[ReplacePI, client.Error | null]> {
+        async ReplacePI(replaceMethod: ReplaceMethod, prompt: string): Promise<[ReplacePI, client.Error | null]> {
             const zero: ReplacePI = {
                 id: '',
                 object: '',
