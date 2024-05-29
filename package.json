@@ -7,7 +7,7 @@
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "scripts": {
-        "prepare": "tsc && typedoc --disableSources src/index.ts",
+        "prepare": "tsc && typedoc --gitRevision main src/index.ts",
         "test": "eslint . && mocha test --no-deprecation"
     },
     "files": [
