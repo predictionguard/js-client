@@ -16,7 +16,7 @@ async function Chat() {
         return;
     }
 
-    console.log('RESULT:' + result.model + ': ' + result.choices[0].message.content);
+    console.log('RESULT:' + result.createdDate() + ': ' + result.model + ': ' + result.choices[0].message.content);
 }
 
 Chat();
