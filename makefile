@@ -15,7 +15,7 @@ publish:
 
 .PHONY: docs
 docs:
-	typedoc --disableSources src/index.ts
+	typedoc --gitRevision main src/index.ts
 
 show-docs: docs
 	open -a "Google Chrome" docs/index.html
