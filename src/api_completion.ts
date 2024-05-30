@@ -1,6 +1,6 @@
 import client from './api_client.js';
 
-/** completion provides support for the completion endpoints. */
+/** Module completion provides support for the completion endpoints. */
 export module completion {
     /** Model represents the set of models that can be used. */
     export enum Model {
@@ -16,31 +16,33 @@ export module completion {
 
     /** Choice represents an object that contains a result choice. */
     export interface Choice {
-        /** index represents the index position from the collection of
-         * choices. */
+        /** index represents the index position in the collection for
+         * this choice. */
         index: number;
 
-        /** model represents the model used for generating the result. */
+        /** model represents the model used for generating the result for
+         * this choice. */
         model: Model;
 
-        /** status represents if the response was successful or not. */
+        /** status represents if the response for this choice was successful
+         * or not. */
         status: string;
 
-        /** text represents the generated text. */
+        /** text represents the generated text for this choice. */
         text: string;
     }
 
     /** Completion represents an object that contains the result for the
      * completion call. */
     export interface Completion {
-        /** id represents a unique identifier for the chat completion. */
+        /** id represents a unique identifier for the result. */
         id: string;
 
-        /** object represent the type of the chat completion document. */
+        /** object represent the type of the result document. */
         object: string;
 
-        /** created represents the unix timestamp for when the chat completion
-         * was created. */
+        /** created represents the unix timestamp for when the request was
+         * received. */
         created: number;
 
         /** choices represents the collection of choices to choose from. */
@@ -54,7 +56,7 @@ export module completion {
 
     /** Client provides APIs to access the completion endpoints. */
     export class Client extends client.Client {
-        /** Chat generates chat completions based on the provided input.
+        /** Chat generates text completions based on the provided input.
          *
          * @example
          * ```

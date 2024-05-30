@@ -1,7 +1,7 @@
 import client from './api_client.js';
 import * as sse from 'fetch-sse';
 
-/** chat provides support for the chat endpoints. */
+/** Module chat provides support for the chat endpoints. */
 export module chat {
     /** Model represents the set of models that can be used. */
     export enum Model {
@@ -35,27 +35,28 @@ export module chat {
 
     /** Choice represents an object that contains a result choice. */
     export interface Choice {
-        /** index represents the index position from the collection of
-         * choices. */
+        /** index represents the index position in the collection for
+         * this choice. */
         index: number;
 
-        /** message represents one of many possible responses to choose from. */
+        /** message represents the message response for this choice. */
         message: Message;
 
-        /** status represents if the response was successful or not. */
+        /** status represents if the response for this choice was successful
+         * or not. */
         status: string;
     }
 
     /** Chat represents an object that contains the result for the chat call. */
     export interface Chat {
-        /** id represents a unique identifier for the chat. */
+        /** id represents a unique identifier for the result. */
         id: string;
 
-        /** object represent the type of the chat document. */
+        /** object represent the type of the result document. */
         object: string;
 
-        /** created represents the unix timestamp for when the chat was
-         * created. */
+        /** created represents the unix timestamp for when the request was
+         * received. */
         created: number;
 
         /** model represents the model used for generating the result. */
@@ -72,41 +73,42 @@ export module chat {
 
     /** SSEDelta represents an object that contains the content. */
     export interface SSEDelta {
-        /** content represents the content of the message. */
+        /** content represents the partial content response for a choice. */
         content: string;
     }
 
     /** SSEChoice represents an object that contains a result choice. */
     export interface SSEChoice {
-        /** index represents the index position from the collection of
-         * choices. */
+        /** index represents the index position in the collection for
+         * this choice. */
         index: number;
 
-        /** delta represents the partial resulting content for a given
-         * choice. */
+        /** delta represents the partial content for this choice. */
         delta: SSEDelta;
 
-        /** generated_text represents the final completed chat response. */
+        /** generated_text represents the final completed chat response which
+         * is provided when this is the last choice. */
         generated_text: string;
 
-        /** logprobs represents the log probabilty of accuracy. */
+        /** logprobs represents the log probabilty of accuracy for this choice. */
         logprobs: number;
 
-        /** finish_reason represents the reason the response has finished. */
+        /** finish_reason represents the reason the response has finished
+         * which is provided when this is the last choice. */
         finish_reason: string;
     }
 
     /** ChatSSE represents an object that contains the result for the chatSSE
      * call. */
     export interface ChatSSE {
-        /** id represents a unique identifier for the chat. */
+        /** id represents a unique identifier for the result. */
         id: string;
 
-        /** object represent the type of the chat document. */
+        /** object represent the type of the result document. */
         object: string;
 
-        /** created represents the unix timestamp for when the chat was
-         * created. */
+        /** created represents the unix timestamp for when the request was
+         * received. */
         created: number;
 
         /** model represents the model used for generating the result. */
