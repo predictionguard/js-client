@@ -48,7 +48,7 @@ async function Chat() {
 
 Chat();
 ```
-Take a look at the `examples` directory for more examples.
+Take a look at the [examples](https://github.com/predictionguard/js-client/tree/main/examples) directory for more examples.
 
 ### Docs
 
