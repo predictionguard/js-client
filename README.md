@@ -52,11 +52,11 @@ Take a look at the [examples](https://github.com/predictionguard/js-client/tree/
 
 ### Docs
 
-You can find the Prediction Guard API docs on the Prediction Guard website.
+You can find the SDK and Prediction Guard docs using these links.
 
-[API Docs](https://docs.predictionguard.com/docs/getting-started/welcome)
+[SDK Docs](https://predictionguard.github.io/js-client)
 
-[API Reference](https://docs.predictionguard.com/api-reference/api-reference/check-api-health)
+[PG API Docs](https://docs.predictionguard.com/docs/getting-started/welcome)
 
 ### Getting started
 
