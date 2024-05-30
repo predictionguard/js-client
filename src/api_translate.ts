@@ -151,6 +151,7 @@ export module translate {
          * }
          *
          * Translate();
+         * ```
          *
          * @param {string} text - text represents the text to be translated.
          * @param {Language} sourceLang - sourceLang represents the source
@@ -160,7 +161,6 @@ export module translate {
          *
          * @returns - A Promise with a Translate object and a client.Error
          * object if the error is not null.
-         * ```
          */
         async Translate(text: string, sourceLang: Language, targetLang: Language): Promise<[Translate, client.Error | null]> {
             const zero: Translate = {
