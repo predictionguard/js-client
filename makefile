@@ -13,8 +13,12 @@ publish:
 	npm login
 	npm publish
 
+.PHONY: docs
 docs:
-	typedoc src/index.ts
+	typedoc --gitRevision main src/index.ts
+
+show-docs: docs
+	open -a "Google Chrome" docs/index.html
 
 outdated:
 	npm outdated
@@ -25,7 +29,6 @@ update:
 .PHONY: test
 test:
 	tsc
-	npm run lint
 	npm run test
 
 # ==============================================================================

@@ -419,7 +419,7 @@ async function testReplacePIBasic() {
 
     const prompt = 'My email is bill@ardanlabs.com and my number is 954-123-4567.';
 
-    var [result, err] = await client.ReplacePI(prompt, pg.replacepi.ReplaceMethod.Mask);
+    var [result, err] = await client.ReplacePI(pg.replacepi.ReplaceMethod.Mask, prompt);
     if (err != null) {
         assert.fail('ERROR:' + err.error);
     }
@@ -435,7 +435,7 @@ async function testReplacePIBadkey() {
 
     const prompt = 'My email is bill@ardanlabs.com and my number is 954-123-4567.';
 
-    var [, err] = await client.ReplacePI(prompt, pg.replacepi.ReplaceMethod.Mask);
+    var [, err] = await client.ReplacePI(pg.replacepi.ReplaceMethod.Mask, prompt);
     if (err == null) {
         assert.fail("didn't get an error");
     }

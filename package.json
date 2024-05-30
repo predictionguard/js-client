@@ -2,15 +2,13 @@
     "type": "module",
     "name": "predictionguard",
     "author": "Prediction Guard",
-    "version": "0.8.0",
+    "version": "0.9.0",
     "license": "Apache 2.0",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "scripts": {
-        "prepublish": "tsc",
-        "lint": "eslint .",
-        "test": "mocha test --no-deprecation",
-        "docs": "typedoc src/index.ts"
+        "prepare": "tsc && typedoc --gitRevision main src/index.ts",
+        "test": "eslint . && mocha test --no-deprecation"
     },
     "files": [
         "dist/*",
