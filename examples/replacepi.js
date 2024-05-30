@@ -4,8 +4,7 @@ const client = new pg.replacepi.Client('https://api.predictionguard.com', proces
 
 async function ReplacePI() {
     const replaceMethod = pg.replacepi.ReplaceMethod.Mask;
-    const prompt = `My email is bill@ardanlabs.com and my number is
-    954-123-4567.`;
+    const prompt = `My email is bill@ardanlabs.com and my number is 954-123-4567.`;
 
     var [result, err] = await client.ReplacePI(replaceMethod, prompt);
     if (err != null) {
