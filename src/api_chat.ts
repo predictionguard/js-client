@@ -21,7 +21,19 @@ export module chat {
         System = 'system',
     }
 
+    /** Base64Encoder defines a method that can read a data source and returns a
+     * base64 encoded string. */
+    export interface Base64Encoder {
+        EncodeBase64(): [string | null, client.Error | null];
+    }
+
     // -------------------------------------------------------------------------
+
+    /** Input represents a role and content related to a chat. */
+    export interface Input {
+        role: Role;
+        content: string;
+    }
 
     /** Message represents an object that contains the content and a role. It
      * can be used for input and returned as part of the response. */
@@ -31,6 +43,9 @@ export module chat {
 
         /** role represents the role of the sender (user or assistant). */
         role: Role;
+
+        /** output represents the output for this message. */
+        output: string;
     }
 
     /** Choice represents an object that contains a result choice. */
@@ -123,6 +138,56 @@ export module chat {
 
     // -------------------------------------------------------------------------
 
+    /** ChatVisionMessage represents content for the vision call. */
+    export interface VisionMessage {
+        /** role represents the role of the sender (user or assistant). */
+        role: Role;
+
+        /** content represents the response for this message. */
+        content: string;
+
+        /** output represents the output for this message. */
+        output: string;
+    }
+
+    /** ChatVisionChoice represents a choice for the vision call. */
+    export interface VisionChoice {
+        /** index represents the index position in the collection for
+         * this choice. */
+        index: number;
+
+        /** message represents a response for this choice. */
+        message: VisionMessage;
+
+        /** status represents if the response for this choice was successful
+         * or not. */
+        status: string;
+    }
+
+    /** ChatVision represents the result for the vision call. */
+    export interface ChatVision {
+        /** id represents a unique identifier for the result. */
+        id: string;
+
+        /** object represent the type of the result document. */
+        object: string;
+
+        /** created represents the unix timestamp for when the request was
+         * received. */
+        created: number;
+
+        /** model represents the model used for generating the result. */
+        model: Model;
+
+        /** choices represents the collection of choices to choose from. */
+        choices: VisionChoice[];
+
+        /** createdDate converts the created unix timestamp into a JS Date. */
+        createdDate(): Date;
+    }
+
+    // -------------------------------------------------------------------------
+
     /** Client provides APIs to access the chat endpoints. */
     export class Client extends client.Client {
         /** Chat generates chat completions based on a conversation history.
@@ -158,7 +223,7 @@ export module chat {
          *
          * @param {Model} model - model represents the model to use for the
          * request.
-         * @param {Message[]} input - input represents the conversation history
+         * @param {Input[]} input - input represents the conversation history
          * with roles (user, assistant) and messages.
          * @param {number} maxTokens - maxTokens represents the maximum number
          * of tokens in the generated chat.
@@ -168,7 +233,7 @@ export module chat {
          * @returns - A Promise with a Chat object and a client.Error object if
          * the error is not null.
          */
-        async Chat(model: Model, input: Message[], maxTokens: number, temperature: number): Promise<[Chat, client.Error | null]> {
+        async Chat(model: Model, input: Input[], maxTokens: number, temperature: number): Promise<[Chat, client.Error | null]> {
             const zero: Chat = {
                 id: '',
                 object: '',
@@ -251,7 +316,7 @@ export module chat {
          *
          * @param {Model} model - model represents the model to use for the
          * request.
-         * @param {Message[]} input - input represents the conversation history
+         * @param {Input[]} input - input represents the conversation history
          * with roles (user, assistant) and messages.
          * @param {number} maxTokens - maxTokens represents the maximum number
          * of tokens in the generated chat.
@@ -264,7 +329,7 @@ export module chat {
          * @returns - A Promise with a client.Error object if the error is not
          * null.
          */
-        async ChatSSE(model: Model, input: Message[], maxTokens: number, temperature: number, onMessage: (event: ChatSSE | null, err: client.Error | null) => void): Promise<client.Error | null> {
+        async ChatSSE(model: Model, input: Input[], maxTokens: number, temperature: number, onMessage: (event: ChatSSE | null, err: client.Error | null) => void): Promise<client.Error | null> {
             try {
                 const body = {
                     model: model,
@@ -295,6 +360,86 @@ export module chat {
                 return null;
             } catch (e) {
                 return {error: JSON.stringify(e)};
+            }
+        }
+
+        /** Vision generates answers a question about an image.
+         *
+         * @example
+         * ```
+         * ```
+         *
+         * @param {Role} role - role represents the role of the person asking
+         * the question.
+         * @param {string} question - question represents the question being
+         * asked.
+         * @param {Base64Encoder} image - image represents an object that can
+         * produce a base64 encoding of an image.
+         * @param {number} maxTokens - maxTokens represents the maximum number
+         * of tokens in the generated chat.
+         * @param {number} temperature - temperature represents the parameter
+         * for controlling randomness in the generated chat.
+         * @param {(event: ChatSSE | null, err: client.Error | null) => void} onMessage -
+         * onMessage represents a function that will receive the stream of chat
+         * results.
+         *
+         * @returns - A Promise with a ChatVision object and a client.Error
+         * object if the error is not null.
+         */
+        async Vision(role: Role, question: string, image: Base64Encoder, maxTokens: number, temperature: number): Promise<[ChatVision, client.Error | null]> {
+            const zero: ChatVision = {
+                id: '',
+                object: '',
+                created: 0,
+                model: Model.NeuralChat7B,
+                choices: [],
+                createdDate: function () {
+                    return new Date(0);
+                },
+            };
+
+            try {
+                const [base64, err1] = image.EncodeBase64();
+                if (err1 != null) {
+                    return [zero, err1];
+                }
+
+                const body = {
+                    model: 'bridgetower-large-itm-mlm-itc',
+                    messages: [
+                        {
+                            role: role,
+                            content: [
+                                {
+                                    type: 'text',
+                                    text: question,
+                                },
+                                {
+                                    type: 'image_url',
+                                    image_url: {
+                                        url: base64,
+                                    },
+                                },
+                            ],
+                        },
+                    ],
+                    MaxTokens: maxTokens,
+                    Temperature: temperature,
+                };
+
+                const [result, err2] = await this.RawDoPost('chat/completions', body);
+                if (err2 != null) {
+                    return [zero, err2];
+                }
+
+                const chat = result as ChatVision;
+                chat.createdDate = function () {
+                    return new Date(this.created * 1000);
+                };
+
+                return [chat, null];
+            } catch (e) {
+                return [zero, {error: JSON.stringify(e)}];
             }
         }
     }

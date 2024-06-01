@@ -14,8 +14,8 @@ export module client {
 
     /** Client provides access to make raw http calls. */
     export class Client {
-        private url;
-        private apiKey;
+        private url: string;
+        private apiKey: string;
 
         // ---------------------------------------------------------------------
 
