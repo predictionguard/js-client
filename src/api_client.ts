@@ -62,7 +62,7 @@ export class Client {
      * @param {number} temperature - temperature represents the parameter
      * for controlling randomness in generated chat.
      *
-     * @returns - A Promise with a Chat object and a client.Error object if
+     * @returns - A Promise with a Chat object and an Error object if
      * the error is not null.
      */
     async Chat(model: model.Models, input: model.ChatInput[], maxTokens: number, temperature: number): Promise<[model.Chat, model.Error | null]> {
@@ -154,11 +154,11 @@ export class Client {
      * of tokens in the generated chat.
      * @param {number} temperature - temperature represents the parameter
      * for controlling randomness in the generated chat.
-     * @param {(event: ChatSSE | null, err: client.Error | null) => void} onMessage -
+     * @param {(event: ChatSSE | null, err: Error | null) => void} onMessage -
      * onMessage represents a function that will receive the stream of chat
      * results.
      *
-     * @returns - A Promise with a client.Error object if the error is not
+     * @returns - A Promise with an Error object if the error is not
      * null.
      */
     async ChatSSE(model: model.Models, input: model.ChatInput[], maxTokens: number, temperature: number, onMessage: (event: model.ChatSSE | null, err: model.Error | null) => void): Promise<model.Error | null> {
@@ -236,7 +236,7 @@ export class Client {
      * @param {number} temperature - temperature represents the parameter
      * for controlling randomness in the generated chat.
      *
-     * @returns - A Promise with a ChatVision object and a client.Error
+     * @returns - A Promise with a ChatVision object and a Error
      * object if the error is not null.
      */
     async ChatVision(role: model.Roles, question: string, image: model.Base64Encoder, maxTokens: number, temperature: number): Promise<[model.ChatVision, model.Error | null]> {
@@ -256,8 +256,6 @@ export class Client {
             if (err1 != null) {
                 return [zero, err1];
             }
-
-            console.log(b64);
 
             const body = {
                 model: model.Models.Llava157BHF,
@@ -335,7 +333,7 @@ export class Client {
      * for controlling randomness in generated chat.
      * @param {number} temperature - prompt represents the chat input.
      *
-     * @returns - A Promise with a Completion object and a client.Error
+     * @returns - A Promise with a Completion object and a Error
      * object if the error is not null.
      */
     async Completion(model: model.Models, maxTokens: number, temperature: number, prompt: string): Promise<[model.Completion, model.Error | null]> {
@@ -368,6 +366,98 @@ export class Client {
             };
 
             return [chat, null];
+        } catch (e) {
+            return [zero, {error: JSON.stringify(e)}];
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Embedding
+
+    /** Embedding generates chat completions based on a conversation history.
+     *
+     * @example
+     * ```
+     * import * as pg from 'predictiongaurd';
+     *
+     * const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
+     *
+     * async function Embedding() {
+     *     const image = new pg.ImageNetwork('https://pbs.twimg.com/profile_images/1571574401107169282/ylAgz_f5_400x400.jpg');
+     *
+     *     const input = [
+     *         {
+     *             text: 'This is Bill Kennedy, a decent Go developer.',
+     *             image: image,
+     *         },
+     *     ];
+     *
+     *     var [result, err] = await client.Embedding(input);
+     *     if (err != null) {
+     *         console.log('ERROR:' + err.error);
+     *         return;
+     *     }
+     *
+     *     for (const dt of result.data) {
+     *         process.stdout.write(dt.embedding.toString());
+     *     }
+     * }
+     *
+     * Embedding();
+     * ```
+     *
+     * @param {EmbeddingInput[]} input - input represents a collection of
+     * text and images to vectorize.
+     *
+     * @returns - A Promise with a Embedding object and an Error object if
+     * the error is not null.
+     */
+    async Embedding(input: model.EmbeddingInput[]): Promise<[model.Embedding, model.Error | null]> {
+        const zero: model.Embedding = {
+            id: '',
+            object: '',
+            created: 0,
+            model: model.Models.BridgetowerLargeItmMlmItc,
+            data: [],
+            createdDate: function () {
+                return new Date(0);
+            },
+        };
+
+        try {
+            const embeds = [];
+            for (const inp of input) {
+                let base64 = '';
+                if (inp.image != null) {
+                    const [b64, err1] = await inp.image.EncodeBase64();
+                    if (err1 != null) {
+                        return [zero, err1];
+                    }
+                    base64 = b64;
+                }
+
+                embeds.push({
+                    text: inp.text,
+                    image: base64,
+                });
+            }
+
+            const body = {
+                model: model.Models.BridgetowerLargeItmMlmItc,
+                input: embeds,
+            };
+
+            const [result, err] = await this.RawDoPost('embeddings', body);
+            if (err != null) {
+                return [zero, err];
+            }
+
+            const embedding = result as model.Embedding;
+            embedding.createdDate = function () {
+                return new Date(this.created * 1000);
+            };
+
+            return [embedding, null];
         } catch (e) {
             return [zero, {error: JSON.stringify(e)}];
         }
@@ -416,7 +506,7 @@ export class Client {
      * @param {string} text - text represents the text to be checked
      * for factuality.
      *
-     * @returns - A Promise with a Factuality object and a client.Error
+     * @returns - A Promise with a Factuality object and a Error
      * object if the error is not null.
      */
     async Factuality(reference: string, text: string): Promise<[model.Factuality, model.Error | null]> {
@@ -476,7 +566,7 @@ export class Client {
      * HealthCheck();
      * ```
      *
-     * @returns - A Promise with a string and a client.Error object if
+     * @returns - A Promise with a string and an Error object if
      * the error is not null.
      */
     async HealthCheck(): Promise<[string, model.Error | null]> {
@@ -524,7 +614,7 @@ export class Client {
      * @param {string} prompt - prompt represents the text to detect
      * injection attacks against.
      *
-     * @returns - A Promise with a Injection object and a client.Error
+     * @returns - A Promise with a Injection object and a Error
      * object if the error is not null.
      */
     async Injection(prompt: string): Promise<[model.Injection, model.Error | null]> {
@@ -593,7 +683,7 @@ export class Client {
      * @param {string} prompt - prompt represents the text to detect
      * injection attacks against.
      *
-     * @returns - A Promise with a ReplacePI object and a client.Error
+     * @returns - A Promise with a ReplacePI object and a Error
      * object if the error is not null.
      * */
     async ReplacePI(replaceMethod: model.ReplaceMethods, prompt: string): Promise<[model.ReplacePI, model.Error | null]> {
@@ -660,7 +750,7 @@ export class Client {
      * @param {string} text - text represents the text to be scored
      * for toxicity.
      *
-     * @returns - A Promise with a Toxicity object and a client.Error
+     * @returns - A Promise with a Toxicity object and a Error
      * object if the error is not null.
      */
     async Toxicity(text: string): Promise<[model.Toxicity, model.Error | null]> {
@@ -729,7 +819,7 @@ export class Client {
      * @param {Language} targetLang - targetLang represents the target
      * language of the text.
      *
-     * @returns - A Promise with a Translate object and a client.Error
+     * @returns - A Promise with a Translate object and a Error
      * object if the error is not null.
      */
     async Translate(text: string, sourceLang: model.Languages, targetLang: model.Languages): Promise<[model.Translate, model.Error | null]> {

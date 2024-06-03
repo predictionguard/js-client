@@ -115,6 +115,23 @@ curl-comp:
 js-comp: compile-ts
 	node --env-file=.env examples/completion.js
 
+curl-embed:
+	curl -il -X POST https://api.predictionguard.com/embeddings \
+     -H "x-api-key: ${PGKEY}" \
+     -H "Content-Type: application/json" \
+     -d '{ \
+		"model": "bridgetower-large-itm-mlm-itc", \
+		"input": [ \
+        	{ \
+			"text": "This is Bill Kennedy, a decent Go developer.", \
+            "image": "$(IMAGE)" \
+          	} \
+    	] \
+	}'
+
+js-embed: compile-ts
+	node --env-file=.env examples/embedding.js
+
 curl-factuality:
 	curl -X POST https://api.predictionguard.com/factuality \
      -H "x-api-key: ${PGKEY}" \
