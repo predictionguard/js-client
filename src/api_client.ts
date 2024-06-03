@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import * as sse from 'fetch-sse';
 import * as model from './api_model.js';
 
-/** Client provides access to make raw http calls. */
+/** Client provides access the PredictionGuard API. */
 export class Client {
     private url: string;
     private apiKey: string;
