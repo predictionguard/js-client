@@ -12,7 +12,7 @@ async function ChatVision() {
     const maxTokens = 300;
     const temperature = 0.1;
 
-    var [result, err] = await client.ChatVision(role, question, file, maxTokens, temperature);
+    var [result, err] = await client.ChatVision(role, question, image, maxTokens, temperature);
     if (err != null) {
         console.log('ERROR:' + err.error);
         return;

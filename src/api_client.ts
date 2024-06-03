@@ -28,13 +28,13 @@ export class Client {
      * ```
      * import * as pg from 'predictionguard';
      *
-     * const client = new pg.chat.Client('https://api.predictionguard.com', process.env.PGKEY);
+     * const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
      *
      * async function Chat() {
      *     const model = pg.chat.Model.NeuralChat7B;
      *     const input = [
      *         {
-     *             role: pg.chat.Role.User,
+     *             role: pg.Roles.User,
      *             content: 'How do you feel about the world in general',
      *         },
      *     ];
@@ -108,13 +108,13 @@ export class Client {
      * ```
      * import * as pg from '../dist/index.js';
      *
-     * const client = new pg.chat.Client('https://api.predictionguard.com', process.env.PGKEY);
+     * const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
      *
      * async function ChatSSE() {
-     *     const model = pg.chat.Model.NeuralChat7B;
+     *     const model = pg.Models.NeuralChat7B;
      *     const input = [
      *         {
-     *             role: pg.chat.Role.User,
+     *             role: pg.Roles.User,
      *             content: 'How do you feel about the world in general',
      *         },
      *     ];
@@ -199,6 +199,30 @@ export class Client {
      *
      * @example
      * ```
+     * import * as pg from 'predictionguard';
+     *
+     * const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
+     *
+     * async function ChatVision() {
+     *     const role = pg.Roles.User;
+     *     const question = 'is there a deer in this picture';
+     *
+     *     const image = new pg.ImageNetwork('https://pbs.twimg.com/profile_images/1571574401107169282/ylAgz_f5_400x400.jpg');
+     *     // const file = new pg.ImageFile('/Users/bill/Documents/images/pGwOq5tz_400x400.jpg');
+     *
+     *     const maxTokens = 300;
+     *     const temperature = 0.1;
+     *
+     *     var [result, err] = await client.ChatVision(role, question, image, maxTokens, temperature);
+     *     if (err != null) {
+     *         console.log('ERROR:' + err.error);
+     *         return;
+     *     }
+     *
+     *     console.log('RESULT:' + result.createdDate() + ': ' + result.model + ': ' + result.choices[0].message.content);
+     * }
+     *
+     * ChatVision();
      * ```
      *
      * @param {Role} role - role represents the role of the person asking
@@ -211,9 +235,6 @@ export class Client {
      * of tokens in the generated chat.
      * @param {number} temperature - temperature represents the parameter
      * for controlling randomness in the generated chat.
-     * @param {(event: ChatSSE | null, err: client.Error | null) => void} onMessage -
-     * onMessage represents a function that will receive the stream of chat
-     * results.
      *
      * @returns - A Promise with a ChatVision object and a client.Error
      * object if the error is not null.
@@ -286,10 +307,10 @@ export class Client {
      * ```
      * import * as pg from 'predictionguard';
      *
-     * const client = new pg.completion.Client('https://api.predictionguard.com', process.env.PGKEY);
+     * const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
      *
      * async function Completions() {
-     *     const model = pg.completion.Model.NeuralChat7B;
+     *     const model = pg.Models.NeuralChat7B;
      *     const maxTokens = 1000;
      *     const temperature = 1.1;
      *     const prompt = 'Will I lose my hair';
@@ -361,7 +382,7 @@ export class Client {
      * ```
      * import * as pg from 'predictionguard';
      *
-     * const client = new pg.factuality.Client('https://api.predictionguard.com', process.env.PGKEY);
+     * const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
      *
      * async function Factuality() {
      *     const fact = `The President shall receive in full for his services during
@@ -440,7 +461,7 @@ export class Client {
      * ```
      * import * as pg from 'predictionguard';
      *
-     * const client = new pg.health.Client('https://api.predictionguard.com', process.env.PGKEY);
+     * const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
      *
      * async function HealthCheck() {
      *     var [result, err] = await client.HealthCheck();
@@ -480,24 +501,24 @@ export class Client {
      *
      * @example
      * ```
-     *import * as pg from 'predictionguard';
+     * import * as pg from 'predictionguard';
      *
-     *const client = new pg.injection.Client('https://api.predictionguard.com', process.env.PGKEY);
+     * const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
      *
-     *async function Injection() {
-     *    const prompt = `A short poem may be a stylistic choice or it may be that you
-     *    have said what you intended to say in a more concise way.`;
+     * async function Injection() {
+     *     const prompt = `A short poem may be a stylistic choice or it may be that you
+     *     have said what you intended to say in a more concise way.`;
      *
-     *    var [result, err] = await client.Injection(prompt);
-     *    if (err != null) {
-     *        console.log('ERROR:' + err.error);
-     *        return;
-     *    }
+     *     var [result, err] = await client.Injection(prompt);
+     *     if (err != null) {
+     *         console.log('ERROR:' + err.error);
+     *         return;
+     *     }
      *
-     *    console.log('RESULT:' + result.checks[0].probability);
-     *}
+     *     console.log('RESULT:' + result.checks[0].probability);
+     * }
      *
-     *Injection();
+     * Injection();
      * ```
      *
      * @param {string} prompt - prompt represents the text to detect
@@ -549,10 +570,10 @@ export class Client {
      * ```
      * import * as pg from 'predictionguard';
      *
-     * const client = new pg.replacepi.Client('https://api.predictionguard.com', process.env.PGKEY);
+     * const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
      *
      * async function ReplacePI() {
-     *     const replaceMethod = pg.replacepi.ReplaceMethod.Mask;
+     *     const replaceMethod = pg.ReplaceMethods.Mask;
      *     const prompt = `My email is bill@ardanlabs.com and my number is 954-123-4567.`;
      *
      *     var [result, err] = await client.ReplacePI(replaceMethod, prompt);
@@ -618,7 +639,7 @@ export class Client {
      * ```
      * import * as pg from 'predictionguard';
      *
-     * const client = new pg.toxicity.Client('https://api.predictionguard.com', process.env.PGKEY);
+     * const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
      *
      * async function Toxicity() {
      *     const text = `Every flight I have is late and I am very angry. I want to
@@ -683,11 +704,11 @@ export class Client {
      * ```
      * import * as pg from 'predictionguard';
      *
-     * const client = new pg.translate.Client('https://api.predictionguard.com', process.env.PGKEY);
+     * const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
      *
      * async function Translate() {
-     *     const sourceLang = pg.translate.Language.English;
-     *     const targetLang = pg.translate.Language.Spanish;
+     *     const sourceLang = pg.Languages.English;
+     *     const targetLang = pg.Languages.Spanish;
      *     const text = `The rain in Spain stays mainly in the plain`;
      *
      *     var [result, err] = await client.Translate(text, sourceLang, targetLang);
