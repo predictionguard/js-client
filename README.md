@@ -27,17 +27,17 @@ To access the API, contact us [here](https://www.predictionguard.com/getting-sta
 ```js
 import * as pg from 'predictionguard';
 
-const client = new pg.chat.Client('https://api.predictionguard.com', process.env.PGKEY);
+const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
 
 async function Chat() {
     const input = [
         {
-            role: pg.chat.Role.User,
+            role: pg.Roles.User,
             content: 'How do you feel about the world in general',
         },
     ];
 
-    var [result, err] = await client.Chat(pg.chat.Model.NeuralChat7B, input, 1000, 1.1);
+    var [result, err] = await client.Chat(pg.Models.NeuralChat7B, input, 1000, 1.1);
     if (err != null) {
         console.log('ERROR:' + err.error);
         return;
