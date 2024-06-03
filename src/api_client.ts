@@ -20,6 +20,7 @@ export class Client {
     }
 
     // -------------------------------------------------------------------------
+    // Chat
 
     /** Chat generates chat completions based on a conversation history.
      *
@@ -194,7 +195,7 @@ export class Client {
         }
     }
 
-    /** Vision generates answers a question about an image.
+    /** ChatVision generates answers a question about an image.
      *
      * @example
      * ```
@@ -217,7 +218,7 @@ export class Client {
      * @returns - A Promise with a ChatVision object and a client.Error
      * object if the error is not null.
      */
-    async Vision(role: model.Roles, question: string, image: model.Base64Encoder, maxTokens: number, temperature: number): Promise<[model.ChatVision, model.Error | null]> {
+    async ChatVision(role: model.Roles, question: string, image: model.Base64Encoder, maxTokens: number, temperature: number): Promise<[model.ChatVision, model.Error | null]> {
         const zero: model.ChatVision = {
             id: '',
             object: '',
@@ -275,8 +276,9 @@ export class Client {
     }
 
     // -------------------------------------------------------------------------
+    // Completion
 
-    /** Chat generates text completions based on the provided input.
+    /** Completion generates text completions based on the provided input.
      *
      * @example
      * ```
@@ -349,6 +351,7 @@ export class Client {
     }
 
     // -------------------------------------------------------------------------
+    // Factuality
 
     /** Factuality checks the factuality of a given text compared to a reference.
      *
@@ -427,6 +430,7 @@ export class Client {
     }
 
     // -------------------------------------------------------------------------
+    // HealthCheck
 
     /** HealthCheck validates the PG API Service is available.
      *
@@ -468,6 +472,7 @@ export class Client {
     }
 
     // -------------------------------------------------------------------------
+    // Injection
 
     /** Injection detects potential prompt injection attacks in a given prompt.
      *
@@ -533,6 +538,7 @@ export class Client {
     }
 
     // -------------------------------------------------------------------------
+    // ReplacePI
 
     /** ReplacePI replaces personal information such as names, SSNs, and
      * emails in a given text.
@@ -602,6 +608,7 @@ export class Client {
     }
 
     // -------------------------------------------------------------------------
+    // Toxicity
 
     /** Toxicity checks the toxicity of a given text.
      *
@@ -666,6 +673,7 @@ export class Client {
     }
 
     // -------------------------------------------------------------------------
+    // Translate
 
     /** Translate converts text from one language to another.
      *
