@@ -1,9 +1,9 @@
 import * as pg from '../dist/index.js';
 
-const client = new pg.completion.Client('https://api.predictionguard.com', process.env.PGKEY);
+const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
 
 async function Completions() {
-    const model = pg.completion.Model.NeuralChat7B;
+    const model = pg.Models.NeuralChat7B;
     const maxTokens = 1000;
     const temperature = 1.1;
     const prompt = 'Will I lose my hair';
