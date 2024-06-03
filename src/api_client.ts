@@ -9,7 +9,7 @@ export class Client {
 
     // -------------------------------------------------------------------------
 
-    /** constructor constructs a client API for use.
+    /** constructor constructs a Client API for use.
      *
      * @param {string} url - url represents the transport and domain:port.
      * @param {string} apiKey - apiKey represents PG api key.
@@ -223,7 +223,7 @@ export class Client {
             id: '',
             object: '',
             created: 0,
-            model: model.Models.NeuralChat7B,
+            model: model.Models.Llava157BHF,
             choices: [],
             createdDate: function () {
                 return new Date(0);
@@ -231,13 +231,15 @@ export class Client {
         };
 
         try {
-            const [base64, err1] = image.EncodeBase64();
+            const [b64, err1] = await image.EncodeBase64();
             if (err1 != null) {
                 return [zero, err1];
             }
 
+            console.log(b64);
+
             const body = {
-                model: 'bridgetower-large-itm-mlm-itc',
+                model: model.Models.Llava157BHF,
                 messages: [
                     {
                         role: role,
@@ -249,14 +251,14 @@ export class Client {
                             {
                                 type: 'image_url',
                                 image_url: {
-                                    url: base64,
+                                    url: 'data:image/jpeg;base64,' + b64,
                                 },
                             },
                         ],
                     },
                 ],
-                MaxTokens: maxTokens,
-                Temperature: temperature,
+                max_tokens: maxTokens,
+                temperature: temperature,
             };
 
             const [result, err2] = await this.RawDoPost('chat/completions', body);

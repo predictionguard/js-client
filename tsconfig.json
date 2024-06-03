@@ -2,6 +2,7 @@
   "files": [
         "src/api_client.ts",    
         "src/api_model.ts",
+        "src/api_image.ts",
         "src/index.ts"
   ],
   "compilerOptions": {

@@ -11,6 +11,7 @@ export enum Models {
     Hermes2ProLlama38B = 'Hermes-2-Pro-Llama-3-8B',
     NousHermesLlama213B = 'Nous-Hermes-Llama-213B',
     Hermes2ProMistral7B = 'Hermes-2-Pro-Mistral-7B',
+    Llava157BHF = 'llava-1.5-7b-hf',
     NeuralChat7B = 'Neural-Chat-7B',
     Yi34BChat = 'Yi-34B-Chat',
     DeepseekCoder67BInstruct = 'deepseek-coder-6.7b-instruct',
@@ -112,7 +113,7 @@ export enum Languages {
 /** Base64Encoder defines a method that can read a data source and returns a
  * base64 encoded string. */
 export interface Base64Encoder {
-    EncodeBase64(): [string | null, Error | null];
+    EncodeBase64(): Promise<[string, Error | null]>;
 }
 
 // -----------------------------------------------------------------------------
