@@ -1,14 +1,8 @@
 {
   "files": [
         "src/api_client.ts",    
-        "src/api_chat.ts",
-        "src/api_completion.ts",
-        "src/api_factuality.ts",
-        "src/api_health.ts",
-        "src/api_injection.ts",
-        "src/api_replacepi.ts",
-        "src/api_toxicity.ts",
-        "src/api_translate.ts",
+        "src/api_model.ts",
+        "src/api_image.ts",
         "src/index.ts"
   ],
   "compilerOptions": {

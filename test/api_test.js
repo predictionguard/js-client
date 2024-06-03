@@ -21,10 +21,21 @@ describe('Test_Client', () => {
                 };
             }
 
-            return {
-                statusCode: 200,
-                json: chatResp,
-            };
+            const result = request.body.getJson().then((body) => {
+                if (body.model == 'llava-1.5-7b-hf') {
+                    return {
+                        statusCode: 200,
+                        json: chatVisionResp,
+                    };
+                }
+
+                return {
+                    statusCode: 200,
+                    json: chatResp,
+                };
+            });
+
+            return result;
         });
 
         proxy.forPost('/completions').thenCallback((request) => {
@@ -37,6 +48,19 @@ describe('Test_Client', () => {
             return {
                 statusCode: 200,
                 json: completionResp,
+            };
+        });
+
+        proxy.forPost('/embeddings').thenCallback((request) => {
+            if (request.headers['x-api-key'] == '') {
+                return {
+                    statusCode: 403,
+                };
+            }
+
+            return {
+                statusCode: 200,
+                json: embeddingResp,
             };
         });
 
@@ -106,21 +130,25 @@ describe('Test_Client', () => {
         });
     });
 
-    // ---------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     after(() => proxy.stop());
 
-    // ---------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     it('chat-basic', async () => {
         await testChatBasic();
+    });
+
+    it('chat-vision', async () => {
+        await testChatVision();
     });
 
     it('chat-badkey', async () => {
         await testChatBadkey();
     });
 
-    // ---------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     it('completion-basic', async () => {
         await testCompletionBasic();
@@ -130,7 +158,17 @@ describe('Test_Client', () => {
         await testCompletionBadkey();
     });
 
-    // ---------------------------------------------------------------------
+    // -------------------------------------------------------------------------
+
+    it('embedding-basic', async () => {
+        await testEmbeddingBasic();
+    });
+
+    it('embedding-badkey', async () => {
+        await testEmbeddingBadkey();
+    });
+
+    // -------------------------------------------------------------------------
 
     it('factuality-basic', async () => {
         await testFactualityBasic();
@@ -140,7 +178,7 @@ describe('Test_Client', () => {
         await testFactualityBadkey();
     });
 
-    // ---------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     it('injection-basic', async () => {
         await testInjectionBasic();
@@ -150,7 +188,7 @@ describe('Test_Client', () => {
         await testInjectionBadkey();
     });
 
-    // ---------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     it('replacePI-basic', async () => {
         await testReplacePIBasic();
@@ -160,7 +198,7 @@ describe('Test_Client', () => {
         await testReplacePIBadkey();
     });
 
-    // ---------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     it('toxicity-basic', async () => {
         await testToxicityBasic();
@@ -170,7 +208,7 @@ describe('Test_Client', () => {
         await testToxicityBadkey();
     });
 
-    // ---------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     it('translate-basic', async () => {
         await testTranslateBasic();
@@ -202,17 +240,35 @@ const chatResp = {
     ],
 };
 
+const chatVisionResp = {
+    id: 'chat-cmSAaDWzqAVOVuGePjDv1HjwVn5SQ',
+    object: 'chat_completion',
+    created: 1717437819,
+    model: 'llava-1.5-7b-hf',
+    choices: [
+        {
+            index: 0,
+            message: {
+                role: 'assistant',
+                content: '?\n\nThe man is wearing a hat, glasses, and a sweater.',
+                output: null,
+            },
+            status: 'success',
+        },
+    ],
+};
+
 async function testChatBasic() {
-    const client = new pg.chat.Client('http://localhost:8080', 'any key');
+    const client = new pg.Client('http://localhost:8080', 'any key');
 
     const messages = [
         {
-            role: pg.chat.Role.User,
+            role: pg.Roles.User,
             content: 'How do you feel about the world in general',
         },
     ];
 
-    var [result, err] = await client.Chat(pg.chat.Model.NeuralChat7B, 1000, 1.1, messages);
+    var [result, err] = await client.Chat(pg.Models.NeuralChat7B, 1000, 1.1, messages);
     if (err != null) {
         assert.fail('ERROR:' + err.error);
     }
@@ -223,17 +279,42 @@ async function testChatBasic() {
     assert.equal(got, exp);
 }
 
+async function testChatVision() {
+    const client = new pg.Client('http://localhost:8080', 'any key');
+
+    const imageMock = {
+        EncodeBase64: function () {
+            return ['', null];
+        },
+    };
+
+    const role = pg.Roles.User;
+    const question = 'is there a deer in this picture';
+    const maxTokens = 300;
+    const temperature = 0.1;
+
+    var [result, err] = await client.ChatVision(role, question, imageMock, maxTokens, temperature);
+    if (err != null) {
+        assert.fail('ERROR:' + err.error);
+    }
+
+    const got = JSON.stringify(result);
+    const exp = JSON.stringify(chatVisionResp);
+
+    assert.equal(got, exp);
+}
+
 async function testChatBadkey() {
-    const client = new pg.chat.Client('http://localhost:8080', '');
+    const client = new pg.Client('http://localhost:8080', '');
 
     const messages = [
         {
-            role: pg.chat.Role.User,
+            role: pg.Roles.User,
             content: 'How do you feel about the world in general',
         },
     ];
 
-    var [, err] = await client.Chat(pg.chat.Model.NeuralChat7B, 1000, 1.1, messages);
+    var [, err] = await client.Chat(pg.Models.NeuralChat7B, 1000, 1.1, messages);
     if (err == null) {
         assert.fail("didn't get an error");
     }
@@ -268,9 +349,9 @@ const completionResp = {
 };
 
 async function testCompletionBasic() {
-    const client = new pg.completion.Client('http://localhost:8080', 'any key');
+    const client = new pg.Client('http://localhost:8080', 'any key');
 
-    var [result, err] = await client.Completion(pg.completion.Model.NeuralChat7B, 1000, 1.0, 'Will I lose my hair');
+    var [result, err] = await client.Completion(pg.Models.NeuralChat7B, 1000, 1.0, 'Will I lose my hair');
     if (err != null) {
         assert.fail('ERROR:' + err.error);
     }
@@ -282,9 +363,82 @@ async function testCompletionBasic() {
 }
 
 async function testCompletionBadkey() {
-    const client = new pg.completion.Client('http://localhost:8080', '');
+    const client = new pg.Client('http://localhost:8080', '');
 
-    var [, err] = await client.Completion(pg.completion.Model.NeuralChat7B, 1000, 1.0, 'Will I lose my hair');
+    var [, err] = await client.Completion(pg.Models.NeuralChat7B, 1000, 1.0, 'Will I lose my hair');
+    if (err == null) {
+        assert.fail("didn't get an error");
+    }
+
+    const got = JSON.stringify(err);
+    const exp = JSON.stringify({
+        error: 'api understands the request but refuses to authorize it',
+    });
+
+    assert.equal(got, exp);
+}
+
+// =============================================================================
+
+const embeddingResp = {
+    id: 'emb - 0qU4sYEutZvkHskxXwzYDgZVOhtLw',
+    object: 'embedding_batch',
+    created: 1717439154,
+    model: 'bridgetower-large-itm-mlm-itc',
+    data: [
+        {
+            status: 'success',
+            index: 0,
+            object: 'embedding',
+            embedding: [0.04457271471619606],
+        },
+    ],
+};
+
+async function testEmbeddingBasic() {
+    const client = new pg.Client('http://localhost:8080', 'any key');
+
+    const imageMock = {
+        EncodeBase64: function () {
+            return ['', null];
+        },
+    };
+
+    const input = [
+        {
+            text: 'This is Bill Kennedy, a decent Go developer.',
+            image: imageMock,
+        },
+    ];
+
+    var [result, err] = await client.Embedding(input);
+    if (err != null) {
+        assert.fail('ERROR:' + err.error);
+    }
+
+    const got = JSON.stringify(result);
+    const exp = JSON.stringify(embeddingResp);
+
+    assert.equal(got, exp);
+}
+
+async function testEmbeddingBadkey() {
+    const client = new pg.Client('http://localhost:8080', '');
+
+    const imageMock = {
+        EncodeBase64: function () {
+            return ['', null];
+        },
+    };
+
+    const input = [
+        {
+            text: 'This is Bill Kennedy, a decent Go developer.',
+            image: imageMock,
+        },
+    ];
+
+    var [, err] = await client.Embedding(input);
     if (err == null) {
         assert.fail("didn't get an error");
     }
@@ -313,7 +467,7 @@ const factualityResp = {
 };
 
 async function testFactualityBasic() {
-    const client = new pg.factuality.Client('http://localhost:8080', 'any key');
+    const client = new pg.Client('http://localhost:8080', 'any key');
 
     const fact =
         'The President shall receive in full for his services during the term for which he shall have been elected compensation in the aggregate amount of 400,000 a year, to be paid monthly, and in addition an expense allowance of 50,000 to assist in defraying expenses relating to or resulting from the discharge of his official duties. Any unused amount of such expense allowance shall revert to the Treasury pursuant to section 1552 of title 31, United States Code. No amount of such expense allowance shall be included in the gross income of the President. He shall be entitled also to the use of the furniture and other effects belonging to the United States and kept in the Executive Residence at the White House.';
@@ -331,7 +485,7 @@ async function testFactualityBasic() {
 }
 
 async function testFactualityBadkey() {
-    const client = new pg.factuality.Client('http://localhost:8080', '');
+    const client = new pg.Client('http://localhost:8080', '');
 
     const fact =
         'The President shall receive in full for his services during the term for which he shall have been elected compensation in the aggregate amount of 400,000 a year, to be paid monthly, and in addition an expense allowance of 50,000 to assist in defraying expenses relating to or resulting from the discharge of his official duties. Any unused amount of such expense allowance shall revert to the Treasury pursuant to section 1552 of title 31, United States Code. No amount of such expense allowance shall be included in the gross income of the President. He shall be entitled also to the use of the furniture and other effects belonging to the United States and kept in the Executive Residence at the White House.';
@@ -366,7 +520,7 @@ const injectionResp = {
 };
 
 async function testInjectionBasic() {
-    const client = new pg.injection.Client('http://localhost:8080', 'any key');
+    const client = new pg.Client('http://localhost:8080', 'any key');
 
     const prompt = 'A short poem may be a stylistic choice or it may be that you have said what you intended to say in a more concise way.';
 
@@ -382,7 +536,7 @@ async function testInjectionBasic() {
 }
 
 async function testInjectionBadkey() {
-    const client = new pg.injection.Client('http://localhost:8080', '');
+    const client = new pg.Client('http://localhost:8080', '');
 
     const prompt = 'A short poem may be a stylistic choice or it may be that you have said what you intended to say in a more concise way.';
 
@@ -415,11 +569,11 @@ const replacePIResp = {
 };
 
 async function testReplacePIBasic() {
-    const client = new pg.replacepi.Client('http://localhost:8080', 'any key');
+    const client = new pg.Client('http://localhost:8080', 'any key');
 
     const prompt = 'My email is bill@ardanlabs.com and my number is 954-123-4567.';
 
-    var [result, err] = await client.ReplacePI(pg.replacepi.ReplaceMethod.Mask, prompt);
+    var [result, err] = await client.ReplacePI(pg.ReplaceMethods.Mask, prompt);
     if (err != null) {
         assert.fail('ERROR:' + err.error);
     }
@@ -431,11 +585,11 @@ async function testReplacePIBasic() {
 }
 
 async function testReplacePIBadkey() {
-    const client = new pg.replacepi.Client('http://localhost:8080', '');
+    const client = new pg.Client('http://localhost:8080', '');
 
     const prompt = 'My email is bill@ardanlabs.com and my number is 954-123-4567.';
 
-    var [, err] = await client.ReplacePI(pg.replacepi.ReplaceMethod.Mask, prompt);
+    var [, err] = await client.ReplacePI(pg.ReplaceMethods.Mask, prompt);
     if (err == null) {
         assert.fail("didn't get an error");
     }
@@ -464,7 +618,7 @@ const toxicityResp = {
 };
 
 async function testToxicityBasic() {
-    const client = new pg.toxicity.Client('http://localhost:8080', 'any key');
+    const client = new pg.Client('http://localhost:8080', 'any key');
 
     const text = 'Every flight I have is late and I am very angry. I want to hurt someone.';
 
@@ -480,7 +634,7 @@ async function testToxicityBasic() {
 }
 
 async function testToxicityBadkey() {
-    const client = new pg.toxicity.Client('http://localhost:8080', '');
+    const client = new pg.Client('http://localhost:8080', '');
 
     const text = 'Every flight I have is late and I am very angry. I want to hurt someone.';
 
@@ -535,11 +689,11 @@ const translateResp = {
 };
 
 async function testTranslateBasic() {
-    const client = new pg.translate.Client('http://localhost:8080', 'any key');
+    const client = new pg.Client('http://localhost:8080', 'any key');
 
     const text = 'The rain in Spain stays mainly in the plain';
-    const sourceLang = pg.translate.Language.English;
-    const targetLang = pg.translate.Language.Spanish;
+    const sourceLang = pg.Languages.English;
+    const targetLang = pg.Languages.Spanish;
 
     var [result, err] = await client.Translate(text, sourceLang, targetLang);
     if (err != null) {
@@ -553,11 +707,11 @@ async function testTranslateBasic() {
 }
 
 async function testTranslateBadkey() {
-    const client = new pg.translate.Client('http://localhost:8080', '');
+    const client = new pg.Client('http://localhost:8080', '');
 
     const text = 'The rain in Spain stays mainly in the plain';
-    const sourceLang = pg.translate.Language.English;
-    const targetLang = pg.translate.Language.Spanish;
+    const sourceLang = pg.Languages.English;
+    const targetLang = pg.Languages.Spanish;
 
     var [, err] = await client.Translate(text, sourceLang, targetLang);
     if (err == null) {

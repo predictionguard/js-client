@@ -1,6 +1,6 @@
 import * as pg from '../dist/index.js';
 
-const client = new pg.injection.Client('https://api.predictionguard.com', process.env.PGKEY);
+const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
 
 async function Injection() {
     const prompt = `A short poem may be a stylistic choice or it may be that you
