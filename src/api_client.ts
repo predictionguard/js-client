@@ -106,7 +106,7 @@ export class Client {
      *
      * @example
      * ```
-     * import * as pg from '../dist/index.js';
+     * import * as pg from 'predictionguard';
      *
      * const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
      *
