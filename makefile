@@ -47,7 +47,16 @@ curl-chat:
 			} \
 		], \
 		"max_tokens": 1000, \
-		"temperature": 1.1 \
+		"temperature": 1.1, \
+		"top_p": 0.1, \
+		"output": { \
+			"factuality": true, \
+			"toxicity": true \
+		}, \
+		"input": { \
+			"pii": "replace", \
+			"pii_replace_method": "random" \
+		} \
 	}'
 
 js-chat: compile-ts
@@ -109,7 +118,8 @@ curl-comp:
 		"model": "Neural-Chat-7B", \
 		"prompt": "Will I lose my hair", \
 		"max_tokens": 1000, \
-		"temperature": 1.1 \
+		"temperature": 1.1, \
+		"top_p": 0.1 \
 	}'
 
 js-comp: compile-ts

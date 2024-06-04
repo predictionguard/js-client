@@ -31,46 +31,49 @@ export class Client {
      * const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
      *
      * async function Chat() {
-     *     const model = pg.chat.Model.NeuralChat7B;
-     *     const input = [
-     *         {
-     *             role: pg.Roles.User,
-     *             content: 'How do you feel about the world in general',
+     *     const input = {
+     *         model: pg.Models.NeuralChat7B,
+     *         messages: [
+     *             {
+     *                 role: pg.Roles.User,
+     *                 content: 'How do you feel about the world in general',
+     *             },
+     *         ],
+     *         maxTokens: 1000,
+     *         temperature: 0.1,
+     *         topP: 0.1,
+     *         options: {
+     *             factuality: true,
+     *             toxicity: true,
+     *             pii: pg.PIIs.Replace,
+     *             piiReplaceMethod: pg.ReplaceMethods.Random,
      *         },
-     *     ];
-     *     const maxTokens = 1000;
-     *     const temperature = 1.1;
+     *     };
      *
-     *     var [result, err] = await client.Chat(model, input, maxTokens, temperature);
+     *     var [result, err] = await client.Chat(input);
      *     if (err != null) {
      *         console.log('ERROR:' + err.error);
      *         return;
      *     }
      *
-     *     console.log('RESULT:' + result.model + ': ' + result.choices[0].message.content);
+     *     console.log('RESULT:' + result.createdDate() + ': ' + result.model + ': ' + result.choices[0].message.content);
      * }
      *
      * Chat();
      * ```
      *
-     * @param {Model} model - model represents the model to use for the
-     * request.
-     * @param {ChatInput[]} input - input represents the conversation history
-     * with roles (user, assistant) and messages.
-     * @param {number} maxTokens - maxTokens represents the maximum number
-     * of tokens in the generated chat.
-     * @param {number} temperature - temperature represents the parameter
-     * for controlling randomness in generated chat.
+     * @param {model.ChatInput} input - input represents the entire set of
+     * possible input for the Chat call.
      *
      * @returns - A Promise with a Chat object and an Error object if
      * the error is not null.
      */
-    async Chat(model: model.Models, input: model.ChatInput[], maxTokens: number, temperature: number): Promise<[model.Chat, model.Error | null]> {
+    async Chat(input: model.ChatInput): Promise<[model.Chat, model.Error | null]> {
         const zero: model.Chat = {
             id: '',
             object: '',
             created: 0,
-            model: model,
+            model: input.model,
             choices: [],
             createdDate: function () {
                 return new Date(0);
@@ -78,12 +81,83 @@ export class Client {
         };
 
         try {
-            const body = {
-                model: model,
-                max_tokens: maxTokens,
-                temperature: temperature,
-                messages: input,
-            };
+            if (!input.hasOwnProperty('model')) {
+                return [zero, {error: 'model is a mandatory input'}];
+            }
+
+            if (!input.hasOwnProperty('messages')) {
+                return [zero, {error: 'messages is a mandatory input'}];
+            }
+
+            let maxTokens = 0;
+            if (input.hasOwnProperty('maxTokens')) {
+                maxTokens = input.maxTokens;
+            }
+
+            let temperature = 0;
+            if (input.hasOwnProperty('temperature')) {
+                temperature = input.temperature;
+            }
+
+            let topP = 0;
+            if (input.hasOwnProperty('topP')) {
+                topP = input.topP;
+            }
+
+            const m = new Map();
+            m.set('model', input.model);
+            m.set('messages', input.messages);
+            m.set('max_tokens', maxTokens);
+            m.set('temperature', temperature);
+            m.set('top_p', topP);
+
+            if (input.hasOwnProperty('options')) {
+                if (input.options.hasOwnProperty('factuality') || input.options.hasOwnProperty('toxicity')) {
+                    let factuality = false;
+                    if (input.options.hasOwnProperty('factuality')) {
+                        factuality = input.options.factuality;
+                    }
+
+                    let toxicity = false;
+                    if (input.options.hasOwnProperty('toxicity')) {
+                        toxicity = input.options.toxicity;
+                    }
+
+                    const output = {
+                        factuality: factuality,
+                        toxicity: toxicity,
+                    };
+
+                    m.set('output', output);
+                }
+
+                if (input.options.hasOwnProperty('blockPromptInjection') || input.options.hasOwnProperty('pii') || input.options.hasOwnProperty('piiReplaceMethod')) {
+                    let blockPromptInjection = false;
+                    if (input.options.hasOwnProperty('blockPromptInjection')) {
+                        blockPromptInjection = input.options.blockPromptInjection;
+                    }
+
+                    let pii = '';
+                    if (input.options.hasOwnProperty('pii')) {
+                        pii = input.options.pii;
+                    }
+
+                    let replaceMethod = '';
+                    if (input.options.hasOwnProperty('piiReplaceMethod')) {
+                        replaceMethod = input.options.piiReplaceMethod;
+                    }
+
+                    const inp = {
+                        block_prompt_injection: blockPromptInjection,
+                        pii: pii,
+                        pii_replace_method: replaceMethod,
+                    };
+
+                    m.set('input', inp);
+                }
+            }
+
+            const body = Object.fromEntries(m.entries());
 
             const [result, err] = await this.RawDoPost('chat/completions', body);
             if (err != null) {
@@ -106,37 +180,39 @@ export class Client {
      *
      * @example
      * ```
-     * import * as pg from 'predictionguard';
+     * import * as pg from 'predictiongaurd';
      *
      * const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
      *
      * async function ChatSSE() {
-     *     const model = pg.Models.NeuralChat7B;
-     *     const input = [
-     *         {
-     *             role: pg.Roles.User,
-     *             content: 'How do you feel about the world in general',
+     *     const input = {
+     *         model: pg.Models.NeuralChat7B,
+     *         messages: [
+     *             {
+     *                 role: pg.Roles.User,
+     *                 content: 'How do you feel about the world in general',
+     *             },
+     *         ],
+     *         maxTokens: 1000,
+     *         temperature: 0.1,
+     *         topP: 0.1,
+     *         onMessage: function (event, err) {
+     *             if (err != null) {
+     *                 if (err.error == 'EOF') {
+     *                     return;
+     *                 }
+     *                 console.log(err);
+     *             }
+     *
+     *             for (const choice of event.choices) {
+     *                 if (choice.delta.hasOwnProperty('content')) {
+     *                     process.stdout.write(choice.delta.content);
+     *                 }
+     *             }
      *         },
-     *     ];
-     *     const maxTokens = 1000;
-     *     const temperature = 1.1;
-     *
-     *     const onMessage = function (event, err) {
-     *         if (err != null) {
-     *             if (err.error == 'EOF') {
-     *                 return;
-     *             }
-     *             console.log(err);
-     *         }
-     *
-     *         for (const choice of event.choices) {
-     *             if (choice.delta.hasOwnProperty('content')) {
-     *                 process.stdout.write(choice.delta.content);
-     *             }
-     *         }
      *     };
      *
-     *     var err = await client.ChatSSE(model, input, maxTokens, temperature, onMessage);
+     *     var err = await client.ChatSSE(input);
      *     if (err != null) {
      *         console.log('ERROR:' + err.error);
      *         return;
@@ -146,28 +222,47 @@ export class Client {
      * ChatSSE();
      * ```
      *
-     * @param {Model} model - model represents the model to use for the
-     * request.
-     * @param {ChatInput[]} input - input represents the conversation history
-     * with roles (user, assistant) and messages.
-     * @param {number} maxTokens - maxTokens represents the maximum number
-     * of tokens in the generated chat.
-     * @param {number} temperature - temperature represents the parameter
-     * for controlling randomness in the generated chat.
-     * @param {(event: ChatSSE | null, err: Error | null) => void} onMessage -
-     * onMessage represents a function that will receive the stream of chat
-     * results.
+     * @param {model.ChatSSEInput} input - input represents the entire set of
+     * possible input for the SSE Chat call.
      *
      * @returns - A Promise with an Error object if the error is not
      * null.
      */
-    async ChatSSE(model: model.Models, input: model.ChatInput[], maxTokens: number, temperature: number, onMessage: (event: model.ChatSSE | null, err: model.Error | null) => void): Promise<model.Error | null> {
+    async ChatSSE(input: model.ChatSSEInput): Promise<model.Error | null> {
         try {
+            if (!input.hasOwnProperty('model')) {
+                return {error: 'model is a mandatory input'};
+            }
+
+            if (!input.hasOwnProperty('messages')) {
+                return {error: 'messages is a mandatory input'};
+            }
+
+            if (!input.hasOwnProperty('onMessage')) {
+                return {error: 'onMessage is a mandatory input'};
+            }
+
+            let maxTokens = 0;
+            if (input.hasOwnProperty('maxTokens')) {
+                maxTokens = input.maxTokens;
+            }
+
+            let temperature = 0;
+            if (input.hasOwnProperty('temperature')) {
+                temperature = input.temperature;
+            }
+
+            let topP = 0;
+            if (input.hasOwnProperty('topP')) {
+                topP = input.topP;
+            }
+
             const body = {
-                model: model,
+                model: input.model,
+                messages: input.messages,
                 max_tokens: maxTokens,
                 temperature: temperature,
-                messages: input,
+                top_p: topP,
                 stream: true,
             };
 
@@ -181,7 +276,7 @@ export class Client {
                     return new Date(this.created * 1000);
                 };
 
-                onMessage(chatSSE, err);
+                input.onMessage(chatSSE, err);
             };
 
             const err = await this.RawDoSSEPost('chat/completions', body, f);
@@ -204,16 +299,18 @@ export class Client {
      * const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
      *
      * async function ChatVision() {
-     *     const role = pg.Roles.User;
-     *     const question = 'is there a deer in this picture';
-     *
      *     const image = new pg.ImageNetwork('https://pbs.twimg.com/profile_images/1571574401107169282/ylAgz_f5_400x400.jpg');
-     *     // const file = new pg.ImageFile('/Users/bill/Documents/images/pGwOq5tz_400x400.jpg');
      *
-     *     const maxTokens = 300;
-     *     const temperature = 0.1;
+     *     const input = {
+     *         role: pg.Roles.User,
+     *         question: 'is there a deer in this picture',
+     *         image: image,
+     *         maxTokens: 1000,
+     *         temperature: 0.1,
+     *         topP: 0.1,
+     *     };
      *
-     *     var [result, err] = await client.ChatVision(role, question, image, maxTokens, temperature);
+     *     var [result, err] = await client.ChatVision(input);
      *     if (err != null) {
      *         console.log('ERROR:' + err.error);
      *         return;
@@ -225,21 +322,13 @@ export class Client {
      * ChatVision();
      * ```
      *
-     * @param {Role} role - role represents the role of the person asking
-     * the question.
-     * @param {string} question - question represents the question being
-     * asked.
-     * @param {Base64Encoder} image - image represents an object that can
-     * produce a base64 encoding of an image.
-     * @param {number} maxTokens - maxTokens represents the maximum number
-     * of tokens in the generated chat.
-     * @param {number} temperature - temperature represents the parameter
-     * for controlling randomness in the generated chat.
+     * @param {model.ChatVisionInput} input - input represents the entire set of
+     * possible input for the Vision Chat call.
      *
      * @returns - A Promise with a ChatVision object and a Error
      * object if the error is not null.
      */
-    async ChatVision(role: model.Roles, question: string, image: model.Base64Encoder, maxTokens: number, temperature: number): Promise<[model.ChatVision, model.Error | null]> {
+    async ChatVision(input: model.ChatVisionInput): Promise<[model.ChatVision, model.Error | null]> {
         const zero: model.ChatVision = {
             id: '',
             object: '',
@@ -252,7 +341,34 @@ export class Client {
         };
 
         try {
-            const [b64, err1] = await image.EncodeBase64();
+            if (!input.hasOwnProperty('role')) {
+                return [zero, {error: 'role is a mandatory input'}];
+            }
+
+            if (!input.hasOwnProperty('question')) {
+                return [zero, {error: 'question is a mandatory input'}];
+            }
+
+            if (!input.hasOwnProperty('image')) {
+                return [zero, {error: 'image is a mandatory input'}];
+            }
+
+            let maxTokens = 0;
+            if (input.hasOwnProperty('maxTokens')) {
+                maxTokens = input.maxTokens;
+            }
+
+            let temperature = 0;
+            if (input.hasOwnProperty('temperature')) {
+                temperature = input.temperature;
+            }
+
+            let topP = 0;
+            if (input.hasOwnProperty('topP')) {
+                topP = input.topP;
+            }
+
+            const [b64, err1] = await input.image.EncodeBase64();
             if (err1 != null) {
                 return [zero, err1];
             }
@@ -261,11 +377,11 @@ export class Client {
                 model: model.Models.Llava157BHF,
                 messages: [
                     {
-                        role: role,
+                        role: input.role,
                         content: [
                             {
                                 type: 'text',
-                                text: question,
+                                text: input.question,
                             },
                             {
                                 type: 'image_url',
@@ -278,6 +394,7 @@ export class Client {
                 ],
                 max_tokens: maxTokens,
                 temperature: temperature,
+                top_p: topP,
             };
 
             const [result, err2] = await this.RawDoPost('chat/completions', body);
@@ -308,12 +425,15 @@ export class Client {
      * const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
      *
      * async function Completions() {
-     *     const model = pg.Models.NeuralChat7B;
-     *     const maxTokens = 1000;
-     *     const temperature = 1.1;
-     *     const prompt = 'Will I lose my hair';
+     *     const input = {
+     *         model: pg.Models.NeuralChat7B,
+     *         prompt: 'Will I lose my hair',
+     *         maxTokens: 1000,
+     *         temperature: 0.1,
+     *         topP: 0.1,
+     *     };
      *
-     *     var [result, err] = await client.Completion(model, maxTokens, temperature, prompt);
+     *     var [result, err] = await client.Completion(input);
      *     if (err != null) {
      *         console.log('ERROR:' + err.error);
      *         return;
@@ -325,18 +445,13 @@ export class Client {
      * Completions();
      * ```
      *
-     * @param {Model} model - model represents the model to use for the
-     * request.
-     * @param {number} maxTokens - maxTokens represents the maximum number
-     * of tokens in the generated chat.
-     * @param {number} temperature - temperature represents the parameter
-     * for controlling randomness in generated chat.
-     * @param {number} temperature - prompt represents the chat input.
+     * @param {model.CompletionInput} input - input represents the entire set of
+     * possible input for the Completion call.
      *
      * @returns - A Promise with a Completion object and a Error
      * object if the error is not null.
      */
-    async Completion(model: model.Models, maxTokens: number, temperature: number, prompt: string): Promise<[model.Completion, model.Error | null]> {
+    async Completion(input: model.CompletionInput): Promise<[model.Completion, model.Error | null]> {
         const zero: model.Completion = {
             id: '',
             object: '',
@@ -348,11 +463,35 @@ export class Client {
         };
 
         try {
+            if (!input.hasOwnProperty('model')) {
+                return [zero, {error: 'model is a mandatory input'}];
+            }
+
+            if (!input.hasOwnProperty('prompt')) {
+                return [zero, {error: 'prompt is a mandatory input'}];
+            }
+
+            let maxTokens = 0;
+            if (input.hasOwnProperty('maxTokens')) {
+                maxTokens = input.maxTokens;
+            }
+
+            let temperature = 0;
+            if (input.hasOwnProperty('temperature')) {
+                temperature = input.temperature;
+            }
+
+            let topP = 0;
+            if (input.hasOwnProperty('topP')) {
+                topP = input.topP;
+            }
+
             const body = {
-                model: model,
+                model: input.model,
+                prompt: input.prompt,
                 max_tokens: maxTokens,
                 temperature: temperature,
-                prompt: prompt,
+                top_p: topP,
             };
 
             const [result, err] = await this.RawDoPost('completions', body);
@@ -406,7 +545,7 @@ export class Client {
      * Embedding();
      * ```
      *
-     * @param {EmbeddingInput[]} input - input represents a collection of
+     * @param {model.EmbeddingInput[]} input - input represents a collection of
      * text and images to vectorize.
      *
      * @returns - A Promise with a Embedding object and an Error object if
@@ -678,7 +817,7 @@ export class Client {
      * ReplacePI();
      * ```
      *
-     * @param {ReplaceMethod} replaceMethod - replaceMethod represents the
+     * @param {model.ReplaceMethods} replaceMethod - replaceMethod represents the
      * method to use for replacing personal information.
      * @param {string} prompt - prompt represents the text to detect
      * injection attacks against.
@@ -814,9 +953,9 @@ export class Client {
      * ```
      *
      * @param {string} text - text represents the text to be translated.
-     * @param {Language} sourceLang - sourceLang represents the source
+     * @param {model.Languages} sourceLang - sourceLang represents the source
      * language of the text.
-     * @param {Language} targetLang - targetLang represents the target
+     * @param {model.Languages} targetLang - targetLang represents the target
      * language of the text.
      *
      * @returns - A Promise with a Translate object and a Error
@@ -972,7 +1111,7 @@ export class Client {
      * @param {string} endpoint - endpoint represents endpoint to call and
      * does not include the transport or domain.
      * @param {any} body - body represents an input object.
-     * @param {(event: sse.ServerSentEvent | null, err: Error | null) => void} onMessage -
+     * @param {(event: sse.ServerSentEvent | null, err: model.Error | null) => void} onMessage -
      * onMessage represents a function that will receive the stream of chat
      * results.
      *

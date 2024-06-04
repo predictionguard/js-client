@@ -26,6 +26,12 @@ export enum Roles {
     System = 'system',
 }
 
+/** PIIs represents the set of pii options that can be used. */
+export enum PIIs {
+    Block = 'block',
+    Replace = 'replace',
+}
+
 /** ReplaceMethods represents the set of replace methods that can be used. */
 export enum ReplaceMethods {
     Random = 'random',
@@ -119,10 +125,54 @@ export interface Base64Encoder {
 
 // -----------------------------------------------------------------------------
 
-/** ChatInput represents a role and content related to a chat. */
-export interface ChatInput {
+/** ChatInputMessage represents a role and content related to a chat. */
+export interface ChatInputMessage {
+    /** role represents the role of the sender (user or assistant). */
     role: Roles;
+
+    /** content represents the content of the message. */
     content: string;
+}
+
+/** ChatInputOptions represents options for post and preprocessing the input. */
+export interface ChatInputOptions {
+    /** factuality represents the choice to run the factuality algorithm. */
+    factuality: boolean;
+
+    /** toxicity represents the choice to run the toxicity algorithm. */
+    toxicity: boolean;
+
+    /** blockPromptInjection represents the choice to run the
+     * blockPromptInjection algorithm. */
+    blockPromptInjection: boolean;
+
+    /** pii represents the choice to run the repalce personal information
+     *  algorithm and which one. */
+    pii: PIIs;
+
+    /** piiReplaceMethod represents the method to use for PII. */
+    piiReplaceMethod: ReplaceMethods;
+}
+
+/** ChatInput represents the full potential input options for chat. */
+export interface ChatInput {
+    /** model represents the model to use. */
+    model: Models;
+
+    /** messages represents the set of messages to process. */
+    messages: ChatInputMessage[];
+
+    /** maxTokens represents the max number of tokens to return. */
+    maxTokens: number;
+
+    /** temperature represents the randomness in GPT's output. */
+    temperature: number;
+
+    /** topP represents the diversity of the generated text. */
+    topP: number;
+
+    /** options represents a set of optional parameters. */
+    options: ChatInputOptions;
 }
 
 /** ChatMessage represents an object that contains the content and a role. It
@@ -176,6 +226,27 @@ export interface Chat {
 
 // -----------------------------------------------------------------------------
 
+/** ChatSSEInput represents the full potential input options for SSE chat. */
+export interface ChatSSEInput {
+    /** model represents the model to use. */
+    model: Models;
+
+    /** messages represents the set of messages to process. */
+    messages: ChatInputMessage[];
+
+    /** maxTokens represents the max number of tokens to return. */
+    maxTokens: number;
+
+    /** temperature represents the randomness in GPT's output. */
+    temperature: number;
+
+    /** topP represents the diversity of the generated text. */
+    topP: number;
+
+    /** onMessage represents a function that will receive the messages. */
+    onMessage: (event: ChatSSE | null, err: Error | null) => void;
+}
+
 /** ChatSSEDelta represents an object that contains the content. */
 export interface ChatSSEDelta {
     /** content represents the partial content response for a choice. */
@@ -228,6 +299,27 @@ export interface ChatSSE {
 
 // -----------------------------------------------------------------------------
 
+/** ChatVisionInput represents the full potential input options for Vision chat. */
+export interface ChatVisionInput {
+    /** role represents the role of the sender (user or assistant). */
+    role: Roles;
+
+    /** question represents the question about the image. */
+    question: string;
+
+    /** image represents an object that knows how to retrieve an image. */
+    image: Base64Encoder;
+
+    /** maxTokens represents the max number of tokens to return. */
+    maxTokens: number;
+
+    /** temperature represents the randomness in GPT's output. */
+    temperature: number;
+
+    /** topP represents the diversity of the generated text. */
+    topP: number;
+}
+
 /** ChatVisionMessage represents content for the vision call. */
 export interface ChatVisionMessage {
     /** role represents the role of the sender (user or assistant). */
@@ -277,6 +369,24 @@ export interface ChatVision {
 }
 
 // -----------------------------------------------------------------------------
+
+/** CompletionInput represents the full potential input options for completion. */
+export interface CompletionInput {
+    /** model represents the model to use. */
+    model: Models;
+
+    /** prompt represents the prompt to process. */
+    prompt: string;
+
+    /** maxTokens represents the max number of tokens to return. */
+    maxTokens: number;
+
+    /** temperature represents the randomness in GPT's output. */
+    temperature: number;
+
+    /** topP represents the diversity of the generated text. */
+    topP: number;
+}
 
 /** Choice represents an object that contains a result choice. */
 export interface CompletionChoice {

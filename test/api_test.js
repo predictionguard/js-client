@@ -261,14 +261,26 @@ const chatVisionResp = {
 async function testChatBasic() {
     const client = new pg.Client('http://localhost:8080', 'any key');
 
-    const messages = [
-        {
-            role: pg.Roles.User,
-            content: 'How do you feel about the world in general',
+    const input = {
+        model: pg.Models.NeuralChat7B,
+        messages: [
+            {
+                role: pg.Roles.User,
+                content: 'How do you feel about the world in general',
+            },
+        ],
+        maxTokens: 1000,
+        temperature: 0.1,
+        topP: 0.1,
+        options: {
+            factuality: true,
+            toxicity: true,
+            pii: pg.PIIs.Replace,
+            piiReplaceMethod: pg.ReplaceMethods.Random,
         },
-    ];
+    };
 
-    var [result, err] = await client.Chat(pg.Models.NeuralChat7B, 1000, 1.1, messages);
+    var [result, err] = await client.Chat(input);
     if (err != null) {
         assert.fail('ERROR:' + err.error);
     }
@@ -288,12 +300,16 @@ async function testChatVision() {
         },
     };
 
-    const role = pg.Roles.User;
-    const question = 'is there a deer in this picture';
-    const maxTokens = 300;
-    const temperature = 0.1;
+    const input = {
+        role: pg.Roles.User,
+        question: 'is there a deer in this picture',
+        image: imageMock,
+        maxTokens: 1000,
+        temperature: 0.1,
+        topP: 0.1,
+    };
 
-    var [result, err] = await client.ChatVision(role, question, imageMock, maxTokens, temperature);
+    var [result, err] = await client.ChatVision(input);
     if (err != null) {
         assert.fail('ERROR:' + err.error);
     }
@@ -307,14 +323,26 @@ async function testChatVision() {
 async function testChatBadkey() {
     const client = new pg.Client('http://localhost:8080', '');
 
-    const messages = [
-        {
-            role: pg.Roles.User,
-            content: 'How do you feel about the world in general',
+    const input = {
+        model: pg.Models.NeuralChat7B,
+        messages: [
+            {
+                role: pg.Roles.User,
+                content: 'How do you feel about the world in general',
+            },
+        ],
+        maxTokens: 1000,
+        temperature: 0.1,
+        topP: 0.1,
+        options: {
+            factuality: true,
+            toxicity: true,
+            pii: pg.PIIs.Replace,
+            piiReplaceMethod: pg.ReplaceMethods.Random,
         },
-    ];
+    };
 
-    var [, err] = await client.Chat(pg.Models.NeuralChat7B, 1000, 1.1, messages);
+    var [, err] = await client.Chat(input);
     if (err == null) {
         assert.fail("didn't get an error");
     }
@@ -351,7 +379,15 @@ const completionResp = {
 async function testCompletionBasic() {
     const client = new pg.Client('http://localhost:8080', 'any key');
 
-    var [result, err] = await client.Completion(pg.Models.NeuralChat7B, 1000, 1.0, 'Will I lose my hair');
+    const input = {
+        model: pg.Models.NeuralChat7B,
+        prompt: 'Will I lose my hair',
+        maxTokens: 1000,
+        temperature: 0.1,
+        topP: 0.1,
+    };
+
+    var [result, err] = await client.Completion(input);
     if (err != null) {
         assert.fail('ERROR:' + err.error);
     }
@@ -365,7 +401,15 @@ async function testCompletionBasic() {
 async function testCompletionBadkey() {
     const client = new pg.Client('http://localhost:8080', '');
 
-    var [, err] = await client.Completion(pg.Models.NeuralChat7B, 1000, 1.0, 'Will I lose my hair');
+    const input = {
+        model: pg.Models.NeuralChat7B,
+        prompt: 'Will I lose my hair',
+        maxTokens: 1000,
+        temperature: 0.1,
+        topP: 0.1,
+    };
+
+    var [, err] = await client.Completion(input);
     if (err == null) {
         assert.fail("didn't get an error");
     }
