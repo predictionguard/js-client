@@ -443,10 +443,6 @@ export interface EmbeddingData {
      * this choice. */
     index: number;
 
-    /** model represents the model used for generating the result for
-     * this choice. */
-    model: Models;
-
     /** status represents if the response for this choice was successful
      * or not. */
     status: string;
