@@ -21,10 +21,10 @@ show-docs: docs
 	open -a "Google Chrome" docs/index.html
 
 outdated:
-	npm outdated
+	npm outdated -g
 
 update:
-	npm update
+	npm update -g
 
 .PHONY: test
 test:
