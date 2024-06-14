@@ -2,6 +2,8 @@ import fetch from 'node-fetch';
 import * as sse from 'fetch-sse';
 import * as model from './api_model.js';
 
+const version = '0.14.0';
+
 /** Client provides access the PredictionGuard API. */
 export class Client {
     private url: string;
@@ -1012,7 +1014,11 @@ export class Client {
         try {
             const response = await fetch(`${this.url}/${endpoint}`, {
                 method: 'get',
-                headers: {'Content-Type': 'application/json', 'x-api-key': this.apiKey},
+                headers: {
+                    'Content-Type': 'application/json',
+                    'User-Agent': `Prediction Guard JS Client: ${version}`,
+                    'x-api-key': this.apiKey,
+                },
             });
 
             if (response.status != 200) {
@@ -1065,7 +1071,11 @@ export class Client {
         try {
             const response = await fetch(`${this.url}/${endpoint}`, {
                 method: 'post',
-                headers: {'Content-Type': 'application/json', 'x-api-key': this.apiKey},
+                headers: {
+                    'Content-Type': 'application/json',
+                    'User-Agent': `Prediction Guard JS Client: ${version}`,
+                    'x-api-key': this.apiKey,
+                },
                 body: JSON.stringify(body),
             });
 
@@ -1122,7 +1132,11 @@ export class Client {
             await sse.fetchEventData(`${this.url}/${endpoint}`, {
                 method: 'POST',
                 data: body,
-                headers: {'Content-Type': 'application/json', 'x-api-key': this.apiKey},
+                headers: {
+                    'Content-Type': 'application/json',
+                    'User-Agent': `Prediction Guard JS Client: ${version}`,
+                    'x-api-key': this.apiKey,
+                },
 
                 onMessage: (event, done) => {
                     if (done) {
