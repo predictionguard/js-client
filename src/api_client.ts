@@ -792,9 +792,9 @@ export class Client {
     }
 
     // -------------------------------------------------------------------------
-    // ReplacePI
+    // ReplacePII
 
-    /** ReplacePI replaces personal information such as names, SSNs, and
+    /** ReplacePII replaces personal information such as names, SSNs, and
      * emails in a given text.
      *
      * @example
@@ -803,11 +803,11 @@ export class Client {
      *
      * const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
      *
-     * async function ReplacePI() {
+     * async function ReplacePII() {
      *     const replaceMethod = pg.ReplaceMethods.Mask;
      *     const prompt = `My email is bill@ardanlabs.com and my number is 954-123-4567.`;
      *
-     *     var [result, err] = await client.ReplacePI(replaceMethod, prompt);
+     *     var [result, err] = await client.ReplacePII(replaceMethod, prompt);
      *     if (err != null) {
      *         console.log('ERROR:' + err.error);
      *         return;
@@ -816,7 +816,7 @@ export class Client {
      *     console.log('RESULT:' + result.checks[0].new_prompt);
      * }
      *
-     * ReplacePI();
+     * ReplacePII();
      * ```
      *
      * @param {model.ReplaceMethods} replaceMethod - replaceMethod represents the
@@ -824,11 +824,11 @@ export class Client {
      * @param {string} prompt - prompt represents the text to detect
      * injection attacks against.
      *
-     * @returns - A Promise with a ReplacePI object and a Error
+     * @returns - A Promise with a ReplacePII object and a Error
      * object if the error is not null.
      * */
-    async ReplacePI(replaceMethod: model.ReplaceMethods, prompt: string): Promise<[model.ReplacePI, model.Error | null]> {
-        const zero: model.ReplacePI = {
+    async ReplacePII(replaceMethod: model.ReplaceMethods, prompt: string): Promise<[model.ReplacePII, model.Error | null]> {
+        const zero: model.ReplacePII = {
             id: '',
             object: '',
             created: 0,
@@ -850,7 +850,7 @@ export class Client {
                 return [zero, err];
             }
 
-            const replacePI = result as model.ReplacePI;
+            const replacePI = result as model.ReplacePII;
             replacePI.createdDate = function () {
                 return new Date(this.created * 1000);
             };

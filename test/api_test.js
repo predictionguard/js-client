@@ -191,11 +191,11 @@ describe('Test_Client', () => {
     // -------------------------------------------------------------------------
 
     it('replacePI-basic', async () => {
-        await testReplacePIBasic();
+        await testReplacePIIBasic();
     });
 
     it('replacePI-badkey', async () => {
-        await testReplacePIBadkey();
+        await testReplacePIIBadkey();
     });
 
     // -------------------------------------------------------------------------
@@ -612,12 +612,12 @@ const replacePIResp = {
     ],
 };
 
-async function testReplacePIBasic() {
+async function testReplacePIIBasic() {
     const client = new pg.Client('http://localhost:8080', 'any key');
 
     const prompt = 'My email is bill@ardanlabs.com and my number is 954-123-4567.';
 
-    var [result, err] = await client.ReplacePI(pg.ReplaceMethods.Mask, prompt);
+    var [result, err] = await client.ReplacePII(pg.ReplaceMethods.Mask, prompt);
     if (err != null) {
         assert.fail('ERROR:' + err.error);
     }
@@ -628,12 +628,12 @@ async function testReplacePIBasic() {
     assert.equal(got, exp);
 }
 
-async function testReplacePIBadkey() {
+async function testReplacePIIBadkey() {
     const client = new pg.Client('http://localhost:8080', '');
 
     const prompt = 'My email is bill@ardanlabs.com and my number is 954-123-4567.';
 
-    var [, err] = await client.ReplacePI(pg.ReplaceMethods.Mask, prompt);
+    var [, err] = await client.ReplacePII(pg.ReplaceMethods.Mask, prompt);
     if (err == null) {
         assert.fail("didn't get an error");
     }

@@ -2,12 +2,10 @@ SHELL_PATH = /bin/ash
 SHELL = $(if $(wildcard $(SHELL_PATH)),/bin/ash,/bin/bash)
 
 install:
-	npm i -g typescript eslint mocha typedoc
-	npm i node-fetch@3 fetch-sse
-	npm i --save-dev typescript-eslint mockttp
+	npm i
 
 compile-ts:
-	tsc
+	npm run build
 
 publish:
 	npm login
@@ -15,7 +13,7 @@ publish:
 
 .PHONY: docs
 docs:
-	typedoc --gitRevision main src/index.ts
+	npm run docs
 
 show-docs: docs
 	open -a "Google Chrome" docs/index.html
@@ -27,8 +25,7 @@ update:
 	npm update -g
 
 .PHONY: test
-test:
-	tsc
+test: compile-ts
 	npm run test
 
 # ==============================================================================

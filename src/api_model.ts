@@ -546,8 +546,8 @@ export interface Injection {
 
 // -----------------------------------------------------------------------------
 
-/** ReplacePICheck represents an object that contains a check choice. */
-export interface ReplacePICheck {
+/** ReplacePIICheck represents an object that contains a check choice. */
+export interface ReplacePIICheck {
     /** index represents the index position in the collection for
      * this checks. */
     index: number;
@@ -559,9 +559,9 @@ export interface ReplacePICheck {
     status: string;
 }
 
-/** ReplacePI represents an object that contains the result for the
+/** ReplacePII represents an object that contains the result for the
  * replacepi call. */
-export interface ReplacePI {
+export interface ReplacePII {
     /** id represents a unique identifier for the result. */
     id: string;
 
@@ -573,7 +573,7 @@ export interface ReplacePI {
     created: number;
 
     /** checks represents the collection of checks to choose from. */
-    checks: ReplacePICheck[];
+    checks: ReplacePIICheck[];
 
     /** createdDate converts the created unix timestamp into a JS Date. */
     createdDate(): Date;

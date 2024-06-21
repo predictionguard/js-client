@@ -8,7 +8,9 @@
     "types": "./dist/index.d.ts",
     "scripts": {
         "prepare": "tsc && typedoc --gitRevision main src/index.ts",
-        "test": "eslint . && mocha test --no-deprecation"
+        "build": "tsc",
+        "test": "eslint . && mocha test --no-deprecation",
+        "docs": "typedoc --gitRevision main src/index.ts"
     },
     "files": [
         "dist/*",
@@ -21,8 +23,15 @@
         "node-fetch": "^3.3.2"
     },
     "devDependencies": {
+        "@eslint/js": "^9.5.0",
+        "@types/eslint__js": "^8.42.3",
         "@types/mocha": "^10.0.6",
-        "mockttp": "^3.11.0",
-        "typescript-eslint": "^7.11.0"
+        "@types/node": "^20.14.7",
+        "eslint": "^8.57.0",
+        "mocha": "^10.4.0",
+        "mockttp": "^3.12.0",
+        "typedoc": "^0.25.13",
+        "typescript": "^5.4.5",
+        "typescript-eslint": "^7.13.1"
     }
 }
