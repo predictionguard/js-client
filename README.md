@@ -76,7 +76,7 @@ Once you have your API key you can use the `makefile` to run curl commands for t
 For example, `make curl-injection` will connect to the injection endpoint and return the injection response.
 The `makefile` also allows you to run the different examples such as `make js-injection` to run the Go injection example.
 
-** Running The Project**
+**Running The Project**
 
 You will need to node before you can run the project. You can follow this [link](https://nodejs.org/en/download/package-manager) or use [brew](https://formulae.brew.sh/formula/node) which is what I do.
 
