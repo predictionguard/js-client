@@ -12,14 +12,14 @@ This package provides functionality developed to simplify interfacing with [Pred
 
 ### Requirements
 
-To access the API, contact us [here](https://www.predictionguard.com/getting-started) to get an enterprise access token. You will need this access token to continue.
+To access the API, contact us [here](https://mailchi.mp/predictionguard/getting-started) to get an enterprise access token. You will need this access token to continue.
 
 ### Usage
 
 **Install Package**
 
-```
-    $ npm i predictionguard
+```bash
+$ npm i predictionguard
 ```
 
 **Code Example**
@@ -72,7 +72,9 @@ You can find the SDK and Prediction Guard docs using these links.
 
 ### Getting started
 
-Once you have your api key you can use the `makefile` to run curl commands for the different api endpoints. For example, `make curl-injection` will connect to the injection endpoint and return the injection response. The `makefile` also allows you to run the different examples such as `make js-injection` to run the Go injection example.
+Once you have your API key you can use the `makefile` to run curl commands for the different API endpoints.
+For example, `make curl-injection` will connect to the injection endpoint and return the injection response.
+The `makefile` also allows you to run the different examples such as `make js-injection` to run the Go injection example.
 
 ** Running The Project**
 
@@ -111,4 +113,5 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
 Copyright 2024 Prediction Guard

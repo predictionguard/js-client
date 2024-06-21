@@ -850,12 +850,12 @@ export class Client {
                 return [zero, err];
             }
 
-            const replacePI = result as model.ReplacePII;
-            replacePI.createdDate = function () {
+            const replacePII = result as model.ReplacePII;
+            replacePII.createdDate = function () {
                 return new Date(this.created * 1000);
             };
 
-            return [replacePI, null];
+            return [replacePII, null];
         } catch (e) {
             return [zero, {error: JSON.stringify(e)}];
         }
