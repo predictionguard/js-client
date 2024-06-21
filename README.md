@@ -98,7 +98,7 @@ Finally you can try running one of the JS examples.
 $ make js-chat
 ```
 
-#### Licensing
+### Licensing
 
 ```
 Licensed under the Apache License, Version 2.0 (the "License");
