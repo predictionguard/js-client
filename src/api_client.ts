@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import * as sse from 'fetch-sse';
 import * as model from './api_model.js';
 
-const version = '0.14.0';
+const version = '0.15.0';
 
 /** Client provides access the PredictionGuard API. */
 export class Client {
@@ -1017,7 +1017,7 @@ export class Client {
                 headers: {
                     'Content-Type': 'application/json',
                     'User-Agent': `Prediction Guard JS Client: ${version}`,
-                    'x-api-key': this.apiKey,
+                    Authorization: `Bearer ${this.apiKey}`,
                 },
             });
 
@@ -1074,7 +1074,7 @@ export class Client {
                 headers: {
                     'Content-Type': 'application/json',
                     'User-Agent': `Prediction Guard JS Client: ${version}`,
-                    'x-api-key': this.apiKey,
+                    Authorization: `Bearer ${this.apiKey}`,
                 },
                 body: JSON.stringify(body),
             });
@@ -1135,7 +1135,7 @@ export class Client {
                 headers: {
                     'Content-Type': 'application/json',
                     'User-Agent': `Prediction Guard JS Client: ${version}`,
-                    'x-api-key': this.apiKey,
+                    Authorization: `Bearer ${this.apiKey}`,
                 },
 
                 onMessage: (event, done) => {
