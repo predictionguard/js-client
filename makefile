@@ -2,12 +2,10 @@ SHELL_PATH = /bin/ash
 SHELL = $(if $(wildcard $(SHELL_PATH)),/bin/ash,/bin/bash)
 
 install:
-	npm i -g typescript eslint mocha typedoc
-	npm i node-fetch@3 fetch-sse
-	npm i --save-dev typescript-eslint mockttp
+	npm i
 
 compile-ts:
-	tsc
+	npm run build
 
 publish:
 	npm login
@@ -15,7 +13,7 @@ publish:
 
 .PHONY: docs
 docs:
-	typedoc --gitRevision main src/index.ts
+	npm run docs
 
 show-docs: docs
 	open -a "Google Chrome" docs/index.html
@@ -27,16 +25,15 @@ update:
 	npm update -g
 
 .PHONY: test
-test:
-	tsc
+test: compile-ts
 	npm run test
 
 # ==============================================================================
 # Examples
 
 curl-chat:
-	curl -il -X POST https://api.predictionguard.com/chat/completions \
-     -H "x-api-key: ${PGKEY}" \
+	curl -i -X POST https://api.predictionguard.com/chat/completions \
+     -H "Authorization: Bearer ${PGKEY}" \
      -H "Content-Type: application/json" \
      -d '{ \
 		"model": "Neural-Chat-7B", \
@@ -63,8 +60,8 @@ js-chat: compile-ts
 	node --env-file=.env examples/chat.js
 
 curl-chat-sse:
-	curl -il -X POST https://api.predictionguard.com/chat/completions \
-     -H "x-api-key: ${PGKEY}" \
+	curl -i -X POST https://api.predictionguard.com/chat/completions \
+     -H "Authorization: Bearer ${PGKEY}" \
      -H "Content-Type: application/json" \
      -d '{ \
 		"model": "Neural-Chat-7B", \
@@ -81,7 +78,7 @@ js-chat-sse: compile-ts
 	node --env-file=.env examples/chat_sse.js
 
 curl-chat-vision:
-	curl -il -X POST https://staging.predictionguard.com/chat/completions \
+	curl -i -X POST https://staging.predictionguard.com/chat/completions \
      -H "x-api-key: ${PGKEYSTAGE}" \
      -H "Content-Type: application/json" \
      -d '{ \
@@ -111,8 +108,8 @@ js-chat-vision: compile-ts
 	node --env-file=.env examples/chat_vision.js
 
 curl-comp:
-	curl -il -X POST https://api.predictionguard.com/completions \
-     -H "x-api-key: ${PGKEY}" \
+	curl -i -X POST https://api.predictionguard.com/completions \
+     -H "Authorization: Bearer ${PGKEY}" \
      -H "Content-Type: application/json" \
      -d '{ \
 		"model": "Neural-Chat-7B", \
@@ -126,8 +123,8 @@ js-comp: compile-ts
 	node --env-file=.env examples/completion.js
 
 curl-embed:
-	curl -il -X POST https://api.predictionguard.com/embeddings \
-     -H "x-api-key: ${PGKEY}" \
+	curl -i -X POST https://api.predictionguard.com/embeddings \
+     -H "Authorization: Bearer ${PGKEY}" \
      -H "Content-Type: application/json" \
      -d '{ \
 		"model": "bridgetower-large-itm-mlm-itc", \
@@ -144,7 +141,7 @@ js-embed: compile-ts
 
 curl-factuality:
 	curl -X POST https://api.predictionguard.com/factuality \
-     -H "x-api-key: ${PGKEY}" \
+     -H "Authorization: Bearer ${PGKEY}" \
      -H "Content-Type: application/json" \
      -d '{ \
 		"reference": "The President shall receive in full for his services during the term for which he shall have been elected compensation in the aggregate amount of 400,000 a year, to be paid monthly, and in addition an expense allowance of 50,000 to assist in defraying expenses relating to or resulting from the discharge of his official duties. Any unused amount of such expense allowance shall revert to the Treasury pursuant to section 1552 of title 31, United States Code. No amount of such expense allowance shall be included in the gross income of the President. He shall be entitled also to the use of the furniture and other effects belonging to the United States and kept in the Executive Residence at the White House.", \
@@ -155,7 +152,7 @@ js-factuality: compile-ts
 	node --env-file=.env examples/factuality.js
 
 curl-health:
-	curl -il https://api.predictionguard.com \
+	curl -i https://api.predictionguard.com \
      -H "x-api-key: ${PGKEY}"
 
 js-health: compile-ts
@@ -163,7 +160,7 @@ js-health: compile-ts
 
 curl-injection:
 	curl -X POST https://api.predictionguard.com/injection \
-	 -H "x-api-key: ${PGKEY}" \
+	 -H "Authorization: Bearer ${PGKEY}" \
      -H "Content-Type: application/json" \
      -d '{ \
 		"prompt": "A short poem may be a stylistic choice or it may be that you have said what you intended to say in a more concise way.", \
@@ -175,7 +172,7 @@ js-injection: compile-ts
 
 curl-replacepi:
 	curl -X POST https://api.predictionguard.com/PII \
-     -H "x-api-key: ${PGKEY}" \
+     -H "Authorization: Bearer ${PGKEY}" \
      -H "Content-Type: application/json" \
      -d '{ \
 		"prompt": "My email is bill@ardanlabs.com and my number is 954-123-4567.", \
@@ -188,7 +185,7 @@ js-replacepi: compile-ts
 
 curl-toxicity:
 	curl -X POST https://api.predictionguard.com/toxicity \
-     -H "x-api-key: ${PGKEY}" \
+     -H "Authorization: Bearer ${PGKEY}" \
      -H "Content-Type: application/json" \
      -d '{ \
 		"text": "Every flight I have is late and I am very angry. I want to hurt someone." \
@@ -199,7 +196,7 @@ js-toxicity: compile-ts
 
 curl-translate:
 	curl -X POST https://api.predictionguard.com/translate \
-     -H "x-api-key: ${PGKEY}" \
+     -H "Authorization: Bearer ${PGKEY}" \
      -H "Content-Type: application/json" \
      -d '{ \
 		"text": "The rain in Spain stays mainly in the plain", \
