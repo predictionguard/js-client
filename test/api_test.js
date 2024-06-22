@@ -15,7 +15,8 @@ describe('Test_Client', () => {
         proxy.start(8080);
 
         proxy.forPost('/chat/completions').thenCallback((request) => {
-            if (request.headers['x-api-key'] == '') {
+            const auth = request.headers['authorization'];
+            if (typeof auth == 'undefined' || auth == 'Bearer') {
                 return {
                     statusCode: 403,
                 };
@@ -39,7 +40,8 @@ describe('Test_Client', () => {
         });
 
         proxy.forPost('/completions').thenCallback((request) => {
-            if (request.headers['x-api-key'] == '') {
+            const auth = request.headers['authorization'];
+            if (typeof auth == 'undefined' || auth == 'Bearer') {
                 return {
                     statusCode: 403,
                 };
@@ -52,7 +54,8 @@ describe('Test_Client', () => {
         });
 
         proxy.forPost('/embeddings').thenCallback((request) => {
-            if (request.headers['x-api-key'] == '') {
+            const auth = request.headers['authorization'];
+            if (typeof auth == 'undefined' || auth == 'Bearer') {
                 return {
                     statusCode: 403,
                 };
@@ -65,7 +68,8 @@ describe('Test_Client', () => {
         });
 
         proxy.forPost('/factuality').thenCallback((request) => {
-            if (request.headers['x-api-key'] == '') {
+            const auth = request.headers['authorization'];
+            if (typeof auth == 'undefined' || auth == 'Bearer') {
                 return {
                     statusCode: 403,
                 };
@@ -78,7 +82,8 @@ describe('Test_Client', () => {
         });
 
         proxy.forPost('/injection').thenCallback((request) => {
-            if (request.headers['x-api-key'] == '') {
+            const auth = request.headers['authorization'];
+            if (typeof auth == 'undefined' || auth == 'Bearer') {
                 return {
                     statusCode: 403,
                 };
@@ -91,7 +96,8 @@ describe('Test_Client', () => {
         });
 
         proxy.forPost('/PII').thenCallback((request) => {
-            if (request.headers['x-api-key'] == '') {
+            const auth = request.headers['authorization'];
+            if (typeof auth == 'undefined' || auth == 'Bearer') {
                 return {
                     statusCode: 403,
                 };
@@ -104,7 +110,8 @@ describe('Test_Client', () => {
         });
 
         proxy.forPost('/toxicity').thenCallback((request) => {
-            if (request.headers['x-api-key'] == '') {
+            const auth = request.headers['authorization'];
+            if (typeof auth == 'undefined' || auth == 'Bearer') {
                 return {
                     statusCode: 403,
                 };
@@ -117,7 +124,8 @@ describe('Test_Client', () => {
         });
 
         proxy.forPost('/translate').thenCallback((request) => {
-            if (request.headers['x-api-key'] == '') {
+            const auth = request.headers['authorization'];
+            if (typeof auth == 'undefined' || auth == 'Bearer') {
                 return {
                     statusCode: 403,
                 };
