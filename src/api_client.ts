@@ -44,6 +44,7 @@ export class Client {
      *         maxTokens: 1000,
      *         temperature: 0.1,
      *         topP: 0.1,
+     *         topK: 50.0,
      *         options: {
      *             factuality: true,
      *             toxicity: true,
@@ -106,12 +107,18 @@ export class Client {
                 topP = input.topP;
             }
 
+            let topK = 0;
+            if (input.hasOwnProperty('topK')) {
+                topK = input.topK;
+            }
+
             const m = new Map();
             m.set('model', input.model);
             m.set('messages', input.messages);
             m.set('max_tokens', maxTokens);
             m.set('temperature', temperature);
             m.set('top_p', topP);
+            m.set('top_k', topK);
 
             if (input.hasOwnProperty('options')) {
                 if (input.options.hasOwnProperty('factuality') || input.options.hasOwnProperty('toxicity')) {
@@ -198,6 +205,7 @@ export class Client {
      *         maxTokens: 1000,
      *         temperature: 0.1,
      *         topP: 0.1,
+     *         topK: 50.0,
      *         onMessage: function (event, err) {
      *             if (err != null) {
      *                 if (err.error == 'EOF') {
@@ -259,12 +267,18 @@ export class Client {
                 topP = input.topP;
             }
 
+            let topK = 0;
+            if (input.hasOwnProperty('topK')) {
+                topK = input.topK;
+            }
+
             const body = {
                 model: input.model,
                 messages: input.messages,
                 max_tokens: maxTokens,
                 temperature: temperature,
                 top_p: topP,
+                top_k: topK,
                 stream: true,
             };
 
@@ -310,6 +324,7 @@ export class Client {
      *         maxTokens: 1000,
      *         temperature: 0.1,
      *         topP: 0.1,
+     *         topK: 50.0,
      *     };
      *
      *     var [result, err] = await client.ChatVision(input);
@@ -370,6 +385,11 @@ export class Client {
                 topP = input.topP;
             }
 
+            let topK = 0;
+            if (input.hasOwnProperty('topK')) {
+                topK = input.topK;
+            }
+
             const [b64, err1] = await input.image.EncodeBase64();
             if (err1 != null) {
                 return [zero, err1];
@@ -397,6 +417,7 @@ export class Client {
                 max_tokens: maxTokens,
                 temperature: temperature,
                 top_p: topP,
+                top_k: topK,
             };
 
             const [result, err2] = await this.RawDoPost('chat/completions', body);
@@ -433,6 +454,7 @@ export class Client {
      *         maxTokens: 1000,
      *         temperature: 0.1,
      *         topP: 0.1,
+     *         topK: 50.0,
      *     };
      *
      *     var [result, err] = await client.Completion(input);
@@ -488,12 +510,18 @@ export class Client {
                 topP = input.topP;
             }
 
+            let topK = 0;
+            if (input.hasOwnProperty('topK')) {
+                topK = input.topK;
+            }
+
             const body = {
                 model: input.model,
                 prompt: input.prompt,
                 max_tokens: maxTokens,
                 temperature: temperature,
                 top_p: topP,
+                top_k: topK,
             };
 
             const [result, err] = await this.RawDoPost('completions', body);

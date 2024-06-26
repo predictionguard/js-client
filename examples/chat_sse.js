@@ -14,6 +14,7 @@ async function ChatSSE() {
         maxTokens: 1000,
         temperature: 0.1,
         topP: 0.1,
+        topK: 50.0,
         onMessage: function (event, err) {
             if (err != null) {
                 if (err.error == 'EOF') {

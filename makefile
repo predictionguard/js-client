@@ -46,6 +46,7 @@ curl-chat:
 		"max_tokens": 1000, \
 		"temperature": 1.1, \
 		"top_p": 0.1, \
+		"top_k": 50.0, \
 		"output": { \
 			"factuality": true, \
 			"toxicity": true \
@@ -71,15 +72,19 @@ curl-chat-sse:
 			"content": "How do you feel about the world in general" \
 			} \
 		], \
-		"stream": true \
+		"stream": true, \
+		"max_tokens": 300, \
+		"temperature": 0.1, \
+		"top_p": 0.1, \
+		"top_k": 50.0 \
 	}'
 
 js-chat-sse: compile-ts
 	node --env-file=.env examples/chat_sse.js
 
 curl-chat-vision:
-	curl -i -X POST https://staging.predictionguard.com/chat/completions \
-     -H "x-api-key: ${PGKEYSTAGE}" \
+	curl -i -X POST https://api.predictionguard.com/chat/completions \
+     -H "x-api-key: ${PGKEY}" \
      -H "Content-Type: application/json" \
      -d '{ \
 		"model": "llava-1.5-7b-hf", \
@@ -101,7 +106,9 @@ curl-chat-vision:
 	 	  	} \
 		], \
 		"max_tokens": 300, \
-		"temperature": 0.1 \
+		"temperature": 0.1, \
+		"top_p": 0.1, \
+		"top_k": 50.0 \
 	}'
 
 js-chat-vision: compile-ts
@@ -117,6 +124,7 @@ curl-comp:
 		"max_tokens": 1000, \
 		"temperature": 1.1, \
 		"top_p": 0.1 \
+		"top_k": 50.0 \
 	}'
 
 js-comp: compile-ts

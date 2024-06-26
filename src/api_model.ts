@@ -171,6 +171,9 @@ export interface ChatInput {
     /** topP represents the diversity of the generated text. */
     topP: number;
 
+    /** topK represents the variability of the generated text. */
+    topK: number;
+
     /** options represents a set of optional parameters. */
     options: ChatInputOptions;
 }
@@ -242,6 +245,9 @@ export interface ChatSSEInput {
 
     /** topP represents the diversity of the generated text. */
     topP: number;
+
+    /** topK represents the variability of the generated text. */
+    topK: number;
 
     /** onMessage represents a function that will receive the messages. */
     onMessage: (event: ChatSSE | null, err: Error | null) => void;
@@ -318,6 +324,9 @@ export interface ChatVisionInput {
 
     /** topP represents the diversity of the generated text. */
     topP: number;
+
+    /** topK represents the variability of the generated text. */
+    topK: number;
 }
 
 /** ChatVisionMessage represents content for the vision call. */
@@ -386,6 +395,9 @@ export interface CompletionInput {
 
     /** topP represents the diversity of the generated text. */
     topP: number;
+
+    /** topK represents the variability of the generated text. */
+    topK: number;
 }
 
 /** Choice represents an object that contains a result choice. */

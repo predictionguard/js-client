@@ -12,6 +12,7 @@ async function ChatVision() {
         maxTokens: 1000,
         temperature: 0.1,
         topP: 0.1,
+        topK: 50.0,
     };
 
     var [result, err] = await client.ChatVision(input);

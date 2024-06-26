@@ -14,6 +14,7 @@ async function Chat() {
         maxTokens: 1000,
         temperature: 0.1,
         topP: 0.1,
+        topK: 50.0,
         options: {
             factuality: true,
             toxicity: true,
