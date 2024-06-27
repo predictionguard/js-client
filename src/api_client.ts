@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import * as sse from 'fetch-sse';
 import * as model from './api_model.js';
 
-const version = '0.16.0';
+const version = '0.17.0';
 
 /** Client provides access the PredictionGuard API. */
 export class Client {
@@ -23,6 +23,16 @@ export class Client {
 
     // -------------------------------------------------------------------------
     // Chat
+
+    /** Set of models supported by the chat APIs. */
+    private chatModels = new Map([
+        [model.Models.DeepseekCoder67BInstruct, true],
+        [model.Models.Hermes2ProLlama38B, true],
+        [model.Models.Hermes2ProMistral7B, true],
+        [model.Models.LLama3SqlCoder8b, true],
+        [model.Models.Llava157BHF, true],
+        [model.Models.NeuralChat7B, true],
+    ]);
 
     /** Chat generates chat completions based on a conversation history.
      *
@@ -83,20 +93,12 @@ export class Client {
             },
         };
 
-        const models = new Map();
-        models.set(model.Models.DeepseekCoder67BInstruct, true);
-        models.set(model.Models.Hermes2ProLlama38B, true);
-        models.set(model.Models.Hermes2ProMistral7B, true);
-        models.set(model.Models.LLama3SqlCoder8b, true);
-        models.set(model.Models.Llava157BHF, true);
-        models.set(model.Models.NeuralChat7B, true);
-
         try {
             if (!input.hasOwnProperty('model')) {
                 return [zero, {error: 'model is a mandatory input'}];
             }
 
-            if (!models.get(input.model)) {
+            if (!this.chatModels.get(input.model)) {
                 return [zero, {error: 'model specified is not supported'}];
             }
 
@@ -251,20 +253,12 @@ export class Client {
      * null.
      */
     async ChatSSE(input: model.ChatSSEInput): Promise<model.Error | null> {
-        const models = new Map();
-        models.set(model.Models.DeepseekCoder67BInstruct, true);
-        models.set(model.Models.Hermes2ProLlama38B, true);
-        models.set(model.Models.Hermes2ProMistral7B, true);
-        models.set(model.Models.LLama3SqlCoder8b, true);
-        models.set(model.Models.Llava157BHF, true);
-        models.set(model.Models.NeuralChat7B, true);
-
         try {
             if (!input.hasOwnProperty('model')) {
                 return {error: 'model is a mandatory input'};
             }
 
-            if (!models.get(input.model)) {
+            if (!this.chatModels.get(input.model)) {
                 return {error: 'model specified is not supported'};
             }
 
@@ -463,6 +457,15 @@ export class Client {
     // -------------------------------------------------------------------------
     // Completion
 
+    /** Set of models supported by the completion API. */
+    private completionModels = new Map([
+        [model.Models.DeepseekCoder67BInstruct, true],
+        [model.Models.Hermes2ProLlama38B, true],
+        [model.Models.Hermes2ProMistral7B, true],
+        [model.Models.NeuralChat7B, true],
+        [model.Models.NousHermesLlama213B, true],
+    ]);
+
     /** Completion generates text completions based on the provided input.
      *
      * @example
@@ -510,19 +513,12 @@ export class Client {
             },
         };
 
-        const models = new Map();
-        models.set(model.Models.DeepseekCoder67BInstruct, true);
-        models.set(model.Models.Hermes2ProLlama38B, true);
-        models.set(model.Models.Hermes2ProMistral7B, true);
-        models.set(model.Models.NeuralChat7B, true);
-        models.set(model.Models.NousHermesLlama213B, true);
-
         try {
             if (!input.hasOwnProperty('model')) {
                 return [zero, {error: 'model is a mandatory input'}];
             }
 
-            if (!models.get(input.model)) {
+            if (!this.completionModels.get(input.model)) {
                 return [zero, {error: 'model specified is not supported'}];
             }
 
