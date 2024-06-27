@@ -31,6 +31,11 @@ test: compile-ts
 # ==============================================================================
 # Examples
 
+curl-chat-get:
+	curl -i -X GET https://api.predictionguard.com/chat/completions \
+     -H "Authorization: Bearer ${PGKEY}" \
+     -H "Content-Type: application/json"
+
 curl-chat:
 	curl -i -X POST https://api.predictionguard.com/chat/completions \
      -H "Authorization: Bearer ${PGKEY}" \
@@ -59,7 +64,7 @@ curl-chat:
 
 js-chat: compile-ts
 	node --env-file=.env examples/chat.js
-
+	 
 curl-chat-sse:
 	curl -i -X POST https://api.predictionguard.com/chat/completions \
      -H "Authorization: Bearer ${PGKEY}" \
@@ -114,6 +119,11 @@ curl-chat-vision:
 js-chat-vision: compile-ts
 	node --env-file=.env examples/chat_vision.js
 
+curl-comp-get:
+	curl -i -X GET https://api.predictionguard.com/completions \
+     -H "Authorization: Bearer ${PGKEY}" \
+     -H "Content-Type: application/json"
+
 curl-comp:
 	curl -i -X POST https://api.predictionguard.com/completions \
      -H "Authorization: Bearer ${PGKEY}" \
@@ -129,6 +139,11 @@ curl-comp:
 
 js-comp: compile-ts
 	node --env-file=.env examples/completion.js
+
+curl-embed-get:
+	curl -i -X GET https://api.predictionguard.com/embeddings \
+     -H "Authorization: Bearer ${PGKEY}" \
+     -H "Content-Type: application/json"
 
 curl-embed:
 	curl -i -X POST https://api.predictionguard.com/embeddings \

@@ -12,6 +12,7 @@ export enum Models {
     Hermes2ProLlama38B = 'Hermes-2-Pro-Llama-3-8B',
     NousHermesLlama213B = 'Nous-Hermes-Llama-213B',
     Hermes2ProMistral7B = 'Hermes-2-Pro-Mistral-7B',
+    LLama3SqlCoder8b = 'llama-3-sqlcoder-8b',
     Llava157BHF = 'llava-1.5-7b-hf',
     NeuralChat7B = 'Neural-Chat-7B',
     Yi34BChat = 'Yi-34B-Chat',
@@ -156,7 +157,14 @@ export interface ChatInputOptions {
 
 /** ChatInput represents the full potential input options for chat. */
 export interface ChatInput {
-    /** model represents the model to use. */
+    /** model represents the model to use. You are restriced to these models:
+     * DeepseekCoder67BInstruct
+     * Hermes2ProLlama38B
+     * Hermes2ProMistral7B
+     * LLama3SqlCoder8b
+     * Llava157BHF
+     * NeuralChat7B
+     */
     model: Models;
 
     /** messages represents the set of messages to process. */
@@ -231,7 +239,14 @@ export interface Chat {
 
 /** ChatSSEInput represents the full potential input options for SSE chat. */
 export interface ChatSSEInput {
-    /** model represents the model to use. */
+    /** model represents the model to use. You are restriced to these models:
+     * DeepseekCoder67BInstruct
+     * Hermes2ProLlama38B
+     * Hermes2ProMistral7B
+     * LLama3SqlCoder8b
+     * Llava157BHF
+     * NeuralChat7B
+     */
     model: Models;
 
     /** messages represents the set of messages to process. */
@@ -381,7 +396,13 @@ export interface ChatVision {
 
 /** CompletionInput represents the full potential input options for completion. */
 export interface CompletionInput {
-    /** model represents the model to use. */
+    /** model represents the model to use. You are restriced to these models:
+     * DeepseekCoder67BInstruct
+     * Hermes2ProLlama38B
+     * Hermes2ProMistral7B
+     * NeuralChat7B
+     * NousHermesLlama213B
+     */
     model: Models;
 
     /** prompt represents the prompt to process. */

@@ -83,9 +83,21 @@ export class Client {
             },
         };
 
+        const models = new Map();
+        models.set(model.Models.DeepseekCoder67BInstruct, true);
+        models.set(model.Models.Hermes2ProLlama38B, true);
+        models.set(model.Models.Hermes2ProMistral7B, true);
+        models.set(model.Models.LLama3SqlCoder8b, true);
+        models.set(model.Models.Llava157BHF, true);
+        models.set(model.Models.NeuralChat7B, true);
+
         try {
             if (!input.hasOwnProperty('model')) {
                 return [zero, {error: 'model is a mandatory input'}];
+            }
+
+            if (!models.get(input.model)) {
+                return [zero, {error: 'model specified is not supported'}];
             }
 
             if (!input.hasOwnProperty('messages')) {
@@ -239,9 +251,21 @@ export class Client {
      * null.
      */
     async ChatSSE(input: model.ChatSSEInput): Promise<model.Error | null> {
+        const models = new Map();
+        models.set(model.Models.DeepseekCoder67BInstruct, true);
+        models.set(model.Models.Hermes2ProLlama38B, true);
+        models.set(model.Models.Hermes2ProMistral7B, true);
+        models.set(model.Models.LLama3SqlCoder8b, true);
+        models.set(model.Models.Llava157BHF, true);
+        models.set(model.Models.NeuralChat7B, true);
+
         try {
             if (!input.hasOwnProperty('model')) {
                 return {error: 'model is a mandatory input'};
+            }
+
+            if (!models.get(input.model)) {
+                return {error: 'model specified is not supported'};
             }
 
             if (!input.hasOwnProperty('messages')) {
@@ -486,9 +510,20 @@ export class Client {
             },
         };
 
+        const models = new Map();
+        models.set(model.Models.DeepseekCoder67BInstruct, true);
+        models.set(model.Models.Hermes2ProLlama38B, true);
+        models.set(model.Models.Hermes2ProMistral7B, true);
+        models.set(model.Models.NeuralChat7B, true);
+        models.set(model.Models.NousHermesLlama213B, true);
+
         try {
             if (!input.hasOwnProperty('model')) {
                 return [zero, {error: 'model is a mandatory input'}];
+            }
+
+            if (!models.get(input.model)) {
+                return [zero, {error: 'model specified is not supported'}];
             }
 
             if (!input.hasOwnProperty('prompt')) {
