@@ -9,14 +9,13 @@ export interface Error {
 /** Models represents the set of models that can be used. */
 export enum Models {
     BridgetowerLargeItmMlmItc = 'bridgetower-large-itm-mlm-itc',
+    DeepseekCoder67BInstruct = 'deepseek-coder-6.7b-instruct',
     Hermes2ProLlama38B = 'Hermes-2-Pro-Llama-3-8B',
-    NousHermesLlama213B = 'Nous-Hermes-Llama-213B',
     Hermes2ProMistral7B = 'Hermes-2-Pro-Mistral-7B',
     LLama3SqlCoder8b = 'llama-3-sqlcoder-8b',
     Llava157BHF = 'llava-1.5-7b-hf',
     NeuralChat7B = 'Neural-Chat-7B',
-    Yi34BChat = 'Yi-34B-Chat',
-    DeepseekCoder67BInstruct = 'deepseek-coder-6.7b-instruct',
+    NousHermesLlama213B = 'Nous-Hermes-Llama-213B',
 }
 
 /** Roles represents the set of roles that a sender can represent themselves
