@@ -746,8 +746,9 @@ async function testTranslateBasic() {
     const text = 'The rain in Spain stays mainly in the plain';
     const sourceLang = pg.Languages.English;
     const targetLang = pg.Languages.Spanish;
+    const useThirdPartyEngine = false;
 
-    var [result, err] = await client.Translate(text, sourceLang, targetLang);
+    var [result, err] = await client.Translate(text, sourceLang, targetLang, useThirdPartyEngine);
     if (err != null) {
         assert.fail('ERROR:' + err.error);
     }
@@ -764,8 +765,9 @@ async function testTranslateBadkey() {
     const text = 'The rain in Spain stays mainly in the plain';
     const sourceLang = pg.Languages.English;
     const targetLang = pg.Languages.Spanish;
+    const useThirdPartyEngine = false;
 
-    var [, err] = await client.Translate(text, sourceLang, targetLang);
+    var [, err] = await client.Translate(text, sourceLang, targetLang, useThirdPartyEngine);
     if (err == null) {
         assert.fail("didn't get an error");
     }

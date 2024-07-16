@@ -997,11 +997,12 @@ export class Client {
      * const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
      *
      * async function Translate() {
+     *     const text = `The rain in Spain stays mainly in the plain`;
      *     const sourceLang = pg.Languages.English;
      *     const targetLang = pg.Languages.Spanish;
-     *     const text = `The rain in Spain stays mainly in the plain`;
+     *     const useThirdPartyEngine = false;
      *
-     *     var [result, err] = await client.Translate(text, sourceLang, targetLang);
+     *     var [result, err] = await client.Translate(text, sourceLang, targetLang, useThirdPartyEngine);
      *     if (err != null) {
      *         console.log('ERROR:' + err.error);
      *         return;
@@ -1018,11 +1019,13 @@ export class Client {
      * language of the text.
      * @param {model.Languages} targetLang - targetLang represents the target
      * language of the text.
+     * @param {boolean} useThirdPartyEngine - Use third-party translation
+     * engines such as OpenAI, DeepL, and Google. Defaults to false.
      *
      * @returns - A Promise with a Translate object and a Error
      * object if the error is not null.
      */
-    async Translate(text: string, sourceLang: model.Languages, targetLang: model.Languages): Promise<[model.Translate, model.Error | null]> {
+    async Translate(text: string, sourceLang: model.Languages, targetLang: model.Languages, useThirdPartyEngine: boolean): Promise<[model.Translate, model.Error | null]> {
         const zero: model.Translate = {
             id: '',
             object: '',
@@ -1041,6 +1044,7 @@ export class Client {
                 text: text,
                 source_lang: sourceLang,
                 target_lang: targetLang,
+                use_third_party_engine: useThirdPartyEngine,
             };
 
             const [result, err] = await this.RawDoPost('translate', body);
