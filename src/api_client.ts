@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import * as sse from 'fetch-sse';
 import * as model from './api_model.js';
 
-const version = '0.19.0';
+const version = '0.20.0';
 
 /** Client provides access the PredictionGuard API. */
 export class Client {
@@ -106,33 +106,25 @@ export class Client {
                 return [zero, {error: 'messages is a mandatory input'}];
             }
 
-            let maxTokens = 0;
-            if (input.hasOwnProperty('maxTokens')) {
-                maxTokens = input.maxTokens;
-            }
-
-            let temperature = 0;
-            if (input.hasOwnProperty('temperature')) {
-                temperature = input.temperature;
-            }
-
-            let topP = 0;
-            if (input.hasOwnProperty('topP')) {
-                topP = input.topP;
-            }
-
-            let topK = 0;
-            if (input.hasOwnProperty('topK')) {
-                topK = input.topK;
-            }
-
             const m = new Map();
             m.set('model', input.model);
             m.set('messages', input.messages);
-            m.set('max_tokens', maxTokens);
-            m.set('temperature', temperature);
-            m.set('top_p', topP);
-            m.set('top_k', topK);
+
+            if (input.hasOwnProperty('maxTokens')) {
+                m.set('max_tokens', input.maxTokens);
+            }
+
+            if (input.hasOwnProperty('temperature')) {
+                m.set('temperature', input.temperature);
+            }
+
+            if (input.hasOwnProperty('topP')) {
+                m.set('top_p', input.topP);
+            }
+
+            if (input.hasOwnProperty('topK')) {
+                m.set('top_k', input.topK);
+            }
 
             if (input.hasOwnProperty('options')) {
                 if (input.options.hasOwnProperty('factuality') || input.options.hasOwnProperty('toxicity')) {
@@ -270,35 +262,28 @@ export class Client {
                 return {error: 'onMessage is a mandatory input'};
             }
 
-            let maxTokens = 0;
+            const m = new Map();
+            m.set('model', input.model);
+            m.set('messages', input.messages);
+            m.set('stream', true);
+
             if (input.hasOwnProperty('maxTokens')) {
-                maxTokens = input.maxTokens;
+                m.set('max_tokens', input.maxTokens);
             }
 
-            let temperature = 0;
             if (input.hasOwnProperty('temperature')) {
-                temperature = input.temperature;
+                m.set('temperature', input.temperature);
             }
 
-            let topP = 0;
             if (input.hasOwnProperty('topP')) {
-                topP = input.topP;
+                m.set('top_p', input.topP);
             }
 
-            let topK = 0;
             if (input.hasOwnProperty('topK')) {
-                topK = input.topK;
+                m.set('top_k', input.topK);
             }
 
-            const body = {
-                model: input.model,
-                messages: input.messages,
-                max_tokens: maxTokens,
-                temperature: temperature,
-                top_p: topP,
-                top_k: topK,
-                stream: true,
-            };
+            const body = Object.fromEntries(m.entries());
 
             const f = function (event: sse.ServerSentEvent | null, err: model.Error | null) {
                 if (event == null) {
@@ -388,55 +373,48 @@ export class Client {
                 return [zero, {error: 'image is a mandatory input'}];
             }
 
-            let maxTokens = 0;
-            if (input.hasOwnProperty('maxTokens')) {
-                maxTokens = input.maxTokens;
-            }
-
-            let temperature = 0;
-            if (input.hasOwnProperty('temperature')) {
-                temperature = input.temperature;
-            }
-
-            let topP = 0;
-            if (input.hasOwnProperty('topP')) {
-                topP = input.topP;
-            }
-
-            let topK = 0;
-            if (input.hasOwnProperty('topK')) {
-                topK = input.topK;
-            }
-
             const [b64, err1] = await input.image.EncodeBase64();
             if (err1 != null) {
                 return [zero, err1];
             }
 
-            const body = {
-                model: model.Models.Llava157BHF,
-                messages: [
-                    {
-                        role: input.role,
-                        content: [
-                            {
-                                type: 'text',
-                                text: input.question,
+            const m = new Map();
+            m.set('model', model.Models.Llava157BHF);
+            m.set('messages', [
+                {
+                    role: input.role,
+                    content: [
+                        {
+                            type: 'text',
+                            text: input.question,
+                        },
+                        {
+                            type: 'image_url',
+                            image_url: {
+                                url: 'data:image/jpeg;base64,' + b64,
                             },
-                            {
-                                type: 'image_url',
-                                image_url: {
-                                    url: 'data:image/jpeg;base64,' + b64,
-                                },
-                            },
-                        ],
-                    },
-                ],
-                max_tokens: maxTokens,
-                temperature: temperature,
-                top_p: topP,
-                top_k: topK,
-            };
+                        },
+                    ],
+                },
+            ]);
+
+            if (input.hasOwnProperty('maxTokens')) {
+                m.set('max_tokens', input.maxTokens);
+            }
+
+            if (input.hasOwnProperty('temperature')) {
+                m.set('temperature', input.temperature);
+            }
+
+            if (input.hasOwnProperty('topP')) {
+                m.set('top_p', input.topP);
+            }
+
+            if (input.hasOwnProperty('topK')) {
+                m.set('top_k', input.topK);
+            }
+
+            const body = Object.fromEntries(m.entries());
 
             const [result, err2] = await this.RawDoPost('chat/completions', body);
             if (err2 != null) {
@@ -526,34 +504,27 @@ export class Client {
                 return [zero, {error: 'prompt is a mandatory input'}];
             }
 
-            let maxTokens = 0;
+            const m = new Map();
+            m.set('model', input.model);
+            m.set('prompt', input.prompt);
+
             if (input.hasOwnProperty('maxTokens')) {
-                maxTokens = input.maxTokens;
+                m.set('max_tokens', input.maxTokens);
             }
 
-            let temperature = 0;
             if (input.hasOwnProperty('temperature')) {
-                temperature = input.temperature;
+                m.set('temperature', input.temperature);
             }
 
-            let topP = 0;
             if (input.hasOwnProperty('topP')) {
-                topP = input.topP;
+                m.set('top_p', input.topP);
             }
 
-            let topK = 0;
             if (input.hasOwnProperty('topK')) {
-                topK = input.topK;
+                m.set('top_k', input.topK);
             }
 
-            const body = {
-                model: input.model,
-                prompt: input.prompt,
-                max_tokens: maxTokens,
-                temperature: temperature,
-                top_p: topP,
-                top_k: topK,
-            };
+            const body = Object.fromEntries(m.entries());
 
             const [result, err] = await this.RawDoPost('completions', body);
             if (err != null) {
