@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import * as sse from 'fetch-sse';
 import * as model from './api_model.js';
 
-const version = '0.20.0';
+const version = '0.21.0';
 
 /** Client provides access the PredictionGuard API. */
 export class Client {
@@ -24,16 +24,6 @@ export class Client {
     // -------------------------------------------------------------------------
     // Chat
 
-    /** Set of models supported by the chat APIs. */
-    private chatModels = new Map([
-        [model.Models.DeepseekCoder67BInstruct, true],
-        [model.Models.Hermes2ProLlama38B, true],
-        [model.Models.Hermes2ProMistral7B, true],
-        [model.Models.LLama3SqlCoder8b, true],
-        [model.Models.Llava157BHF, true],
-        [model.Models.NeuralChat7B, true],
-    ]);
-
     /** Chat generates chat completions based on a conversation history.
      *
      * @example
@@ -44,7 +34,7 @@ export class Client {
      *
      * async function Chat() {
      *     const input = {
-     *         model: pg.Models.NeuralChat7B,
+     *         model: 'Neural-Chat-7B',
      *         messages: [
      *             {
      *                 role: pg.Roles.User,
@@ -54,7 +44,7 @@ export class Client {
      *         maxTokens: 1000,
      *         temperature: 0.1,
      *         topP: 0.1,
-     *         topK: 50.0,
+     *         topK: 50,
      *         options: {
      *             factuality: true,
      *             toxicity: true,
@@ -96,10 +86,6 @@ export class Client {
         try {
             if (!input.hasOwnProperty('model')) {
                 return [zero, {error: 'model is a mandatory input'}];
-            }
-
-            if (!this.chatModels.get(input.model)) {
-                return [zero, {error: 'model specified is not supported'}];
             }
 
             if (!input.hasOwnProperty('messages')) {
@@ -201,7 +187,7 @@ export class Client {
      *
      * async function ChatSSE() {
      *     const input = {
-     *         model: pg.Models.NeuralChat7B,
+     *         model: 'Neural-Chat-7B',
      *         messages: [
      *             {
      *                 role: pg.Roles.User,
@@ -211,7 +197,7 @@ export class Client {
      *         maxTokens: 1000,
      *         temperature: 0.1,
      *         topP: 0.1,
-     *         topK: 50.0,
+     *         topK: 50,
      *         onMessage: function (event, err) {
      *             if (err != null) {
      *                 if (err.error == 'EOF') {
@@ -248,10 +234,6 @@ export class Client {
         try {
             if (!input.hasOwnProperty('model')) {
                 return {error: 'model is a mandatory input'};
-            }
-
-            if (!this.chatModels.get(input.model)) {
-                return {error: 'model specified is not supported'};
             }
 
             if (!input.hasOwnProperty('messages')) {
@@ -327,7 +309,7 @@ export class Client {
      *         maxTokens: 1000,
      *         temperature: 0.1,
      *         topP: 0.1,
-     *         topK: 50.0,
+     *         topK: 50,
      *     };
      *
      *     var [result, err] = await client.ChatVision(input);
@@ -353,7 +335,7 @@ export class Client {
             id: '',
             object: '',
             created: 0,
-            model: model.Models.Llava157BHF,
+            model: '',
             choices: [],
             createdDate: function () {
                 return new Date(0);
@@ -361,6 +343,10 @@ export class Client {
         };
 
         try {
+            if (!input.hasOwnProperty('model')) {
+                return [zero, {error: 'model is a mandatory input'}];
+            }
+
             if (!input.hasOwnProperty('role')) {
                 return [zero, {error: 'role is a mandatory input'}];
             }
@@ -379,7 +365,7 @@ export class Client {
             }
 
             const m = new Map();
-            m.set('model', model.Models.Llava157BHF);
+            m.set('model', input.model);
             m.set('messages', [
                 {
                     role: input.role,
@@ -435,15 +421,6 @@ export class Client {
     // -------------------------------------------------------------------------
     // Completion
 
-    /** Set of models supported by the completion API. */
-    private completionModels = new Map([
-        [model.Models.DeepseekCoder67BInstruct, true],
-        [model.Models.Hermes2ProLlama38B, true],
-        [model.Models.Hermes2ProMistral7B, true],
-        [model.Models.NeuralChat7B, true],
-        [model.Models.NousHermesLlama213B, true],
-    ]);
-
     /** Completion generates text completions based on the provided input.
      *
      * @example
@@ -454,12 +431,12 @@ export class Client {
      *
      * async function Completions() {
      *     const input = {
-     *         model: pg.Models.NeuralChat7B,
+     *         model: 'Neural-Chat-7B',
      *         prompt: 'Will I lose my hair',
      *         maxTokens: 1000,
      *         temperature: 0.1,
      *         topP: 0.1,
-     *         topK: 50.0,
+     *         topK: 50,
      *     };
      *
      *     var [result, err] = await client.Completion(input);
@@ -494,10 +471,6 @@ export class Client {
         try {
             if (!input.hasOwnProperty('model')) {
                 return [zero, {error: 'model is a mandatory input'}];
-            }
-
-            if (!this.completionModels.get(input.model)) {
-                return [zero, {error: 'model specified is not supported'}];
             }
 
             if (!input.hasOwnProperty('prompt')) {
@@ -563,7 +536,7 @@ export class Client {
      *         },
      *     ];
      *
-     *     var [result, err] = await client.Embedding(input);
+     *     var [result, err] = await client.Embedding('bridgetower-large-itm-mlm-itc', input);
      *     if (err != null) {
      *         console.log('ERROR:' + err.error);
      *         return;
@@ -577,18 +550,20 @@ export class Client {
      * Embedding();
      * ```
      *
+     * @param {string} model - model to use.
+     *
      * @param {model.EmbeddingInput[]} input - input represents a collection of
      * text and images to vectorize.
      *
      * @returns - A Promise with a Embedding object and an Error object if
      * the error is not null.
      */
-    async Embedding(input: model.EmbeddingInput[]): Promise<[model.Embedding, model.Error | null]> {
+    async Embedding(model: string, input: model.EmbeddingInput[]): Promise<[model.Embedding, model.Error | null]> {
         const zero: model.Embedding = {
             id: '',
             object: '',
             created: 0,
-            model: model.Models.BridgetowerLargeItmMlmItc,
+            model: '',
             data: [],
             createdDate: function () {
                 return new Date(0);
@@ -614,7 +589,7 @@ export class Client {
             }
 
             const body = {
-                model: model.Models.BridgetowerLargeItmMlmItc,
+                model: model,
                 input: embeds,
             };
 

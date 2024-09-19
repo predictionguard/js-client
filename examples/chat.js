@@ -4,7 +4,7 @@ const client = new pg.Client('https://api.predictionguard.com', process.env.PGKE
 
 async function Chat() {
     const input = {
-        model: pg.Models.NeuralChat7B,
+        model: 'Neural-Chat-7B',
         messages: [
             {
                 role: pg.Roles.User,
@@ -14,7 +14,7 @@ async function Chat() {
         maxTokens: 1000,
         temperature: 0.1,
         topP: 0.1,
-        topK: 50.0,
+        topK: 50,
         options: {
             factuality: true,
             toxicity: true,

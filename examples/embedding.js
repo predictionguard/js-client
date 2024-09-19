@@ -12,7 +12,7 @@ async function Embedding() {
         },
     ];
 
-    var [result, err] = await client.Embedding(input);
+    var [result, err] = await client.Embedding('bridgetower-large-itm-mlm-itc', input);
     if (err != null) {
         console.log('ERROR:' + err.error);
         return;

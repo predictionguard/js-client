@@ -270,7 +270,7 @@ async function testChatBasic() {
     const client = new pg.Client('http://localhost:8080', 'any key');
 
     const input = {
-        model: pg.Models.NeuralChat7B,
+        model: 'Neural-Chat-7B',
         messages: [
             {
                 role: pg.Roles.User,
@@ -309,6 +309,7 @@ async function testChatVision() {
     };
 
     const input = {
+        model: 'llava-1.5-7b-hf',
         role: pg.Roles.User,
         question: 'is there a deer in this picture',
         image: imageMock,
@@ -332,7 +333,7 @@ async function testChatBadkey() {
     const client = new pg.Client('http://localhost:8080', '');
 
     const input = {
-        model: pg.Models.NeuralChat7B,
+        model: 'Neural-Chat-7B',
         messages: [
             {
                 role: pg.Roles.User,
@@ -388,7 +389,7 @@ async function testCompletionBasic() {
     const client = new pg.Client('http://localhost:8080', 'any key');
 
     const input = {
-        model: pg.Models.NeuralChat7B,
+        model: 'Neural-Chat-7B',
         prompt: 'Will I lose my hair',
         maxTokens: 1000,
         temperature: 0.1,
@@ -410,7 +411,7 @@ async function testCompletionBadkey() {
     const client = new pg.Client('http://localhost:8080', '');
 
     const input = {
-        model: pg.Models.NeuralChat7B,
+        model: 'Neural-Chat-7B',
         prompt: 'Will I lose my hair',
         maxTokens: 1000,
         temperature: 0.1,
@@ -463,7 +464,7 @@ async function testEmbeddingBasic() {
         },
     ];
 
-    var [result, err] = await client.Embedding(input);
+    var [result, err] = await client.Embedding('bridgetower-large-itm-mlm-itc', input);
     if (err != null) {
         assert.fail('ERROR:' + err.error);
     }
@@ -490,7 +491,7 @@ async function testEmbeddingBadkey() {
         },
     ];
 
-    var [, err] = await client.Embedding(input);
+    var [, err] = await client.Embedding('bridgetower-large-itm-mlm-itc', input);
     if (err == null) {
         assert.fail("didn't get an error");
     }

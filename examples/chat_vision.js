@@ -6,16 +6,17 @@ async function ChatVision() {
     const image = new pg.ImageNetwork('https://images.ctfassets.net/hrltx12pl8hq/7GlCy7xexnzzrAARg86iUj/f4429bfa8397f81a2429ea003181347f/Autumn_Vectors.jpg');
 
     const input = {
+        model: 'llava-1.5-7b-hf',
         role: pg.Roles.User,
         question: 'is there a deer in this picture',
         image: image,
         maxTokens: 1000,
         temperature: 0.1,
         topP: 0.1,
-        topK: 50.0,
+        topK: 50,
     };
 
-    var [result, err] = await client.ChatVision(input);
+    var [result, err] = await client.ChatVision('bridgetower-large-itm-mlm-itc', input);
     if (err != null) {
         console.log('ERROR:' + err.error);
         return;

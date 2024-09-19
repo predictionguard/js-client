@@ -4,7 +4,7 @@ const client = new pg.Client('https://api.predictionguard.com', process.env.PGKE
 
 async function ChatSSE() {
     const input = {
-        model: pg.Models.NeuralChat7B,
+        model: 'Neural-Chat-7B',
         messages: [
             {
                 role: pg.Roles.User,
@@ -14,7 +14,7 @@ async function ChatSSE() {
         maxTokens: 1000,
         temperature: 0.1,
         topP: 0.1,
-        topK: 50.0,
+        topK: 50,
         onMessage: function (event, err) {
             if (err != null) {
                 if (err.error == 'EOF') {

@@ -6,18 +6,6 @@ export interface Error {
 
 // -----------------------------------------------------------------------------
 
-/** Models represents the set of models that can be used. */
-export enum Models {
-    BridgetowerLargeItmMlmItc = 'bridgetower-large-itm-mlm-itc',
-    DeepseekCoder67BInstruct = 'deepseek-coder-6.7b-instruct',
-    Hermes2ProLlama38B = 'Hermes-2-Pro-Llama-3-8B',
-    Hermes2ProMistral7B = 'Hermes-2-Pro-Mistral-7B',
-    LLama3SqlCoder8b = 'llama-3-sqlcoder-8b',
-    Llava157BHF = 'llava-1.5-7b-hf',
-    NeuralChat7B = 'Neural-Chat-7B',
-    NousHermesLlama213B = 'Nous-Hermes-Llama-213B',
-}
-
 /** Roles represents the set of roles that a sender can represent themselves
  * as. */
 export enum Roles {
@@ -156,15 +144,8 @@ export interface ChatInputOptions {
 
 /** ChatInput represents the full potential input options for chat. */
 export interface ChatInput {
-    /** model represents the model to use. You are restriced to these models:
-     * DeepseekCoder67BInstruct
-     * Hermes2ProLlama38B
-     * Hermes2ProMistral7B
-     * LLama3SqlCoder8b
-     * Llava157BHF
-     * NeuralChat7B
-     */
-    model: Models;
+    /** model represents the model to use. */
+    model: string;
 
     /** messages represents the set of messages to process. */
     messages: ChatInputMessage[];
@@ -225,7 +206,7 @@ export interface Chat {
     created: number;
 
     /** model represents the model used for generating the result. */
-    model: Models;
+    model: string;
 
     /** choices represents the collection of choices to choose from. */
     choices: ChatChoice[];
@@ -238,15 +219,8 @@ export interface Chat {
 
 /** ChatSSEInput represents the full potential input options for SSE chat. */
 export interface ChatSSEInput {
-    /** model represents the model to use. You are restriced to these models:
-     * DeepseekCoder67BInstruct
-     * Hermes2ProLlama38B
-     * Hermes2ProMistral7B
-     * LLama3SqlCoder8b
-     * Llava157BHF
-     * NeuralChat7B
-     */
-    model: Models;
+    /** model represents the model to use. */
+    model: string;
 
     /** messages represents the set of messages to process. */
     messages: ChatInputMessage[];
@@ -308,7 +282,7 @@ export interface ChatSSE {
     created: number;
 
     /** model represents the model used for generating the result. */
-    model: Models;
+    model: string;
 
     /** choices represents the collection of choices to choose from. */
     choices: ChatSSEChoice[];
@@ -321,6 +295,9 @@ export interface ChatSSE {
 
 /** ChatVisionInput represents the full potential input options for Vision chat. */
 export interface ChatVisionInput {
+    /** model represents the model to use. */
+    model: string;
+
     /** role represents the role of the sender (user or assistant). */
     role: Roles;
 
@@ -382,7 +359,7 @@ export interface ChatVision {
     created: number;
 
     /** model represents the model used for generating the result. */
-    model: Models;
+    model: string;
 
     /** choices represents the collection of choices to choose from. */
     choices: ChatVisionChoice[];
@@ -395,14 +372,8 @@ export interface ChatVision {
 
 /** CompletionInput represents the full potential input options for completion. */
 export interface CompletionInput {
-    /** model represents the model to use. You are restriced to these models:
-     * DeepseekCoder67BInstruct
-     * Hermes2ProLlama38B
-     * Hermes2ProMistral7B
-     * NeuralChat7B
-     * NousHermesLlama213B
-     */
-    model: Models;
+    /** model represents the model to use. */
+    model: string;
 
     /** prompt represents the prompt to process. */
     prompt: string;
@@ -428,7 +399,7 @@ export interface CompletionChoice {
 
     /** model represents the model used for generating the result for
      * this choice. */
-    model: Models;
+    model: string;
 
     /** status represents if the response for this choice was successful
      * or not. */
@@ -496,7 +467,7 @@ export interface Embedding {
     created: number;
 
     /** model represents the model used for generating the result. */
-    model: Models;
+    model: string;
 
     /** EmbeddingData represents the collection of vector points. */
     data: EmbeddingData[];
