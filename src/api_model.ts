@@ -187,10 +187,6 @@ export interface ChatChoice {
 
     /** message represents the message response for this choice. */
     message: ChatMessage;
-
-    /** status represents if the response for this choice was successful
-     * or not. */
-    status: string;
 }
 
 /** Chat represents an object that contains the result for the chat call. */
@@ -340,10 +336,6 @@ export interface ChatVisionChoice {
 
     /** message represents a response for this choice. */
     message: ChatVisionMessage;
-
-    /** status represents if the response for this choice was successful
-     * or not. */
-    status: string;
 }
 
 /** ChatVision represents the result for the vision call. */
@@ -397,14 +389,6 @@ export interface CompletionChoice {
      * this choice. */
     index: number;
 
-    /** model represents the model used for generating the result for
-     * this choice. */
-    model: string;
-
-    /** status represents if the response for this choice was successful
-     * or not. */
-    status: string;
-
     /** text represents the generated text for this choice. */
     text: string;
 }
@@ -446,9 +430,8 @@ export interface EmbeddingData {
      * this choice. */
     index: number;
 
-    /** status represents if the response for this choice was successful
-     * or not. */
-    status: string;
+    /** object represent the type of the result document. */
+    object: string;
 
     //** embedding represents the collection of vector points. */
     embedding: number[];
@@ -486,9 +469,6 @@ export interface FactualityCheck {
 
     /** score represents the score for this check. */
     score: number;
-
-    /** status represents the status for this check. */
-    status: string;
 }
 
 /** Factuality represents an object that contains the result for the
@@ -592,9 +572,6 @@ export interface ToxicityCheck {
 
     /** score represents the score for the provided text. */
     score: number;
-
-    /** status represents the status for this check. */
-    status: string;
 }
 
 /** Toxicity represents an object that contains the result for the

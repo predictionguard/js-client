@@ -243,7 +243,6 @@ const chatResp = {
                     "The world, in general, is full of both beauty and challenges. It can be considered as a mixed bag with various aspects to explore, understand, and appreciate. There are countless achievements in terms of scientific advancements, medical breakthroughs, and technological innovations. On the other hand, the world often encounters issues related to inequality, conflicts, environmental degradation, and moral complexities.\n\nPersonally, it's essential to maintain a balance and perspective while navigating these dimensions. It means trying to find the silver lining behind every storm, practicing gratitude, and embracing empathy to connect with and help others. Actively participating in making the world a better place by supporting causes close to one's heart can also provide a sense of purpose and hope.",
                 output: '',
             },
-            status: 'success',
         },
     ],
 };
@@ -261,7 +260,6 @@ const chatVisionResp = {
                 content: '?\n\nThe man is wearing a hat, glasses, and a sweater.',
                 output: null,
             },
-            status: 'success',
         },
     ],
 };
@@ -380,7 +378,6 @@ const completionResp = {
                     "The world, in general, is full of both beauty and challenges. It can be considered as a mixed bag with various aspects to explore, understand, and appreciate. There are countless achievements in terms of scientific advancements, medical breakthroughs, and technological innovations. On the other hand, the world often encounters issues related to inequality, conflicts, environmental degradation, and moral complexities.\n\nPersonally, it's essential to maintain a balance and perspective while navigating these dimensions. It means trying to find the silver lining behind every storm, practicing gratitude, and embracing empathy to connect with and help others. Actively participating in making the world a better place by supporting causes close to one's heart can also provide a sense of purpose and hope.",
                 output: '',
             },
-            status: 'success',
         },
     ],
 };
@@ -440,7 +437,6 @@ const embeddingResp = {
     model: 'bridgetower-large-itm-mlm-itc',
     data: [
         {
-            status: 'success',
             index: 0,
             object: 'embedding',
             embedding: [0.04457271471619606],
@@ -514,7 +510,6 @@ const factualityResp = {
         {
             Score: 0.7879658937454224,
             Index: 0,
-            Status: 'success',
         },
     ],
 };
@@ -665,7 +660,6 @@ const toxicityResp = {
         {
             Score: 0.7072361707687378,
             Index: 0,
-            Status: 'success',
         },
     ],
 };
