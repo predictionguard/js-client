@@ -147,6 +147,30 @@ export interface ChatInput {
     /** model represents the model to use. */
     model: string;
 
+    /** message represents a message to process. */
+    messages: string;
+
+    /** maxTokens represents the max number of tokens to return. */
+    maxTokens: number;
+
+    /** temperature represents the randomness in GPT's output. */
+    temperature: number;
+
+    /** topP represents the diversity of the generated text. */
+    topP: number;
+
+    /** topK represents the variability of the generated text. */
+    topK: number;
+
+    /** options represents a set of optional parameters. */
+    options: ChatInputOptions;
+}
+
+/** ChatInputMulti represents the full potential input options for chat. */
+export interface ChatInputMulti {
+    /** model represents the model to use. */
+    model: string;
+
     /** messages represents the set of messages to process. */
     messages: ChatInputMessage[];
 
@@ -169,14 +193,11 @@ export interface ChatInput {
 /** ChatMessage represents an object that contains the content and a role. It
  * can be used for input and returned as part of the response. */
 export interface ChatMessage {
-    /** content represents the content of the message. */
-    content: string;
-
     /** role represents the role of the sender (user or assistant). */
     role: Roles;
 
-    /** output represents the output for this message. */
-    output: string;
+    /** content represents the content of the message. */
+    content: string;
 }
 
 /** ChatChoice represents an object that contains a result choice. */
@@ -323,9 +344,6 @@ export interface ChatVisionMessage {
 
     /** content represents the response for this message. */
     content: string;
-
-    /** output represents the output for this message. */
-    output: string;
 }
 
 /** ChatVisionChoice represents a choice for the vision call. */

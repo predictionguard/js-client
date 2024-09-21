@@ -148,6 +148,10 @@ describe('Test_Client', () => {
         await testChatBasic();
     });
 
+    it('chat-multi', async () => {
+        await testChatMulti();
+    });
+
     it('chat-vision', async () => {
         await testChatVision();
     });
@@ -275,6 +279,34 @@ async function testChatBasic() {
                 content: 'How do you feel about the world in general',
             },
         ],
+        maxTokens: 1000,
+        temperature: 0.1,
+        topP: 0.1,
+        options: {
+            factuality: true,
+            toxicity: true,
+            pii: pg.PIIs.Replace,
+            piiReplaceMethod: pg.ReplaceMethods.Random,
+        },
+    };
+
+    var [result, err] = await client.Chat(input);
+    if (err != null) {
+        assert.fail('ERROR:' + err.error);
+    }
+
+    const got = JSON.stringify(result);
+    const exp = JSON.stringify(chatResp);
+
+    assert.equal(got, exp);
+}
+
+async function testChatMulti() {
+    const client = new pg.Client('http://localhost:8080', 'any key');
+
+    const input = {
+        model: 'Neural-Chat-7B',
+        messages: 'How do you feel about the world in general',
         maxTokens: 1000,
         temperature: 0.1,
         topP: 0.1,

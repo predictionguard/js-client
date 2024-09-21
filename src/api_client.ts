@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import * as sse from 'fetch-sse';
 import * as model from './api_model.js';
 
-const version = '0.22.0';
+const version = '0.23.0';
 
 /** Client provides access the PredictionGuard API. */
 export class Client {
@@ -35,6 +35,31 @@ export class Client {
      * async function Chat() {
      *     const input = {
      *         model: 'Neural-Chat-7B',
+     *         messages: 'How do you feel about the world in general',
+     *         maxTokens: 1000,
+     *         temperature: 0.1,
+     *         topP: 0.1,
+     *         topK: 50,
+     *         options: {
+     *             factuality: true,
+     *             toxicity: true,
+     *             pii: pg.PIIs.Replace,
+     *             piiReplaceMethod: pg.ReplaceMethods.Random,
+     *         },
+     *     };
+     *
+     *     var [result, err] = await client.Chat(input);
+     *     if (err != null) {
+     *         console.log('ERROR:' + err.error);
+     *         return;
+     *     }
+     *
+     *     console.log('RESULT:' + result.createdDate() + ': ' + result.model + ': ' + result.choices[0].message.content);
+     * }
+     *
+     * async function ChatMulti() {
+     *     const input = {
+     *         model: 'Neural-Chat-7B',
      *         messages: [
      *             {
      *                 role: pg.Roles.User,
@@ -63,15 +88,16 @@ export class Client {
      * }
      *
      * Chat();
+     * ChatMulti();
      * ```
      *
-     * @param {model.ChatInput} input - input represents the entire set of
+     * @param {model.ChatInput | model.ChatInputMulti} input - input represents the entire set of
      * possible input for the Chat call.
      *
      * @returns - A Promise with a Chat object and an Error object if
      * the error is not null.
      */
-    async Chat(input: model.ChatInput): Promise<[model.Chat, model.Error | null]> {
+    async Chat(input: model.ChatInput | model.ChatInputMulti): Promise<[model.Chat, model.Error | null]> {
         const zero: model.Chat = {
             id: '',
             object: '',

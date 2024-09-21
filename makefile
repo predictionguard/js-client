@@ -42,16 +42,11 @@ curl-chat:
      -H "Content-Type: application/json" \
      -d '{ \
 		"model": "Neural-Chat-7B", \
-		"messages": [ \
-			{ \
-			"role": "user", \
-			"content": "How do you feel about the world in general" \
-			} \
-		], \
+		"messages": "How do you feel about the world in general", \
 		"max_tokens": 1000, \
 		"temperature": 1.1, \
 		"top_p": 0.1, \
-		"top_k": 50.0, \
+		"top_k": 50, \
 		"output": { \
 			"factuality": true, \
 			"toxicity": true \
@@ -64,6 +59,35 @@ curl-chat:
 
 js-chat: compile-ts
 	node --env-file=.env examples/chat.js
+
+curl-chat-multi:
+	curl -i -X POST https://api.predictionguard.com/chat/completions \
+     -H "Authorization: Bearer ${PGKEY}" \
+     -H "Content-Type: application/json" \
+     -d '{ \
+		"model": "Neural-Chat-7B", \
+		"messages": [ \
+			{ \
+			"role": "user", \
+			"content": "How do you feel about the world in general" \
+			} \
+		], \
+		"max_tokens": 1000, \
+		"temperature": 1.1, \
+		"top_p": 0.1, \
+		"top_k": 50, \
+		"output": { \
+			"factuality": true, \
+			"toxicity": true \
+		}, \
+		"input": { \
+			"pii": "replace", \
+			"pii_replace_method": "random" \
+		} \
+	}'
+
+js-chat-multi: compile-ts
+	node --env-file=.env examples/chat_multi.js
 	 
 curl-chat-sse:
 	curl -i -X POST https://api.predictionguard.com/chat/completions \
