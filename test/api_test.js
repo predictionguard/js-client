@@ -235,7 +235,7 @@ describe('Test_Client', () => {
 
 const chatResp = {
     id: 'chat-ShL1yk0N0h1lzmrJDQCpCz3WQFQh9',
-    object: 'chat_completion',
+    object: 'chat.completion',
     created: 1715628729,
     model: 'Neural-Chat-7B',
     choices: [
@@ -253,7 +253,7 @@ const chatResp = {
 
 const chatVisionResp = {
     id: 'chat-cmSAaDWzqAVOVuGePjDv1HjwVn5SQ',
-    object: 'chat_completion',
+    object: 'chat.completion',
     created: 1717437819,
     model: 'llava-1.5-7b-hf',
     choices: [
@@ -398,7 +398,7 @@ async function testChatBadkey() {
 
 const completionResp = {
     id: 'chat-ShL1yk0N0h1lzmrJDQCpCz3WQFQh9',
-    object: 'chat_completion',
+    object: 'chat.completion',
     created: 1715628729,
     model: 'Neural-Chat-7B',
     choices: [
@@ -464,7 +464,7 @@ async function testCompletionBadkey() {
 
 const embeddingResp = {
     id: 'emb - 0qU4sYEutZvkHskxXwzYDgZVOhtLw',
-    object: 'embedding_batch',
+    object: 'list',
     created: 1717439154,
     model: 'bridgetower-large-itm-mlm-itc',
     data: [
@@ -536,7 +536,7 @@ async function testEmbeddingBadkey() {
 
 const factualityResp = {
     id: 'fact-GK9kueuMw0NQLc0sYEIVlkGsPH31R',
-    object: 'factuality_check',
+    object: 'factuality.check',
     created: 1715730425,
     checks: [
         {
@@ -686,7 +686,7 @@ async function testReplacePIIBadkey() {
 
 const toxicityResp = {
     id: 'toxi-vRvkxJHmAiSh3NvuuSc48HQ669g7y',
-    object: 'toxicity_check',
+    object: 'toxicity.check',
     created: 1715731131,
     checks: [
         {
