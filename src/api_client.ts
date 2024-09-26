@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import * as sse from 'fetch-sse';
 import * as model from './api_model.js';
 
-const version = '0.26.0';
+const version = '0.26.1';
 
 /** Client provides access the PredictionGuard API. */
 export class Client {
