@@ -1,22 +1,30 @@
 import * as pg from '../dist/index.js';
 
-const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
+const client = new pg.Client('https://api.predictionguard.com', process.env.PREDICTIONGUARD_API_KEY);
 
 async function ChatVision() {
-    const image = new pg.ImageNetwork('https://images.ctfassets.net/hrltx12pl8hq/7GlCy7xexnzzrAARg86iUj/f4429bfa8397f81a2429ea003181347f/Autumn_Vectors.jpg');
+    const image = new pg.ImageNetwork('https://predictionguard.com/lib_eltrNYEjQbpUWFRI/oy2r533pndpk0q8q.png?w=1024&dpr=2');
 
     const input = {
         model: 'llava-1.5-7b-hf',
         role: pg.Roles.User,
-        question: 'is there a deer in this picture',
+        question: 'Is there a computer in this picture?',
         image: image,
         maxTokens: 1000,
         temperature: 0.1,
         topP: 0.1,
         topK: 50,
+        inputExtension: {
+            pii: pg.PIIs.Replace,
+            piiReplaceMethod: pg.ReplaceMethods.Random,
+        },
+        outputExtension: {
+            factuality: true,
+            toxicity: true,
+        },
     };
 
-    var [result, err] = await client.ChatVision('bridgetower-large-itm-mlm-itc', input);
+    var [result, err] = await client.ChatVision(input);
     if (err != null) {
         console.log('ERROR:' + err.error);
         return;

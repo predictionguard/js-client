@@ -1,6 +1,6 @@
 import * as pg from '../dist/index.js';
 
-const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
+const client = new pg.Client('https://api.predictionguard.com', process.env.PREDICTIONGUARD_API_KEY);
 
 async function ChatSSE() {
     const input = {
@@ -15,6 +15,10 @@ async function ChatSSE() {
         temperature: 0.1,
         topP: 0.1,
         topK: 50,
+        inputExtension: {
+            pii: pg.PIIs.Replace,
+            piiReplaceMethod: pg.ReplaceMethods.Random,
+        },
         onMessage: function (event, err) {
             if (err != null) {
                 if (err.error == 'EOF') {

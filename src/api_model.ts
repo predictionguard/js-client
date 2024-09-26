@@ -113,23 +113,8 @@ export interface Base64Encoder {
 
 // -----------------------------------------------------------------------------
 
-/** ChatInputMessage represents a role and content related to a chat. */
-export interface ChatInputMessage {
-    /** role represents the role of the sender (user or assistant). */
-    role: Roles;
-
-    /** content represents the content of the message. */
-    content: string;
-}
-
 /** ChatInputOptions represents options for post and preprocessing the input. */
-export interface ChatInputOptions {
-    /** factuality represents the choice to run the factuality algorithm. */
-    factuality: boolean;
-
-    /** toxicity represents the choice to run the toxicity algorithm. */
-    toxicity: boolean;
-
+export interface InputExtension {
     /** blockPromptInjection represents the choice to run the
      * blockPromptInjection algorithm. */
     blockPromptInjection: boolean;
@@ -140,6 +125,26 @@ export interface ChatInputOptions {
 
     /** piiReplaceMethod represents the method to use for PII. */
     piiReplaceMethod: ReplaceMethods;
+}
+
+/** ChatInputOptions represents options for post and preprocessing the input. */
+export interface OutputExtension {
+    /** factuality represents the choice to run the factuality algorithm. */
+    factuality: boolean;
+
+    /** toxicity represents the choice to run the toxicity algorithm. */
+    toxicity: boolean;
+}
+
+// -----------------------------------------------------------------------------
+
+/** ChatInputMessage represents a role and content related to a chat. */
+export interface ChatInputMessage {
+    /** role represents the role of the sender (user or assistant). */
+    role: Roles;
+
+    /** content represents the content of the message. */
+    content: string;
 }
 
 /** ChatInput represents the full potential input options for chat. */
@@ -162,8 +167,11 @@ export interface ChatInput {
     /** topK represents the variability of the generated text. */
     topK: number;
 
-    /** options represents a set of optional parameters. */
-    options: ChatInputOptions;
+    /** inputExtension represents a set of optional pre-processing integrations. */
+    inputExtension: InputExtension;
+
+    /** inputExtension represents a set of optional post-processing integrations. */
+    outputExtension: OutputExtension;
 }
 
 /** ChatInputMulti represents the full potential input options for chat. */
@@ -186,8 +194,11 @@ export interface ChatInputMulti {
     /** topK represents the variability of the generated text. */
     topK: number;
 
-    /** options represents a set of optional parameters. */
-    options: ChatInputOptions;
+    /** inputExtension represents a set of optional pre-processing integrations. */
+    inputExtension: InputExtension;
+
+    /** inputExtension represents a set of optional post-processing integrations. */
+    outputExtension: OutputExtension;
 }
 
 /** ChatMessage represents an object that contains the content and a role. It
@@ -253,6 +264,9 @@ export interface ChatSSEInput {
 
     /** topK represents the variability of the generated text. */
     topK: number;
+
+    /** inputExtension represents a set of optional pre-processing integrations. */
+    inputExtension: InputExtension;
 
     /** onMessage represents a function that will receive the messages. */
     onMessage: (event: ChatSSE | null, err: Error | null) => void;
@@ -335,6 +349,12 @@ export interface ChatVisionInput {
 
     /** topK represents the variability of the generated text. */
     topK: number;
+
+    /** inputExtension represents a set of optional pre-processing integrations. */
+    inputExtension: InputExtension;
+
+    /** inputExtension represents a set of optional post-processing integrations. */
+    outputExtension: OutputExtension;
 }
 
 /** ChatVisionMessage represents content for the vision call. */
@@ -399,6 +419,12 @@ export interface CompletionInput {
 
     /** topK represents the variability of the generated text. */
     topK: number;
+
+    /** inputExtension represents a set of optional pre-processing integrations. */
+    inputExtension: InputExtension;
+
+    /** inputExtension represents a set of optional post-processing integrations. */
+    outputExtension: OutputExtension;
 }
 
 /** Choice represents an object that contains a result choice. */

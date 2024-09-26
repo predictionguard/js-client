@@ -1,6 +1,6 @@
 import * as pg from '../dist/index.js';
 
-const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
+const client = new pg.Client('https://api.predictionguard.com', process.env.PREDICTIONGUARD_API_KEY);
 
 async function ChatMulti() {
     const input = {
@@ -15,11 +15,13 @@ async function ChatMulti() {
         temperature: 0.1,
         topP: 0.1,
         topK: 50,
-        options: {
-            factuality: true,
-            toxicity: true,
+        inputExtension: {
             pii: pg.PIIs.Replace,
             piiReplaceMethod: pg.ReplaceMethods.Random,
+        },
+        outputExtension: {
+            factuality: true,
+            toxicity: true,
         },
     };
 

@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import * as sse from 'fetch-sse';
 import * as model from './api_model.js';
 
-const version = '0.23.0';
+const version = '0.26.0';
 
 /** Client provides access the PredictionGuard API. */
 export class Client {
@@ -40,11 +40,13 @@ export class Client {
      *         temperature: 0.1,
      *         topP: 0.1,
      *         topK: 50,
-     *         options: {
-     *             factuality: true,
-     *             toxicity: true,
+     *         inputExtension: {
      *             pii: pg.PIIs.Replace,
      *             piiReplaceMethod: pg.ReplaceMethods.Random,
+     *         },
+     *         outputExtension: {
+     *             factuality: true,
+     *             toxicity: true,
      *         },
      *     };
      *
@@ -70,11 +72,13 @@ export class Client {
      *         temperature: 0.1,
      *         topP: 0.1,
      *         topK: 50,
-     *         options: {
-     *             factuality: true,
-     *             toxicity: true,
+     *         inputExtension: {
      *             pii: pg.PIIs.Replace,
      *             piiReplaceMethod: pg.ReplaceMethods.Random,
+     *         },
+     *         outputExtension: {
+     *             factuality: true,
+     *             toxicity: true,
      *         },
      *     };
      *
@@ -138,40 +142,21 @@ export class Client {
                 m.set('top_k', input.topK);
             }
 
-            if (input.hasOwnProperty('options')) {
-                if (input.options.hasOwnProperty('factuality') || input.options.hasOwnProperty('toxicity')) {
-                    let factuality = false;
-                    if (input.options.hasOwnProperty('factuality')) {
-                        factuality = input.options.factuality;
-                    }
-
-                    let toxicity = false;
-                    if (input.options.hasOwnProperty('toxicity')) {
-                        toxicity = input.options.toxicity;
-                    }
-
-                    const output = {
-                        factuality: factuality,
-                        toxicity: toxicity,
-                    };
-
-                    m.set('output', output);
-                }
-
-                if (input.options.hasOwnProperty('blockPromptInjection') || input.options.hasOwnProperty('pii') || input.options.hasOwnProperty('piiReplaceMethod')) {
+            if (input.hasOwnProperty('inputExtension')) {
+                if (input.inputExtension.hasOwnProperty('blockPromptInjection') || input.inputExtension.hasOwnProperty('pii') || input.inputExtension.hasOwnProperty('piiReplaceMethod')) {
                     let blockPromptInjection = false;
-                    if (input.options.hasOwnProperty('blockPromptInjection')) {
-                        blockPromptInjection = input.options.blockPromptInjection;
+                    if (input.inputExtension.hasOwnProperty('blockPromptInjection')) {
+                        blockPromptInjection = input.inputExtension.blockPromptInjection;
                     }
 
                     let pii = '';
-                    if (input.options.hasOwnProperty('pii')) {
-                        pii = input.options.pii;
+                    if (input.inputExtension.hasOwnProperty('pii')) {
+                        pii = input.inputExtension.pii;
                     }
 
                     let replaceMethod = '';
-                    if (input.options.hasOwnProperty('piiReplaceMethod')) {
-                        replaceMethod = input.options.piiReplaceMethod;
+                    if (input.inputExtension.hasOwnProperty('piiReplaceMethod')) {
+                        replaceMethod = input.inputExtension.piiReplaceMethod;
                     }
 
                     const inp = {
@@ -181,6 +166,27 @@ export class Client {
                     };
 
                     m.set('input', inp);
+                }
+            }
+
+            if (input.hasOwnProperty('outputExtension')) {
+                if (input.outputExtension.hasOwnProperty('factuality') || input.outputExtension.hasOwnProperty('toxicity')) {
+                    let factuality = false;
+                    if (input.outputExtension.hasOwnProperty('factuality')) {
+                        factuality = input.outputExtension.factuality;
+                    }
+
+                    let toxicity = false;
+                    if (input.outputExtension.hasOwnProperty('toxicity')) {
+                        toxicity = input.outputExtension.toxicity;
+                    }
+
+                    const output = {
+                        factuality: factuality,
+                        toxicity: toxicity,
+                    };
+
+                    m.set('output', output);
                 }
             }
 
@@ -224,6 +230,10 @@ export class Client {
      *         temperature: 0.1,
      *         topP: 0.1,
      *         topK: 50,
+     *         inputExtension: {
+     *             pii: pg.PIIs.Replace,
+     *             piiReplaceMethod: pg.ReplaceMethods.Random,
+     *         },
      *         onMessage: function (event, err) {
      *             if (err != null) {
      *                 if (err.error == 'EOF') {
@@ -291,6 +301,33 @@ export class Client {
                 m.set('top_k', input.topK);
             }
 
+            if (input.hasOwnProperty('inputExtension')) {
+                if (input.inputExtension.hasOwnProperty('blockPromptInjection') || input.inputExtension.hasOwnProperty('pii') || input.inputExtension.hasOwnProperty('piiReplaceMethod')) {
+                    let blockPromptInjection = false;
+                    if (input.inputExtension.hasOwnProperty('blockPromptInjection')) {
+                        blockPromptInjection = input.inputExtension.blockPromptInjection;
+                    }
+
+                    let pii = '';
+                    if (input.inputExtension.hasOwnProperty('pii')) {
+                        pii = input.inputExtension.pii;
+                    }
+
+                    let replaceMethod = '';
+                    if (input.inputExtension.hasOwnProperty('piiReplaceMethod')) {
+                        replaceMethod = input.inputExtension.piiReplaceMethod;
+                    }
+
+                    const inp = {
+                        block_prompt_injection: blockPromptInjection,
+                        pii: pii,
+                        pii_replace_method: replaceMethod,
+                    };
+
+                    m.set('input', inp);
+                }
+            }
+
             const body = Object.fromEntries(m.entries());
 
             const f = function (event: sse.ServerSentEvent | null, err: model.Error | null) {
@@ -336,6 +373,14 @@ export class Client {
      *         temperature: 0.1,
      *         topP: 0.1,
      *         topK: 50,
+     *         inputExtension: {
+     *             pii: pg.PIIs.Replace,
+     *             piiReplaceMethod: pg.ReplaceMethods.Random,
+     *         },
+     *         outputExtension: {
+     *             factuality: true,
+     *             toxicity: true,
+     *         },
      *     };
      *
      *     var [result, err] = await client.ChatVision(input);
@@ -426,6 +471,54 @@ export class Client {
                 m.set('top_k', input.topK);
             }
 
+            if (input.hasOwnProperty('inputExtension')) {
+                if (input.inputExtension.hasOwnProperty('blockPromptInjection') || input.inputExtension.hasOwnProperty('pii') || input.inputExtension.hasOwnProperty('piiReplaceMethod')) {
+                    let blockPromptInjection = false;
+                    if (input.inputExtension.hasOwnProperty('blockPromptInjection')) {
+                        blockPromptInjection = input.inputExtension.blockPromptInjection;
+                    }
+
+                    let pii = '';
+                    if (input.inputExtension.hasOwnProperty('pii')) {
+                        pii = input.inputExtension.pii;
+                    }
+
+                    let replaceMethod = '';
+                    if (input.inputExtension.hasOwnProperty('piiReplaceMethod')) {
+                        replaceMethod = input.inputExtension.piiReplaceMethod;
+                    }
+
+                    const inp = {
+                        block_prompt_injection: blockPromptInjection,
+                        pii: pii,
+                        pii_replace_method: replaceMethod,
+                    };
+
+                    m.set('input', inp);
+                }
+            }
+
+            if (input.hasOwnProperty('outputExtension')) {
+                if (input.outputExtension.hasOwnProperty('factuality') || input.outputExtension.hasOwnProperty('toxicity')) {
+                    let factuality = false;
+                    if (input.outputExtension.hasOwnProperty('factuality')) {
+                        factuality = input.outputExtension.factuality;
+                    }
+
+                    let toxicity = false;
+                    if (input.outputExtension.hasOwnProperty('toxicity')) {
+                        toxicity = input.outputExtension.toxicity;
+                    }
+
+                    const output = {
+                        factuality: factuality,
+                        toxicity: toxicity,
+                    };
+
+                    m.set('output', output);
+                }
+            }
+
             const body = Object.fromEntries(m.entries());
 
             const [result, err2] = await this.RawDoPost('chat/completions', body);
@@ -463,6 +556,14 @@ export class Client {
      *         temperature: 0.1,
      *         topP: 0.1,
      *         topK: 50,
+     *         inputExtension: {
+     *             pii: pg.PIIs.Replace,
+     *             piiReplaceMethod: pg.ReplaceMethods.Random,
+     *         },
+     *         outputExtension: {
+     *             factuality: true,
+     *             toxicity: true,
+     *         },
      *     };
      *
      *     var [result, err] = await client.Completion(input);
@@ -521,6 +622,54 @@ export class Client {
 
             if (input.hasOwnProperty('topK')) {
                 m.set('top_k', input.topK);
+            }
+
+            if (input.hasOwnProperty('inputExtension')) {
+                if (input.inputExtension.hasOwnProperty('blockPromptInjection') || input.inputExtension.hasOwnProperty('pii') || input.inputExtension.hasOwnProperty('piiReplaceMethod')) {
+                    let blockPromptInjection = false;
+                    if (input.inputExtension.hasOwnProperty('blockPromptInjection')) {
+                        blockPromptInjection = input.inputExtension.blockPromptInjection;
+                    }
+
+                    let pii = '';
+                    if (input.inputExtension.hasOwnProperty('pii')) {
+                        pii = input.inputExtension.pii;
+                    }
+
+                    let replaceMethod = '';
+                    if (input.inputExtension.hasOwnProperty('piiReplaceMethod')) {
+                        replaceMethod = input.inputExtension.piiReplaceMethod;
+                    }
+
+                    const inp = {
+                        block_prompt_injection: blockPromptInjection,
+                        pii: pii,
+                        pii_replace_method: replaceMethod,
+                    };
+
+                    m.set('input', inp);
+                }
+            }
+
+            if (input.hasOwnProperty('outputExtension')) {
+                if (input.outputExtension.hasOwnProperty('factuality') || input.outputExtension.hasOwnProperty('toxicity')) {
+                    let factuality = false;
+                    if (input.outputExtension.hasOwnProperty('factuality')) {
+                        factuality = input.outputExtension.factuality;
+                    }
+
+                    let toxicity = false;
+                    if (input.outputExtension.hasOwnProperty('toxicity')) {
+                        toxicity = input.outputExtension.toxicity;
+                    }
+
+                    const output = {
+                        factuality: factuality,
+                        toxicity: toxicity,
+                    };
+
+                    m.set('output', output);
+                }
             }
 
             const body = Object.fromEntries(m.entries());
