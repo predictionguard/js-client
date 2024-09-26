@@ -13,9 +13,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-              sudo npm i -g typescript eslint mocha typedoc
-              sudo npm i node-fetch@3
-              sudo npm i --save-dev typescript-eslint mockttp
+              npm i
       - run:
           name: Prepare
           command: |
