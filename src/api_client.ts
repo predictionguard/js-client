@@ -239,7 +239,14 @@ export class Client {
      *                 if (err.error == 'EOF') {
      *                     return;
      *                 }
-     *                 console.log(err);
+     *
+     *                 console.log('ERROR 1:' + err.error);
+     *                 return;
+     *             }
+     *
+     *             if (event.error != '') {
+     *                 console.log('ERROR 2:' + err.error);
+     *                 return;
      *             }
      *
      *             for (const choice of event.choices) {
@@ -339,6 +346,13 @@ export class Client {
                 chatSSE.createdDate = function () {
                     return new Date(this.created * 1000);
                 };
+
+                // Bill: Earler versions of the API didn't set this field so it
+                // could be undefined. When V2 is 100% running, we can remove
+                // this code.
+                if (typeof chatSSE.error == 'undefined') {
+                    chatSSE.error = '';
+                }
 
                 input.onMessage(chatSSE, err);
             };

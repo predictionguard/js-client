@@ -24,7 +24,14 @@ async function ChatSSE() {
                 if (err.error == 'EOF') {
                     return;
                 }
-                console.log(err);
+
+                console.log('ERROR 1:' + err.error);
+                return;
+            }
+
+            if (event.error != '') {
+                console.log('ERROR 2:' + event.error);
+                return;
             }
 
             for (const choice of event.choices) {

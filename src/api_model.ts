@@ -318,6 +318,9 @@ export interface ChatSSE {
     /** choices represents the collection of choices to choose from. */
     choices: ChatSSEChoice[];
 
+    /** error provides error information from the stream. */
+    error: string;
+
     /** createdDate converts the created unix timestamp into a JS Date. */
     createdDate(): Date;
 }
