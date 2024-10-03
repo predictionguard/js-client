@@ -453,6 +453,9 @@ export interface Completion {
      * received. */
     created: number;
 
+    /** model represents the model used for generating the result. */
+    model: string;
+
     /** choices represents the collection of choices to choose from. */
     choices: CompletionChoice[];
 

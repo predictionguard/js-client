@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import * as sse from 'fetch-sse';
 import * as model from './api_model.js';
 
-const version = '0.27.0';
+const version = '0.29.0';
 
 /** Client provides access the PredictionGuard API. */
 export class Client {
@@ -603,6 +603,7 @@ export class Client {
             id: '',
             object: '',
             created: 0,
+            model: '',
             choices: [],
             createdDate: function () {
                 return new Date(0);

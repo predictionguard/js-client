@@ -398,7 +398,7 @@ async function testChatBadkey() {
 
 const completionResp = {
     id: 'chat-ShL1yk0N0h1lzmrJDQCpCz3WQFQh9',
-    object: 'chat.completion',
+    object: 'text_completion',
     created: 1715628729,
     model: 'Neural-Chat-7B',
     choices: [
