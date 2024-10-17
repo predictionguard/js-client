@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import * as sse from 'fetch-sse';
 import * as model from './api_model.js';
 
-const version = '0.29.0';
+const version = '0.30.0';
 
 /** Client provides access the PredictionGuard API. */
 export class Client {
@@ -719,20 +719,36 @@ export class Client {
      * async function Embedding() {
      *     const image = new pg.ImageNetwork('https://pbs.twimg.com/profile_images/1571574401107169282/ylAgz_f5_400x400.jpg');
      *
-     *     const input = [
+     *     const input1 = [
      *         {
      *             text: 'This is Bill Kennedy, a decent Go developer.',
      *             image: image,
      *         },
      *     ];
      *
-     *     var [result, err] = await client.Embedding('bridgetower-large-itm-mlm-itc', input);
+     *     var [result1, err] = await client.Embedding('bridgetower-large-itm-mlm-itc', input1);
      *     if (err != null) {
      *         console.log('ERROR:' + err.error);
      *         return;
      *     }
      *
-     *     for (const dt of result.data) {
+     *     for (const dt of result1.data) {
+     *         process.stdout.write(dt.embedding.toString());
+     *     }
+     *
+     *     const input2 = [
+     *         {
+     *             text: 'This is Bill Kennedy, a decent Go developer.',
+     *         },
+     *     ];
+     *
+     *     var [result2, err] = await client.Embedding('multilingual-e5-large-instruct', input2, true, pg.Directions.Right);
+     *     if (err != null) {
+     *         console.log('ERROR:' + err.error);
+     *         return;
+     *     }
+     *
+     *     for (const dt of result2.data) {
      *         process.stdout.write(dt.embedding.toString());
      *     }
      * }
@@ -745,10 +761,16 @@ export class Client {
      * @param {model.EmbeddingInput[]} input - input represents a collection of
      * text and images to vectorize.
      *
+     * @param {boolean} truncate - truncate represents whether to truncate the
+     * input if it's too long. Not all models support this.
+     *
+     * @param {model.Directions} truncateDir - truncateDir represents the
+     * direction to truncate, either Right or Left.
+     *
      * @returns - A Promise with a Embedding object and an Error object if
      * the error is not null.
      */
-    async Embedding(model: string, input: model.EmbeddingInput[]): Promise<[model.Embedding, model.Error | null]> {
+    async Embedding(model: string, input: model.EmbeddingInput[], truncate?: boolean, truncateDir?: model.Directions): Promise<[model.Embedding, model.Error | null]> {
         const zero: model.Embedding = {
             id: '',
             object: '',
@@ -778,10 +800,19 @@ export class Client {
                 });
             }
 
-            const body = {
-                model: model,
-                input: embeds,
-            };
+            const m = new Map();
+            m.set('model', model);
+            m.set('input', embeds);
+
+            if (typeof truncate !== 'undefined') {
+                m.set('truncate', truncate);
+            }
+
+            if (typeof truncateDir !== 'undefined') {
+                m.set('truncate_direction', truncateDir);
+            }
+
+            const body = Object.fromEntries(m.entries());
 
             const [result, err] = await this.RawDoPost('embeddings', body);
             if (err != null) {

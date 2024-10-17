@@ -28,6 +28,12 @@ export enum ReplaceMethods {
     Mask = 'mask',
 }
 
+/** Directions represents the set of directions that can be used. */
+export enum Directions {
+    Right = 'Right',
+    Left = 'Left',
+}
+
 /** Languages represents the set of languages that can be used. */
 export enum Languages {
     Afrikanns = 'afr',

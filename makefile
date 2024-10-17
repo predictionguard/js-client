@@ -169,7 +169,7 @@ curl-embed-get:
      -H "Authorization: Bearer ${PREDICTIONGUARD_API_KEY}" \
      -H "Content-Type: application/json"
 
-curl-embed:
+curl-embed-basic:
 	curl -i -X POST https://api.predictionguard.com/embeddings \
      -H "Authorization: Bearer ${PREDICTIONGUARD_API_KEY}" \
      -H "Content-Type: application/json" \
@@ -179,6 +179,21 @@ curl-embed:
         	{ \
 			"text": "This is Bill Kennedy, a decent Go developer.", \
             "image": "$(IMAGE)" \
+          	} \
+    	] \
+	}'
+
+curl-embed-truncate:
+	curl -i -X POST https://api.predictionguard.com/embeddings \
+     -H "Authorization: Bearer ${PREDICTIONGUARD_API_KEY}" \
+     -H "Content-Type: application/json" \
+     -d '{ \
+		"model": "multilingual-e5-large-instruct", \
+		"truncate": true, \
+		"truncate_direction": "Right", \
+		"input": [ \
+        	{ \
+			"text": "This is Bill Kennedy, a decent Go developer." \
           	} \
     	] \
 	}'
