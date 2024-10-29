@@ -22,6 +22,8 @@ async function Embedding() {
         process.stdout.write(dt.embedding.toString());
     }
 
+    process.stdout.write('\n*******************************\n');
+
     const input2 = [
         {
             text: 'This is Bill Kennedy, a decent Go developer.',
@@ -35,6 +37,20 @@ async function Embedding() {
     }
 
     for (const dt of result2.data) {
+        process.stdout.write(dt.embedding.toString());
+    }
+
+    process.stdout.write('\n*******************************\n');
+
+    const input3 = [0, 3293, 83, 19893, 118963, 25, 7, 3034, 5, 2];
+
+    var [result3, err] = await client.Embedding('multilingual-e5-large-instruct', input3);
+    if (err != null) {
+        console.log('ERROR:' + err.error);
+        return;
+    }
+
+    for (const dt of result3.data) {
         process.stdout.write(dt.embedding.toString());
     }
 }

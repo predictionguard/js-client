@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import * as sse from 'fetch-sse';
 import * as model from './api_model.js';
 
-const version = '0.30.0';
+const version = '0.31.0';
 
 /** Client provides access the PredictionGuard API. */
 export class Client {
@@ -758,8 +758,8 @@ export class Client {
      *
      * @param {string} model - model to use.
      *
-     * @param {model.EmbeddingInput[]} input - input represents a collection of
-     * text and images to vectorize.
+     * @param {(model.EmbeddingInput | number | number[])[]} input - input represents a collection of
+     * text and images, numbers, or a slice of numbers to vectorize.
      *
      * @param {boolean} truncate - truncate represents whether to truncate the
      * input if it's too long. Not all models support this.
@@ -770,7 +770,7 @@ export class Client {
      * @returns - A Promise with a Embedding object and an Error object if
      * the error is not null.
      */
-    async Embedding(model: string, input: model.EmbeddingInput[], truncate?: boolean, truncateDir?: model.Directions): Promise<[model.Embedding, model.Error | null]> {
+    async Embedding(model: string, input: (model.EmbeddingInput | number | number[])[], truncate?: boolean, truncateDir?: model.Directions): Promise<[model.Embedding, model.Error | null]> {
         const zero: model.Embedding = {
             id: '',
             object: '',
@@ -783,21 +783,21 @@ export class Client {
         };
 
         try {
-            const embeds = [];
-            for (const inp of input) {
-                let base64 = '';
-                if (inp.image != null) {
-                    const [b64, err1] = await inp.image.EncodeBase64();
-                    if (err1 != null) {
-                        return [zero, err1];
-                    }
-                    base64 = b64;
+            if (input.length == 0) {
+                return [zero, {error: 'no input provided'}];
+            }
+
+            let embeds;
+
+            if (input[0] instanceof Array || typeof input[0] === 'number') {
+                embeds = input;
+            } else {
+                const [inputs, err] = await this.embedInputs(input as model.EmbeddingInput[]);
+                if (err != null) {
+                    return [zero, err];
                 }
 
-                embeds.push({
-                    text: inp.text,
-                    image: base64,
-                });
+                embeds = inputs;
             }
 
             const m = new Map();
@@ -828,6 +828,28 @@ export class Client {
         } catch (e) {
             return [zero, {error: JSON.stringify(e)}];
         }
+    }
+
+    private async embedInputs(input: model.EmbeddingInput[]): Promise<[object, model.Error | null]> {
+        const embeds = [];
+
+        for (const inp of input) {
+            let base64 = '';
+            if (inp.image != null) {
+                const [b64, err1] = await inp.image.EncodeBase64();
+                if (err1 != null) {
+                    return [{}, err1];
+                }
+                base64 = b64;
+            }
+
+            embeds.push({
+                text: inp.text,
+                image: base64,
+            });
+        }
+
+        return [embeds, null];
     }
 
     // -------------------------------------------------------------------------
