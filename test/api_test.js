@@ -109,6 +109,20 @@ describe('Test_Client', () => {
             };
         });
 
+        proxy.forPost('/rerank').thenCallback((request) => {
+            const auth = request.headers['authorization'];
+            if (typeof auth == 'undefined' || auth == 'Bearer') {
+                return {
+                    statusCode: 403,
+                };
+            }
+
+            return {
+                statusCode: 200,
+                json: rerankResp,
+            };
+        });
+
         proxy.forPost('/toxicity').thenCallback((request) => {
             const auth = request.headers['authorization'];
             if (typeof auth == 'undefined' || auth == 'Bearer') {
@@ -208,6 +222,16 @@ describe('Test_Client', () => {
 
     it('replacePI-badkey', async () => {
         await testReplacePIIBadkey();
+    });
+
+    // -------------------------------------------------------------------------
+
+    it('rerank-basic', async () => {
+        await testRerankBasic();
+    });
+
+    it('rerank-badkey', async () => {
+        await testRerankBadkey();
     });
 
     // -------------------------------------------------------------------------
@@ -670,6 +694,71 @@ async function testReplacePIIBadkey() {
     const prompt = 'My email is bill@ardanlabs.com and my number is 954-123-4567.';
 
     var [, err] = await client.ReplacePII(pg.ReplaceMethods.Mask, prompt);
+    if (err == null) {
+        assert.fail("didn't get an error");
+    }
+
+    const got = JSON.stringify(err);
+    const exp = JSON.stringify({
+        error: 'api understands the request but refuses to authorize it',
+    });
+
+    assert.equal(got, exp);
+}
+
+// =============================================================================
+
+const rerankResp = {
+    id: 'rerank-67b1cdc7-bd15-4728-9482-d0d36c1b59f2',
+    object: 'list',
+    created: 1732232529,
+    model: 'bge-reranker-v2-m3',
+    results: [
+        {
+            index: 0,
+            relevance_score: 0.06512755,
+            text: 'Deep Learning is not pizza.',
+        },
+        {
+            index: 1,
+            relevance_score: 0.05439932,
+            text: 'Deep Learning is pizza.',
+        },
+    ],
+};
+
+async function testRerankBasic() {
+    const client = new pg.Client('http://localhost:8080', 'any key');
+
+    const input = {
+        model: 'bge-reranker-v2-m3',
+        query: 'What is Deep Learning?',
+        documents: ['Deep Learning is not pizza.', 'Deep Learning is pizza.'],
+        returnDocuments: true,
+    };
+
+    var [result, err] = await client.Rerank(input);
+    if (err != null) {
+        assert.fail('ERROR:' + err.error);
+    }
+
+    const got = JSON.stringify(result);
+    const exp = JSON.stringify(rerankResp);
+
+    assert.equal(got, exp);
+}
+
+async function testRerankBadkey() {
+    const client = new pg.Client('http://localhost:8080', '');
+
+    const input = {
+        model: 'bge-reranker-v2-m3',
+        query: 'What is Deep Learning?',
+        documents: ['Deep Learning is not pizza.', 'Deep Learning is pizza.'],
+        returnDocuments: true,
+    };
+
+    var [, err] = await client.Rerank(input);
     if (err == null) {
         assert.fail("didn't get an error");
     }

@@ -256,6 +256,20 @@ curl-replacepi:
 js-replacepi: compile-ts
 	node --env-file=.env examples/replacepi.js
 
+curl-rerank:
+	curl -i -X POST https://api.predictionguard.com/rerank \
+     -H "Authorization: Bearer SvTs40VBQCaSX6w0P46R61XoTPNF8RNp8875WqCd" \
+     -H "Content-Type: application/json" \
+     -d '{ \
+		"model": "bge-reranker-v2-m3", \
+		"query": "What is Deep Learning?", \
+		"documents": ["Deep Learning is not pizza.", "Deep Learning is pizza."], \
+		"return_documents": true \
+     }'
+
+js-rerank: compile-ts
+	node --env-file=.env examples/rerank.js
+
 curl-toxicity:
 	curl -X POST https://api.predictionguard.com/toxicity \
      -H "Authorization: Bearer ${PREDICTIONGUARD_API_KEY}" \

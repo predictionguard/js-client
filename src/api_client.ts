@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import * as sse from 'fetch-sse';
 import * as model from './api_model.js';
 
-const version = '0.31.0';
+const version = '0.32.0';
 
 /** Client provides access the PredictionGuard API. */
 export class Client {
@@ -1104,6 +1104,79 @@ export class Client {
             };
 
             return [replacePII, null];
+        } catch (e) {
+            return [zero, {error: JSON.stringify(e)}];
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Rerank
+
+    /** Rerank sorts text inputs by semantic relevance to a specified query.
+     *
+     * @example
+     * ```
+     * import * as pg from '../dist/index.js';
+     *
+     * const client = new pg.Client('https://api.predictionguard.com', process.env.PREDICTIONGUARD_API_KEY);
+     *
+     * async function Rerank() {
+     *     const input = {
+     *         model: 'bge-reranker-v2-m3',
+     *         query: 'What is Deep Learning?',
+     *         documents: ['Deep Learning is not pizza.', 'Deep Learning is pizza.'],
+     *         returnDocuments: true,
+     *     };
+     *
+     *     var [result, err] = await client.Rerank(input);
+     *     if (err != null) {
+     *         console.log('ERROR:' + err.error);
+     *         return;
+     *     }
+     *
+     *     console.log('RESULT:' + result.results[0].relevance_score);
+     * }
+     *
+     * Rerank();
+     * ```
+     *
+     * @param {model.RerankInput} input - input represents the entire set of
+     * possible input for the Rerank call.
+     *
+     * @returns - A Promise with a Rerank object and a Error
+     * object if the error is not null.
+     * */
+    async Rerank(input: model.RerankInput): Promise<[model.Rerank, model.Error | null]> {
+        const zero: model.Rerank = {
+            id: '',
+            object: '',
+            created: 0,
+            model: '',
+            results: [],
+            createdDate: function () {
+                return new Date(0);
+            },
+        };
+
+        try {
+            const body = {
+                model: input.model,
+                query: input.query,
+                documents: input.documents,
+                return_documents: input.returnDocuments,
+            };
+
+            const [result, err] = await this.RawDoPost('rerank', body);
+            if (err != null) {
+                return [zero, err];
+            }
+
+            const rerank = result as model.Rerank;
+            rerank.createdDate = function () {
+                return new Date(this.created * 1000);
+            };
+
+            return [rerank, null];
         } catch (e) {
             return [zero, {error: JSON.stringify(e)}];
         }

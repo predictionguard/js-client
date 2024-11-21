@@ -620,6 +620,58 @@ export interface ReplacePII {
 
 // -----------------------------------------------------------------------------
 
+/** RerankInput represents the input to generate a rerank. */
+export interface RerankInput {
+    /** model represents the model to use. */
+    model: string;
+
+    /** query represents the content to rank against. */
+    query: string;
+
+    /** documents represent the documents to rank. */
+    documents: string[];
+
+    /** returnDocuments determines to return the document in the result. */
+    returnDocuments: boolean;
+}
+
+//** RerankResult represents an individual rerank result. */
+export interface RerankResult {
+    /** index represents the index position in the collection for
+     * this checks. */
+    index: number;
+
+    /** relevance_score is the ranking of the result. */
+    relevance_score: number;
+
+    /** text represents the returned document. */
+    text: string;
+}
+
+/** Rerank represents an object that contains the result for the rerank call. */
+export interface Rerank {
+    /** id represents a unique identifier for the result. */
+    id: string;
+
+    /** object represent the type of the result document. */
+    object: string;
+
+    /** created represents the unix timestamp for when the request was
+     * received. */
+    created: number;
+
+    /** model represents the model that was used. */
+    model: string;
+
+    //** results is the set of rankings. */
+    results: RerankResult[];
+
+    /** createdDate converts the created unix timestamp into a JS Date. */
+    createdDate(): Date;
+}
+
+// -----------------------------------------------------------------------------
+
 /** ToxicityCheck represents an object that contains a check choice. */
 export interface ToxicityCheck {
     /** index represents the index position in the collection for
