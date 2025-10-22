@@ -130,6 +130,10 @@ export class Client {
                 m.set('max_tokens', input.maxTokens);
             }
 
+            if (input.hasOwnProperty('maxCompletionTokens')) {
+                m.set('max_completion_tokens', input.maxCompletionTokens);
+            }
+
             if (input.hasOwnProperty('temperature')) {
                 m.set('temperature', input.temperature);
             }
@@ -140,6 +144,38 @@ export class Client {
 
             if (input.hasOwnProperty('topK')) {
                 m.set('top_k', input.topK);
+            }
+
+            if (input.hasOwnProperty('frequencyPenalty')) {
+                m.set('frequency_penalty', input.frequencyPenalty);
+            }
+
+            if (input.hasOwnProperty('presencePenalty')) {
+                m.set('presence_penalty', input.presencePenalty);
+            }
+
+            if (input.hasOwnProperty('logitBias')) {
+                m.set('logit_bias', input.logitBias);
+            }
+
+            if (input.hasOwnProperty('stop')) {
+                m.set('stop', input.stop);
+            }
+
+            if (input.hasOwnProperty('reasoningEffort')) {
+                m.set('reasoning_effort', input.reasoningEffort);
+            }
+
+            if (input.hasOwnProperty('toolChoice')) {
+                m.set('tool_choice', input.toolChoice);
+            }
+
+            if (input.hasOwnProperty('tools')) {
+                m.set('tools', input.tools);
+            }
+
+            if (input.hasOwnProperty('parallelToolCalls')) {
+                m.set('parallel_tool_calls', input.parallelToolCalls);
             }
 
             if (input.hasOwnProperty('inputExtension')) {
@@ -296,6 +332,10 @@ export class Client {
                 m.set('max_tokens', input.maxTokens);
             }
 
+            if (input.hasOwnProperty('maxCompletionTokens')) {
+                m.set('max_completion_tokens', input.maxCompletionTokens);
+            }
+
             if (input.hasOwnProperty('temperature')) {
                 m.set('temperature', input.temperature);
             }
@@ -306,6 +346,38 @@ export class Client {
 
             if (input.hasOwnProperty('topK')) {
                 m.set('top_k', input.topK);
+            }
+
+            if (input.hasOwnProperty('frequencyPenalty')) {
+                m.set('frequency_penalty', input.frequencyPenalty);
+            }
+
+            if (input.hasOwnProperty('presencePenalty')) {
+                m.set('presence_penalty', input.presencePenalty);
+            }
+
+            if (input.hasOwnProperty('logitBias')) {
+                m.set('logit_bias', input.logitBias);
+            }
+
+            if (input.hasOwnProperty('stop')) {
+                m.set('stop', input.stop);
+            }
+
+            if (input.hasOwnProperty('reasoningEffort')) {
+                m.set('reasoning_effort', input.reasoningEffort);
+            }
+
+            if (input.hasOwnProperty('toolChoice')) {
+                m.set('tool_choice', input.toolChoice);
+            }
+
+            if (input.hasOwnProperty('tools')) {
+                m.set('tools', input.tools);
+            }
+
+            if (input.hasOwnProperty('parallelToolCalls')) {
+                m.set('parallel_tool_calls', input.parallelToolCalls);
             }
 
             if (input.hasOwnProperty('inputExtension')) {
@@ -473,6 +545,10 @@ export class Client {
                 m.set('max_tokens', input.maxTokens);
             }
 
+            if (input.hasOwnProperty('maxCompletionTokens')) {
+                m.set('max_completion_tokens', input.maxCompletionTokens);
+            }
+
             if (input.hasOwnProperty('temperature')) {
                 m.set('temperature', input.temperature);
             }
@@ -483,6 +559,38 @@ export class Client {
 
             if (input.hasOwnProperty('topK')) {
                 m.set('top_k', input.topK);
+            }
+
+            if (input.hasOwnProperty('frequencyPenalty')) {
+                m.set('frequency_penalty', input.frequencyPenalty);
+            }
+
+            if (input.hasOwnProperty('presencePenalty')) {
+                m.set('presence_penalty', input.presencePenalty);
+            }
+
+            if (input.hasOwnProperty('logitBias')) {
+                m.set('logit_bias', input.logitBias);
+            }
+
+            if (input.hasOwnProperty('stop')) {
+                m.set('stop', input.stop);
+            }
+
+            if (input.hasOwnProperty('reasoningEffort')) {
+                m.set('reasoning_effort', input.reasoningEffort);
+            }
+
+            if (input.hasOwnProperty('toolChoice')) {
+                m.set('tool_choice', input.toolChoice);
+            }
+
+            if (input.hasOwnProperty('tools')) {
+                m.set('tools', input.tools);
+            }
+
+            if (input.hasOwnProperty('parallelToolCalls')) {
+                m.set('parallel_tool_calls', input.parallelToolCalls);
             }
 
             if (input.hasOwnProperty('inputExtension')) {
@@ -637,6 +745,26 @@ export class Client {
 
             if (input.hasOwnProperty('topK')) {
                 m.set('top_k', input.topK);
+            }
+
+            if (input.hasOwnProperty('frequencyPenalty')) {
+                m.set('frequency_penalty', input.frequencyPenalty);
+            }
+
+            if (input.hasOwnProperty('presencePenalty')) {
+                m.set('presence_penalty', input.presencePenalty);
+            }
+
+            if (input.hasOwnProperty('logitBias')) {
+                m.set('logit_bias', input.logitBias);
+            }
+
+            if (input.hasOwnProperty('stop')) {
+                m.set('stop', input.stop);
+            }
+
+            if (input.hasOwnProperty('stream')) {
+                m.set('stream', input.stream);
             }
 
             if (input.hasOwnProperty('inputExtension')) {
@@ -1326,6 +1454,303 @@ export class Client {
     }
 
     // -------------------------------------------------------------------------
+    // CompletionSSE
+
+    /** CompletionSSE generates a stream of text completions based on a prompt.
+     *
+     * @example
+     * ```
+     * import * as pg from 'predictionguard';
+     *
+     * const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
+     *
+     * async function CompletionSSE() {
+     *     const input = {
+     *         model: 'Neural-Chat-7B',
+     *         prompt: 'Will I lose my hair?',
+     *         maxTokens: 1000,
+     *         temperature: 0.1,
+     *         topP: 0.1,
+     *         topK: 50,
+     *         inputExtension: {
+     *             pii: pg.PIIs.Replace,
+     *             piiReplaceMethod: pg.ReplaceMethods.Random,
+     *         },
+     *         onMessage: function (event, err) {
+     *             if (err != null) {
+     *                 if (err.error == 'EOF') {
+     *                     return;
+     *                 }
+     *                 console.log('ERROR:' + err.error);
+     *                 return;
+     *             }
+     *
+     *             for (const choice of event.choices) {
+     *                 process.stdout.write(choice.text);
+     *             }
+     *         },
+     *     };
+     *
+     *     var err = await client.CompletionSSE(input);
+     *     if (err != null) {
+     *         console.log('ERROR:' + err.error);
+     *         return;
+     *     }
+     * }
+     *
+     * CompletionSSE();
+     * ```
+     *
+     * @param {model.CompletionSSEInput} input - input represents the entire set of
+     * possible input for the SSE Completion call.
+     *
+     * @returns - A Promise with an Error object if the error is not null.
+     */
+    async CompletionSSE(input: model.CompletionSSEInput): Promise<model.Error | null> {
+        try {
+            if (!input.hasOwnProperty('model')) {
+                return {error: 'model is a mandatory input'};
+            }
+
+            if (!input.hasOwnProperty('prompt')) {
+                return {error: 'prompt is a mandatory input'};
+            }
+
+            if (!input.hasOwnProperty('onMessage')) {
+                return {error: 'onMessage is a mandatory input'};
+            }
+
+            const m = new Map();
+            m.set('model', input.model);
+            m.set('prompt', input.prompt);
+            m.set('stream', true);
+
+            if (input.hasOwnProperty('maxTokens')) {
+                m.set('max_tokens', input.maxTokens);
+            }
+
+            if (input.hasOwnProperty('temperature')) {
+                m.set('temperature', input.temperature);
+            }
+
+            if (input.hasOwnProperty('topP')) {
+                m.set('top_p', input.topP);
+            }
+
+            if (input.hasOwnProperty('topK')) {
+                m.set('top_k', input.topK);
+            }
+
+            if (input.hasOwnProperty('frequencyPenalty')) {
+                m.set('frequency_penalty', input.frequencyPenalty);
+            }
+
+            if (input.hasOwnProperty('presencePenalty')) {
+                m.set('presence_penalty', input.presencePenalty);
+            }
+
+            if (input.hasOwnProperty('logitBias')) {
+                m.set('logit_bias', input.logitBias);
+            }
+
+            if (input.hasOwnProperty('stop')) {
+                m.set('stop', input.stop);
+            }
+
+            if (input.hasOwnProperty('inputExtension')) {
+                if (input.inputExtension.hasOwnProperty('blockPromptInjection') || input.inputExtension.hasOwnProperty('pii') || input.inputExtension.hasOwnProperty('piiReplaceMethod')) {
+                    let blockPromptInjection = false;
+                    if (input.inputExtension.hasOwnProperty('blockPromptInjection')) {
+                        blockPromptInjection = input.inputExtension.blockPromptInjection;
+                    }
+
+                    let pii = '';
+                    if (input.inputExtension.hasOwnProperty('pii')) {
+                        pii = input.inputExtension.pii;
+                    }
+
+                    let replaceMethod = '';
+                    if (input.inputExtension.hasOwnProperty('piiReplaceMethod')) {
+                        replaceMethod = input.inputExtension.piiReplaceMethod;
+                    }
+
+                    const inp = {
+                        block_prompt_injection: blockPromptInjection,
+                        pii: pii,
+                        pii_replace_method: replaceMethod,
+                    };
+
+                    m.set('input', inp);
+                }
+            }
+
+            const body = Object.fromEntries(m.entries());
+
+            const f = function (event: sse.ServerSentEvent | null, err: model.Error | null) {
+                if (event == null) {
+                    return;
+                }
+
+                const completionSSE = JSON.parse(event.data) as model.CompletionSSE;
+                completionSSE.createdDate = function () {
+                    return new Date(this.created * 1000);
+                };
+
+                input.onMessage(completionSSE, err);
+            };
+
+            const err = await this.RawDoSSEPost('completions', body, f);
+            if (err != null) {
+                return err;
+            }
+
+            return null;
+        } catch (e) {
+            return {error: JSON.stringify(e)};
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // AudioTranscription
+
+    /** AudioTranscription transcribes audio files to text.
+     *
+     * @example
+     * ```
+     * import * as pg from 'predictionguard';
+     * import * as fs from 'fs';
+     *
+     * const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
+     *
+     * async function AudioTranscription() {
+     *     const input = {
+     *         model: 'whisper-1',
+     *         file: './audio.wav',
+     *         language: 'en',
+     *         temperature: 0.1,
+     *         timestampGranularities: [pg.TimestampGranularity.Word, pg.TimestampGranularity.Segment],
+     *         diarization: true,
+     *         responseFormat: pg.AudioResponseFormat.VerboseJson,
+     *     };
+     *
+     *     var [result, err] = await client.AudioTranscription(input);
+     *     if (err != null) {
+     *         console.log('ERROR:' + err.error);
+     *         return;
+     *     }
+     *
+     *     console.log('RESULT:' + result.text);
+     * }
+     *
+     * AudioTranscription();
+     * ```
+     *
+     * @param {model.AudioTranscriptionInput} input - input represents the entire set of
+     * possible input for the AudioTranscription call.
+     *
+     * @returns - A Promise with an AudioTranscription object and an Error object if
+     * the error is not null.
+     */
+    async AudioTranscription(input: model.AudioTranscriptionInput): Promise<[model.AudioTranscription, model.Error | null]> {
+        const zero: model.AudioTranscription = {
+            text: '',
+        };
+
+        try {
+            if (!input.hasOwnProperty('model')) {
+                return [zero, {error: 'model is a mandatory input'}];
+            }
+
+            if (!input.hasOwnProperty('file')) {
+                return [zero, {error: 'file is a mandatory input'}];
+            }
+
+            const [result, err] = await this.RawDoMultipartPost('audio/transcriptions', input, {
+                toxicity: input.toxicity,
+                pii: input.pii,
+                replaceMethod: input.replaceMethod,
+                injection: input.injection,
+            });
+
+            if (err != null) {
+                return [zero, err];
+            }
+
+            return [result as model.AudioTranscription, null];
+        } catch (e) {
+            return [zero, {error: JSON.stringify(e)}];
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // DocumentExtract
+
+    /** DocumentExtract extracts text from documents using OCR.
+     *
+     * @example
+     * ```
+     * import * as pg from 'predictionguard';
+     *
+     * const client = new pg.Client('https://api.predictionguard.com', process.env.PGKEY);
+     *
+     * async function DocumentExtract() {
+     *     const input = {
+     *         file: './document.pdf',
+     *         embedImages: false,
+     *         outputFormat: 'markdown',
+     *         chunkDocument: true,
+     *         chunkSize: 1000,
+     *         enableOCR: true,
+     *     };
+     *
+     *     var [result, err] = await client.DocumentExtract(input);
+     *     if (err != null) {
+     *         console.log('ERROR:' + err.error);
+     *         return;
+     *     }
+     *
+     *     console.log('RESULT:' + result.title + ': ' + result.count + ' words');
+     * }
+     *
+     * DocumentExtract();
+     * ```
+     *
+     * @param {model.DocumentExtractInput} input - input represents the entire set of
+     * possible input for the DocumentExtract call.
+     *
+     * @returns - A Promise with a DocumentExtract object and an Error object if
+     * the error is not null.
+     */
+    async DocumentExtract(input: model.DocumentExtractInput): Promise<[model.DocumentExtract, model.Error | null]> {
+        const zero: model.DocumentExtract = {
+            title: '',
+            contents: '',
+            count: 0,
+        };
+
+        try {
+            if (!input.hasOwnProperty('file')) {
+                return [zero, {error: 'file is a mandatory input'}];
+            }
+
+            const [result, err] = await this.RawDoMultipartPost('documents/extract', input, {
+                toxicity: input.toxicity,
+                pii: input.pii,
+                replaceMethod: input.replaceMethod,
+                injection: input.injection,
+            });
+
+            if (err != null) {
+                return [zero, err];
+            }
+
+            return [result as model.DocumentExtract, null];
+        } catch (e) {
+            return [zero, {error: JSON.stringify(e)}];
+        }
+    }
+
+    // -------------------------------------------------------------------------
 
     /** RawDoGet performs a raw GET call.
      *
@@ -1509,6 +1934,121 @@ export class Client {
             return null;
         } catch (e) {
             return {error: JSON.stringify(e)};
+        }
+    }
+
+    /**
+     * RawDoMultipartPost performs a raw POST call with multipart/form-data support.
+     *
+     * @param {string} endpoint - endpoint represents endpoint to call and
+     * does not include the transport or domain.
+     * @param {any} input - input represents the input object with file and other fields.
+     * @param {object} headers - additional headers to include in the request.
+     *
+     * @returns - A Promise with a response object and an error object if
+     * the error is not null.
+     */
+    protected async RawDoMultipartPost(endpoint: string, input: any, headers: any): Promise<[any, model.Error | null]> {
+        try {
+            const formData = new FormData();
+
+            // Handle file - can be File object or path string
+            if (input.file) {
+                if (typeof input.file === 'string') {
+                    // In Node.js environment, we need to read the file
+                    const fs = await import('fs');
+                    const path = await import('path');
+                    const fileBuffer = fs.readFileSync(input.file);
+                    const fileName = path.basename(input.file);
+                    const blob = new Blob([fileBuffer]);
+                    formData.append('file', blob, fileName);
+                } else {
+                    // Assume it's already a File object (browser environment)
+                    formData.append('file', input.file);
+                }
+            }
+
+            // Add other fields based on endpoint
+            if (endpoint === 'audio/transcriptions') {
+                if (input.model) formData.append('model', input.model);
+                if (input.language) formData.append('language', input.language);
+                if (input.prompt) formData.append('prompt', input.prompt);
+                if (input.temperature !== undefined) formData.append('temperature', input.temperature.toString());
+                if (input.timestampGranularities) {
+                    if (Array.isArray(input.timestampGranularities)) {
+                        input.timestampGranularities.forEach((g: string) => formData.append('timestamps_granularities[]', g));
+                    } else {
+                        formData.append('timestamps_granularities[]', input.timestampGranularities);
+                    }
+                }
+                if (input.diarization !== undefined) formData.append('diarization', input.diarization.toString());
+                if (input.responseFormat) formData.append('response_format', input.responseFormat);
+            } else if (endpoint === 'documents/extract') {
+                if (input.embedImages !== undefined) formData.append('embedImages', input.embedImages.toString());
+                if (input.outputFormat) formData.append('outputFormat', input.outputFormat);
+                if (input.chunkDocument !== undefined) formData.append('chunkDocument', input.chunkDocument.toString());
+                if (input.chunkSize !== undefined) formData.append('chunkSize', input.chunkSize.toString());
+                if (input.enableOCR !== undefined) formData.append('enableOCR', input.enableOCR.toString());
+            }
+
+            const requestHeaders: any = {
+                'User-Agent': `Prediction Guard JS Client: ${version}`,
+                Authorization: `Bearer ${this.apiKey}`,
+            };
+
+            // Add optional headers for PII, toxicity, injection
+            if (headers.toxicity !== undefined) {
+                requestHeaders['Toxicity'] = headers.toxicity.toString();
+            }
+            if (headers.pii) {
+                requestHeaders['Pii'] = headers.pii;
+            }
+            if (headers.replaceMethod) {
+                requestHeaders['Replace-Method'] = headers.replaceMethod;
+            }
+            if (headers.injection !== undefined) {
+                requestHeaders['Injection'] = headers.injection.toString();
+            }
+
+            const response = await fetch(`${this.url}/${endpoint}`, {
+                method: 'post',
+                headers: requestHeaders,
+                body: formData,
+            });
+
+            if (response.status != 200) {
+                switch (response.status) {
+                    case 404:
+                        return [null, {error: 'url not found'}];
+
+                    case 403:
+                        return [null, {error: 'api understands the request but refuses to authorize it'}];
+
+                    case 503:
+                        return [null, {error: 'service unavilable'}];
+
+                    default:
+                        const result = await response.json();
+                        return [null, result as model.Error];
+                }
+            }
+
+            const contextType = response.headers.get('content-type');
+
+            let result;
+            switch (true) {
+                case contextType?.startsWith('text/plain'):
+                    result = await response.text();
+                    break;
+
+                case contextType?.startsWith('application/json'):
+                    result = await response.json();
+                    break;
+            }
+
+            return [result, null];
+        } catch (e) {
+            return [null, {error: JSON.stringify(e)}];
         }
     }
 }

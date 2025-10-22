@@ -7,10 +7,10 @@
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "scripts": {
-        "prepare": "tsc && typedoc --gitRevision main src/index.ts",
+        "prepare": "tsc && typedoc --gitRevision main src/index.ts --skipErrorChecking",
         "build": "tsc",
         "test": "eslint . && mocha test --no-deprecation",
-        "docs": "typedoc --gitRevision main src/index.ts"
+        "docs": "typedoc --gitRevision main src/index.ts --skipErrorChecking"
     },
     "files": [
         "dist/*",
