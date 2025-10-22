@@ -1,128 +1,157 @@
+// test/build_verify.js
 import * as pg from '../dist/index.js';
 
-// Minimal test to verify the client builds and exports are correct
-console.log('🔍 Testing Prediction Guard Client Imports...\n');
-
-// Test 1: Check all exports exist
-console.log('1. Checking exports...');
-const exports = {
-    Client: pg.Client,
-    Roles: pg.Roles,
-    PIIs: pg.PIIs,
-    ReplaceMethods: pg.ReplaceMethods,
-    Directions: pg.Directions,
-    Languages: pg.Languages,
-    // NEW exports
-    ReasoningEffort: pg.ReasoningEffort,
-    ToolChoiceOptions: pg.ToolChoiceOptions,
-    TimestampGranularity: pg.TimestampGranularity,
-    AudioResponseFormat: pg.AudioResponseFormat,
-    ImageNetwork: pg.ImageNetwork,
-    ImageFile: pg.ImageFile,
+const section = (title) => {
+  console.log(`\n${title}`);
 };
 
-let allExportsPresent = true;
-for (const [name, value] of Object.entries(exports)) {
-    if (value === undefined) {
-        console.log(`   ❌ Missing: ${name}`);
-        allExportsPresent = false;
-    }
-}
-
-if (allExportsPresent) {
-    console.log('   ✅ All exports present');
-} else {
-    console.log('   ❌ Some exports missing');
-    process.exit(1);
-}
-
-// Test 2: Check new enums have correct values
-console.log('\n2. Checking new enum values...');
-
-const enumTests = {
-    'ReasoningEffort.Low': pg.ReasoningEffort?.Low === 'low',
-    'ReasoningEffort.Medium': pg.ReasoningEffort?.Medium === 'medium',
-    'ReasoningEffort.High': pg.ReasoningEffort?.High === 'high',
-    'ToolChoiceOptions.None': pg.ToolChoiceOptions?.None === 'none',
-    'ToolChoiceOptions.Auto': pg.ToolChoiceOptions?.Auto === 'auto',
-    'ToolChoiceOptions.Required': pg.ToolChoiceOptions?.Required === 'required',
-    'TimestampGranularity.Word': pg.TimestampGranularity?.Word === 'word',
-    'TimestampGranularity.Segment': pg.TimestampGranularity?.Segment === 'segment',
-    'AudioResponseFormat.Json': pg.AudioResponseFormat?.Json === 'json',
-    'AudioResponseFormat.VerboseJson': pg.AudioResponseFormat?.VerboseJson === 'verbose_json',
+const fail = (msg) => {
+  console.log(`   ❌ ${msg}`);
+  process.exit(1);
 };
 
-let allEnumsCorrect = true;
-for (const [test, result] of Object.entries(enumTests)) {
-    if (!result) {
-        console.log(`   ❌ Failed: ${test}`);
-        allEnumsCorrect = false;
+const ok = (msg) => console.log(`   ✅ ${msg}`);
+const warn = (msg) => console.log(`   ⚠️  ${msg}`);
+
+// ──────────────────────────────────────────────────────────────────────────────
+// 1) Exports: verify required ones; don't fail if there are extras
+// ──────────────────────────────────────────────────────────────────────────────
+
+section('🔍 Testing Prediction Guard Client Imports...\n1. Checking exports...');
+
+const requiredExports = [
+  'Client',
+  'Roles',
+  'PIIs',
+  'ReplaceMethods',
+  'Directions',
+  'Languages',
+  // Newer/optional – we still treat them as required for this version:
+  'ReasoningEffort',
+  'ToolChoiceOptions',
+  'TimestampGranularity',
+  'AudioResponseFormat',
+  'ImageNetwork',
+  'ImageFile',
+];
+
+const missingExports = requiredExports.filter((k) => typeof pg[k] === 'undefined');
+if (missingExports.length) {
+  missingExports.forEach((k) => console.log(`   ❌ Missing export: ${k}`));
+  process.exit(1);
+}
+ok('All required exports present');
+
+// Also show extra exports (informational only)
+const extra = Object.keys(pg).filter((k) => !requiredExports.includes(k));
+if (extra.length) {
+  console.log(`   ℹ️  Extra exports detected (${extra.length}): ${extra.join(', ')}`);
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+/* 2) Enums: check expected values but allow additional ones to exist.
+   If an enum doesn’t exist (older build), we fail (since we marked them as required above).
+*/
+section('\n2. Checking enum values (allowing extras)...');
+
+const enumSpec = {
+  ReasoningEffort: { Low: 'low', Medium: 'medium', High: 'high' },
+  ToolChoiceOptions: { None: 'none', Auto: 'auto', Required: 'required' },
+  TimestampGranularity: { Word: 'word', Segment: 'segment' },
+  AudioResponseFormat: { Json: 'json', VerboseJson: 'verbose_json' },
+};
+
+let enumFailures = 0;
+for (const [enumName, expectedMap] of Object.entries(enumSpec)) {
+  const obj = pg[enumName];
+  if (!obj || typeof obj !== 'object') {
+    console.log(`   ❌ Enum missing or invalid: ${enumName}`);
+    enumFailures++;
+    continue;
+  }
+
+  const missing = Object.entries(expectedMap).filter(([k, v]) => obj?.[k] !== v);
+  if (missing.length) {
+    for (const [k, v] of missing) {
+      console.log(`   ❌ ${enumName}.${k} expected "${v}", got "${obj?.[k]}"`);
     }
+    enumFailures++;
+  } else {
+    ok(`${enumName} values OK`);
+  }
+
+  // Informational: show extra keys, but don't fail
+  const extras = Object.keys(obj).filter((k) => !(k in expectedMap));
+  if (extras.length) {
+    console.log(`   ℹ️  ${enumName} has extra keys: ${extras.join(', ')}`);
+  }
 }
 
-if (allEnumsCorrect) {
-    console.log('   ✅ All enum values correct');
+if (enumFailures) {
+  fail('Some enum values incorrect');
 } else {
-    console.log('   ❌ Some enum values incorrect');
-    process.exit(1);
+  ok('All enum values correct');
 }
 
-// Test 3: Check Client has new methods
-console.log('\n3. Checking Client methods...');
+// ──────────────────────────────────────────────────────────────────────────────
+// 3) Client methods: discover dynamically; assert a minimum set exists
+// ──────────────────────────────────────────────────────────────────────────────
+
+section('\n3. Checking Client methods dynamically...');
 
 const client = new pg.Client('https://api.predictionguard.com', 'test-key');
 
-const methods = {
-    // Existing methods
-    Chat: typeof client.Chat === 'function',
-    ChatSSE: typeof client.ChatSSE === 'function',
-    ChatVision: typeof client.ChatVision === 'function',
-    Completion: typeof client.Completion === 'function',
-    Embedding: typeof client.Embedding === 'function',
-    Factuality: typeof client.Factuality === 'function',
-    HealthCheck: typeof client.HealthCheck === 'function',
-    Injection: typeof client.Injection === 'function',
-    ReplacePII: typeof client.ReplacePII === 'function',
-    Rerank: typeof client.Rerank === 'function',
-    Toxicity: typeof client.Toxicity === 'function',
-    Translate: typeof client.Translate === 'function',
-    // NEW methods
-    CompletionSSE: typeof client.CompletionSSE === 'function',
-    AudioTranscription: typeof client.AudioTranscription === 'function',
-    DocumentExtract: typeof client.DocumentExtract === 'function',
-};
+// Discover available methods off the prototype (excluding constructor)
+const discovered = Object.getOwnPropertyNames(pg.Client.prototype)
+  .filter((n) => n !== 'constructor' && typeof client[n] === 'function')
+  .sort();
 
-let allMethodsPresent = true;
-for (const [name, exists] of Object.entries(methods)) {
-    if (!exists) {
-        console.log(`   ❌ Missing method: ${name}`);
-        allMethodsPresent = false;
-    }
+const minimumRequiredMethods = [
+  // Core
+  'Chat', 'ChatSSE', 'ChatVision',
+  'Completion', 'CompletionSSE',
+  'Embedding',
+  'Factuality',
+  'HealthCheck',
+  'Injection',
+  'ReplacePII',
+  'Rerank',
+  'Toxicity',
+  'Translate',
+  'AudioTranscription',
+  'DocumentExtract',
+];
+
+const missingMethods = minimumRequiredMethods.filter((m) => !discovered.includes(m));
+if (missingMethods.length) {
+  missingMethods.forEach((m) => console.log(`   ❌ Missing method: ${m}`));
+  fail('Some required Client methods are missing');
 }
 
-if (allMethodsPresent) {
-    console.log('   ✅ All methods present (15 total, 3 new)');
-} else {
-    console.log('   ❌ Some methods missing');
-    process.exit(1);
-}
+ok(`All required methods present (${minimumRequiredMethods.length} minimum)`);
+// Informational: show all discovered methods
+console.log(`   ℹ️  Discovered methods (${discovered.length}): ${discovered.join(', ')}`);
 
-// Test 4: Verify API key is set for real testing
-console.log('\n4. Checking environment...');
+// ──────────────────────────────────────────────────────────────────────────────
+// 4) Environment check (optional live tests)
+// ──────────────────────────────────────────────────────────────────────────────
+
+section('\n4. Checking environment...');
 if (process.env.PREDICTIONGUARD_API_KEY) {
-    console.log('   ✅ API key is set');
-    console.log('   Ready to run full tests with: node examples/test_quick.js');
+  ok('API key is set');
+  console.log('   Ready to run full tests with: npm test');
 } else {
-    console.log('   ⚠️  API key not set');
-    console.log('   Set with: export PREDICTIONGUARD_API_KEY="your-key"');
-    console.log('   (Required for API tests, but build verification passed)');
+  warn('API key not set');
+  console.log('   Set with: export PREDICTIONGUARD_API_KEY="your-key"');
+  console.log('   (Required for live API tests, but build verification passed)');
 }
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Summary
+// ──────────────────────────────────────────────────────────────────────────────
 
 console.log('\n✅ Build verification complete!');
-console.log('📦 Package version: 0.32.0');
-console.log('🎉 All new features are available!\n');
 console.log('Next steps:');
 console.log('  1. Set API key: export PREDICTIONGUARD_API_KEY="your-key"');
-console.log('  2. Run quick test: node examples/test_quick.js');
+console.log('  2. Run quick test: npm test (or node test/integration_test.js)');
 console.log('  3. Try examples: node examples/chat_function_calling.js');
-console.log('  4. Read guide: cat TESTING.md\n');

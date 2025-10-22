@@ -114,116 +114,89 @@ export class Client {
         };
 
         try {
-            if (!input.hasOwnProperty('model')) {
+            if (!('model' in input)) {
                 return [zero, {error: 'model is a mandatory input'}];
             }
 
-            if (!input.hasOwnProperty('messages')) {
+            if (!('messages' in input)) {
                 return [zero, {error: 'messages is a mandatory input'}];
             }
 
             const m = new Map();
             m.set('model', input.model);
-            m.set('messages', input.messages);
+            m.set('messages', (input as any).messages);
 
-            if (input.hasOwnProperty('maxTokens')) {
-                m.set('max_tokens', input.maxTokens);
+            if ('maxTokens' in input) {
+                m.set('max_tokens', (input as any).maxTokens);
             }
 
-            if (input.hasOwnProperty('maxCompletionTokens')) {
-                m.set('max_completion_tokens', input.maxCompletionTokens);
+            if ('maxCompletionTokens' in input) {
+                m.set('max_completion_tokens', (input as any).maxCompletionTokens);
             }
 
-            if (input.hasOwnProperty('temperature')) {
-                m.set('temperature', input.temperature);
+            if ('temperature' in input) {
+                m.set('temperature', (input as any).temperature);
             }
 
-            if (input.hasOwnProperty('topP')) {
-                m.set('top_p', input.topP);
+            if ('topP' in input) {
+                m.set('top_p', (input as any).topP);
             }
 
-            if (input.hasOwnProperty('topK')) {
-                m.set('top_k', input.topK);
+            if ('topK' in input) {
+                m.set('top_k', (input as any).topK);
             }
 
-            if (input.hasOwnProperty('frequencyPenalty')) {
-                m.set('frequency_penalty', input.frequencyPenalty);
+            if ('frequencyPenalty' in input) {
+                m.set('frequency_penalty', (input as any).frequencyPenalty);
             }
 
-            if (input.hasOwnProperty('presencePenalty')) {
-                m.set('presence_penalty', input.presencePenalty);
+            if ('presencePenalty' in input) {
+                m.set('presence_penalty', (input as any).presencePenalty);
             }
 
-            if (input.hasOwnProperty('logitBias')) {
-                m.set('logit_bias', input.logitBias);
+            if ('logitBias' in input) {
+                m.set('logit_bias', (input as any).logitBias);
             }
 
-            if (input.hasOwnProperty('stop')) {
-                m.set('stop', input.stop);
+            if ('stop' in input) {
+                m.set('stop', (input as any).stop);
             }
 
-            if (input.hasOwnProperty('reasoningEffort')) {
-                m.set('reasoning_effort', input.reasoningEffort);
+            if ('reasoningEffort' in input) {
+                m.set('reasoning_effort', (input as any).reasoningEffort);
             }
 
-            if (input.hasOwnProperty('toolChoice')) {
-                m.set('tool_choice', input.toolChoice);
+            if ('toolChoice' in input) {
+                m.set('tool_choice', (input as any).toolChoice);
             }
 
-            if (input.hasOwnProperty('tools')) {
-                m.set('tools', input.tools);
+            if ('tools' in input) {
+                m.set('tools', (input as any).tools);
             }
 
-            if (input.hasOwnProperty('parallelToolCalls')) {
-                m.set('parallel_tool_calls', input.parallelToolCalls);
+            if ('parallelToolCalls' in input) {
+                m.set('parallel_tool_calls', (input as any).parallelToolCalls);
             }
 
-            if (input.hasOwnProperty('inputExtension')) {
-                if (input.inputExtension.hasOwnProperty('blockPromptInjection') || input.inputExtension.hasOwnProperty('pii') || input.inputExtension.hasOwnProperty('piiReplaceMethod')) {
-                    let blockPromptInjection = false;
-                    if (input.inputExtension.hasOwnProperty('blockPromptInjection')) {
-                        blockPromptInjection = input.inputExtension.blockPromptInjection;
-                    }
-
-                    let pii = '';
-                    if (input.inputExtension.hasOwnProperty('pii')) {
-                        pii = input.inputExtension.pii;
-                    }
-
-                    let replaceMethod = '';
-                    if (input.inputExtension.hasOwnProperty('piiReplaceMethod')) {
-                        replaceMethod = input.inputExtension.piiReplaceMethod;
-                    }
-
-                    const inp = {
-                        block_prompt_injection: blockPromptInjection,
-                        pii: pii,
-                        pii_replace_method: replaceMethod,
-                    };
-
-                    m.set('input', inp);
-                }
+            // ---- FIX: inputExtension safe narrowing
+            const ie = (input as any).inputExtension;
+            if (ie && (ie.blockPromptInjection != null || ie.pii != null || ie.piiReplaceMethod != null)) {
+                const inp = {
+                    block_prompt_injection: ie.blockPromptInjection ?? false,
+                    pii: ie.pii ?? '',
+                    pii_replace_method: ie.piiReplaceMethod ?? '',
+                };
+                m.set('input', inp);
             }
 
-            if (input.hasOwnProperty('outputExtension')) {
-                if (input.outputExtension.hasOwnProperty('factuality') || input.outputExtension.hasOwnProperty('toxicity')) {
-                    let factuality = false;
-                    if (input.outputExtension.hasOwnProperty('factuality')) {
-                        factuality = input.outputExtension.factuality;
-                    }
-
-                    let toxicity = false;
-                    if (input.outputExtension.hasOwnProperty('toxicity')) {
-                        toxicity = input.outputExtension.toxicity;
-                    }
-
-                    const output = {
-                        factuality: factuality,
-                        toxicity: toxicity,
-                    };
-
-                    m.set('output', output);
-                }
+            // ---- FIX: outputExtension safe narrowing
+            const oe = (input as any).outputExtension;
+            if (oe && (oe.factuality != null || oe.toxicity != null)) {
+                const output = {
+                    factuality: oe.factuality ?? false,
+                    toxicity: oe.toxicity ?? false,
+                };
+                m.set('output', output);
             }
 
             const body = Object.fromEntries(m.entries());
@@ -311,15 +284,15 @@ export class Client {
      */
     async ChatSSE(input: model.ChatSSEInput): Promise<model.Error | null> {
         try {
-            if (!input.hasOwnProperty('model')) {
+            if (!('model' in input)) {
                 return {error: 'model is a mandatory input'};
             }
 
-            if (!input.hasOwnProperty('messages')) {
+            if (!('messages' in input)) {
                 return {error: 'messages is a mandatory input'};
             }
 
-            if (!input.hasOwnProperty('onMessage')) {
+            if (!('onMessage' in input)) {
                 return {error: 'onMessage is a mandatory input'};
             }
 
@@ -328,83 +301,67 @@ export class Client {
             m.set('messages', input.messages);
             m.set('stream', true);
 
-            if (input.hasOwnProperty('maxTokens')) {
+            if ('maxTokens' in input) {
                 m.set('max_tokens', input.maxTokens);
             }
 
-            if (input.hasOwnProperty('maxCompletionTokens')) {
+            if ('maxCompletionTokens' in input) {
                 m.set('max_completion_tokens', input.maxCompletionTokens);
             }
 
-            if (input.hasOwnProperty('temperature')) {
+            if ('temperature' in input) {
                 m.set('temperature', input.temperature);
             }
 
-            if (input.hasOwnProperty('topP')) {
+            if ('topP' in input) {
                 m.set('top_p', input.topP);
             }
 
-            if (input.hasOwnProperty('topK')) {
+            if ('topK' in input) {
                 m.set('top_k', input.topK);
             }
 
-            if (input.hasOwnProperty('frequencyPenalty')) {
+            if ('frequencyPenalty' in input) {
                 m.set('frequency_penalty', input.frequencyPenalty);
             }
 
-            if (input.hasOwnProperty('presencePenalty')) {
+            if ('presencePenalty' in input) {
                 m.set('presence_penalty', input.presencePenalty);
             }
 
-            if (input.hasOwnProperty('logitBias')) {
+            if ('logitBias' in input) {
                 m.set('logit_bias', input.logitBias);
             }
 
-            if (input.hasOwnProperty('stop')) {
+            if ('stop' in input) {
                 m.set('stop', input.stop);
             }
 
-            if (input.hasOwnProperty('reasoningEffort')) {
+            if ('reasoningEffort' in input) {
                 m.set('reasoning_effort', input.reasoningEffort);
             }
 
-            if (input.hasOwnProperty('toolChoice')) {
+            if ('toolChoice' in input) {
                 m.set('tool_choice', input.toolChoice);
             }
 
-            if (input.hasOwnProperty('tools')) {
+            if ('tools' in input) {
                 m.set('tools', input.tools);
             }
 
-            if (input.hasOwnProperty('parallelToolCalls')) {
+            if ('parallelToolCalls' in input) {
                 m.set('parallel_tool_calls', input.parallelToolCalls);
             }
 
-            if (input.hasOwnProperty('inputExtension')) {
-                if (input.inputExtension.hasOwnProperty('blockPromptInjection') || input.inputExtension.hasOwnProperty('pii') || input.inputExtension.hasOwnProperty('piiReplaceMethod')) {
-                    let blockPromptInjection = false;
-                    if (input.inputExtension.hasOwnProperty('blockPromptInjection')) {
-                        blockPromptInjection = input.inputExtension.blockPromptInjection;
-                    }
-
-                    let pii = '';
-                    if (input.inputExtension.hasOwnProperty('pii')) {
-                        pii = input.inputExtension.pii;
-                    }
-
-                    let replaceMethod = '';
-                    if (input.inputExtension.hasOwnProperty('piiReplaceMethod')) {
-                        replaceMethod = input.inputExtension.piiReplaceMethod;
-                    }
-
-                    const inp = {
-                        block_prompt_injection: blockPromptInjection,
-                        pii: pii,
-                        pii_replace_method: replaceMethod,
-                    };
-
-                    m.set('input', inp);
-                }
+            // ---- FIX: inputExtension safe narrowing
+            const ie = (input as any).inputExtension;
+            if (ie && (ie.blockPromptInjection != null || ie.pii != null || ie.piiReplaceMethod != null)) {
+                const inp = {
+                    block_prompt_injection: ie.blockPromptInjection ?? false,
+                    pii: ie.pii ?? '',
+                    pii_replace_method: ie.piiReplaceMethod ?? '',
+                };
+                m.set('input', inp);
             }
 
             const body = Object.fromEntries(m.entries());
@@ -419,11 +376,11 @@ export class Client {
                     return new Date(this.created * 1000);
                 };
 
-                // Bill: Earler versions of the API didn't set this field so it
+                // Bill: Earlier versions of the API didn't set this field so it
                 // could be undefined. When V2 is 100% running, we can remove
                 // this code.
-                if (typeof chatSSE.error == 'undefined') {
-                    chatSSE.error = '';
+                if (typeof (chatSSE as any).error === 'undefined') {
+                    (chatSSE as any).error = '';
                 }
 
                 input.onMessage(chatSSE, err);
@@ -500,19 +457,19 @@ export class Client {
         };
 
         try {
-            if (!input.hasOwnProperty('model')) {
+            if (!('model' in input)) {
                 return [zero, {error: 'model is a mandatory input'}];
             }
 
-            if (!input.hasOwnProperty('role')) {
+            if (!('role' in input)) {
                 return [zero, {error: 'role is a mandatory input'}];
             }
 
-            if (!input.hasOwnProperty('question')) {
+            if (!('question' in input)) {
                 return [zero, {error: 'question is a mandatory input'}];
             }
 
-            if (!input.hasOwnProperty('image')) {
+            if (!('image' in input)) {
                 return [zero, {error: 'image is a mandatory input'}];
             }
 
@@ -541,104 +498,77 @@ export class Client {
                 },
             ]);
 
-            if (input.hasOwnProperty('maxTokens')) {
+            if ('maxTokens' in input) {
                 m.set('max_tokens', input.maxTokens);
             }
 
-            if (input.hasOwnProperty('maxCompletionTokens')) {
+            if ('maxCompletionTokens' in input) {
                 m.set('max_completion_tokens', input.maxCompletionTokens);
             }
 
-            if (input.hasOwnProperty('temperature')) {
+            if ('temperature' in input) {
                 m.set('temperature', input.temperature);
             }
 
-            if (input.hasOwnProperty('topP')) {
+            if ('topP' in input) {
                 m.set('top_p', input.topP);
             }
 
-            if (input.hasOwnProperty('topK')) {
+            if ('topK' in input) {
                 m.set('top_k', input.topK);
             }
 
-            if (input.hasOwnProperty('frequencyPenalty')) {
+            if ('frequencyPenalty' in input) {
                 m.set('frequency_penalty', input.frequencyPenalty);
             }
 
-            if (input.hasOwnProperty('presencePenalty')) {
+            if ('presencePenalty' in input) {
                 m.set('presence_penalty', input.presencePenalty);
             }
 
-            if (input.hasOwnProperty('logitBias')) {
+            if ('logitBias' in input) {
                 m.set('logit_bias', input.logitBias);
             }
 
-            if (input.hasOwnProperty('stop')) {
+            if ('stop' in input) {
                 m.set('stop', input.stop);
             }
 
-            if (input.hasOwnProperty('reasoningEffort')) {
+            if ('reasoningEffort' in input) {
                 m.set('reasoning_effort', input.reasoningEffort);
             }
 
-            if (input.hasOwnProperty('toolChoice')) {
+            if ('toolChoice' in input) {
                 m.set('tool_choice', input.toolChoice);
             }
 
-            if (input.hasOwnProperty('tools')) {
+            if ('tools' in input) {
                 m.set('tools', input.tools);
             }
 
-            if (input.hasOwnProperty('parallelToolCalls')) {
+            if ('parallelToolCalls' in input) {
                 m.set('parallel_tool_calls', input.parallelToolCalls);
             }
 
-            if (input.hasOwnProperty('inputExtension')) {
-                if (input.inputExtension.hasOwnProperty('blockPromptInjection') || input.inputExtension.hasOwnProperty('pii') || input.inputExtension.hasOwnProperty('piiReplaceMethod')) {
-                    let blockPromptInjection = false;
-                    if (input.inputExtension.hasOwnProperty('blockPromptInjection')) {
-                        blockPromptInjection = input.inputExtension.blockPromptInjection;
-                    }
-
-                    let pii = '';
-                    if (input.inputExtension.hasOwnProperty('pii')) {
-                        pii = input.inputExtension.pii;
-                    }
-
-                    let replaceMethod = '';
-                    if (input.inputExtension.hasOwnProperty('piiReplaceMethod')) {
-                        replaceMethod = input.inputExtension.piiReplaceMethod;
-                    }
-
-                    const inp = {
-                        block_prompt_injection: blockPromptInjection,
-                        pii: pii,
-                        pii_replace_method: replaceMethod,
-                    };
-
-                    m.set('input', inp);
-                }
+            // ---- FIX: inputExtension safe narrowing
+            const ie = (input as any).inputExtension;
+            if (ie && (ie.blockPromptInjection != null || ie.pii != null || ie.piiReplaceMethod != null)) {
+                const inp = {
+                    block_prompt_injection: ie.blockPromptInjection ?? false,
+                    pii: ie.pii ?? '',
+                    pii_replace_method: ie.piiReplaceMethod ?? '',
+                };
+                m.set('input', inp);
             }
 
-            if (input.hasOwnProperty('outputExtension')) {
-                if (input.outputExtension.hasOwnProperty('factuality') || input.outputExtension.hasOwnProperty('toxicity')) {
-                    let factuality = false;
-                    if (input.outputExtension.hasOwnProperty('factuality')) {
-                        factuality = input.outputExtension.factuality;
-                    }
-
-                    let toxicity = false;
-                    if (input.outputExtension.hasOwnProperty('toxicity')) {
-                        toxicity = input.outputExtension.toxicity;
-                    }
-
-                    const output = {
-                        factuality: factuality,
-                        toxicity: toxicity,
-                    };
-
-                    m.set('output', output);
-                }
+            // ---- FIX: outputExtension safe narrowing
+            const oe = (input as any).outputExtension;
+            if (oe && (oe.factuality != null || oe.toxicity != null)) {
+                const output = {
+                    factuality: oe.factuality ?? false,
+                    toxicity: oe.toxicity ?? false,
+                };
+                m.set('output', output);
             }
 
             const body = Object.fromEntries(m.entries());
@@ -719,11 +649,11 @@ export class Client {
         };
 
         try {
-            if (!input.hasOwnProperty('model')) {
+            if (!('model' in input)) {
                 return [zero, {error: 'model is a mandatory input'}];
             }
 
-            if (!input.hasOwnProperty('prompt')) {
+            if (!('prompt' in input)) {
                 return [zero, {error: 'prompt is a mandatory input'}];
             }
 
@@ -731,88 +661,61 @@ export class Client {
             m.set('model', input.model);
             m.set('prompt', input.prompt);
 
-            if (input.hasOwnProperty('maxTokens')) {
+            if ('maxTokens' in input) {
                 m.set('max_tokens', input.maxTokens);
             }
 
-            if (input.hasOwnProperty('temperature')) {
+            if ('temperature' in input) {
                 m.set('temperature', input.temperature);
             }
 
-            if (input.hasOwnProperty('topP')) {
+            if ('topP' in input) {
                 m.set('top_p', input.topP);
             }
 
-            if (input.hasOwnProperty('topK')) {
+            if ('topK' in input) {
                 m.set('top_k', input.topK);
             }
 
-            if (input.hasOwnProperty('frequencyPenalty')) {
+            if ('frequencyPenalty' in input) {
                 m.set('frequency_penalty', input.frequencyPenalty);
             }
 
-            if (input.hasOwnProperty('presencePenalty')) {
+            if ('presencePenalty' in input) {
                 m.set('presence_penalty', input.presencePenalty);
             }
 
-            if (input.hasOwnProperty('logitBias')) {
+            if ('logitBias' in input) {
                 m.set('logit_bias', input.logitBias);
             }
 
-            if (input.hasOwnProperty('stop')) {
+            if ('stop' in input) {
                 m.set('stop', input.stop);
             }
 
-            if (input.hasOwnProperty('stream')) {
+            if ('stream' in input) {
                 m.set('stream', input.stream);
             }
 
-            if (input.hasOwnProperty('inputExtension')) {
-                if (input.inputExtension.hasOwnProperty('blockPromptInjection') || input.inputExtension.hasOwnProperty('pii') || input.inputExtension.hasOwnProperty('piiReplaceMethod')) {
-                    let blockPromptInjection = false;
-                    if (input.inputExtension.hasOwnProperty('blockPromptInjection')) {
-                        blockPromptInjection = input.inputExtension.blockPromptInjection;
-                    }
-
-                    let pii = '';
-                    if (input.inputExtension.hasOwnProperty('pii')) {
-                        pii = input.inputExtension.pii;
-                    }
-
-                    let replaceMethod = '';
-                    if (input.inputExtension.hasOwnProperty('piiReplaceMethod')) {
-                        replaceMethod = input.inputExtension.piiReplaceMethod;
-                    }
-
-                    const inp = {
-                        block_prompt_injection: blockPromptInjection,
-                        pii: pii,
-                        pii_replace_method: replaceMethod,
-                    };
-
-                    m.set('input', inp);
-                }
+            // ---- FIX: inputExtension safe narrowing
+            const ie = (input as any).inputExtension;
+            if (ie && (ie.blockPromptInjection != null || ie.pii != null || ie.piiReplaceMethod != null)) {
+                const inp = {
+                    block_prompt_injection: ie.blockPromptInjection ?? false,
+                    pii: ie.pii ?? '',
+                    pii_replace_method: ie.piiReplaceMethod ?? '',
+                };
+                m.set('input', inp);
             }
 
-            if (input.hasOwnProperty('outputExtension')) {
-                if (input.outputExtension.hasOwnProperty('factuality') || input.outputExtension.hasOwnProperty('toxicity')) {
-                    let factuality = false;
-                    if (input.outputExtension.hasOwnProperty('factuality')) {
-                        factuality = input.outputExtension.factuality;
-                    }
-
-                    let toxicity = false;
-                    if (input.outputExtension.hasOwnProperty('toxicity')) {
-                        toxicity = input.outputExtension.toxicity;
-                    }
-
-                    const output = {
-                        factuality: factuality,
-                        toxicity: toxicity,
-                    };
-
-                    m.set('output', output);
-                }
+            // ---- FIX: outputExtension safe narrowing
+            const oe = (input as any).outputExtension;
+            if (oe && (oe.factuality != null || oe.toxicity != null)) {
+                const output = {
+                    factuality: oe.factuality ?? false,
+                    toxicity: oe.toxicity ?? false,
+                };
+                m.set('output', output);
             }
 
             const body = Object.fromEntries(m.entries());
@@ -915,7 +818,7 @@ export class Client {
                 return [zero, {error: 'no input provided'}];
             }
 
-            let embeds;
+            let embeds: any;
 
             if (input[0] instanceof Array || typeof input[0] === 'number') {
                 embeds = input;
@@ -959,7 +862,7 @@ export class Client {
     }
 
     private async embedInputs(input: model.EmbeddingInput[]): Promise<[object, model.Error | null]> {
-        const embeds = [];
+        const embeds: any[] = [];
 
         for (const inp of input) {
             let base64 = '';
@@ -1508,15 +1411,15 @@ export class Client {
      */
     async CompletionSSE(input: model.CompletionSSEInput): Promise<model.Error | null> {
         try {
-            if (!input.hasOwnProperty('model')) {
+            if (!('model' in input)) {
                 return {error: 'model is a mandatory input'};
             }
 
-            if (!input.hasOwnProperty('prompt')) {
+            if (!('prompt' in input)) {
                 return {error: 'prompt is a mandatory input'};
             }
 
-            if (!input.hasOwnProperty('onMessage')) {
+            if (!('onMessage' in input)) {
                 return {error: 'onMessage is a mandatory input'};
             }
 
@@ -1525,63 +1428,47 @@ export class Client {
             m.set('prompt', input.prompt);
             m.set('stream', true);
 
-            if (input.hasOwnProperty('maxTokens')) {
+            if ('maxTokens' in input) {
                 m.set('max_tokens', input.maxTokens);
             }
 
-            if (input.hasOwnProperty('temperature')) {
+            if ('temperature' in input) {
                 m.set('temperature', input.temperature);
             }
 
-            if (input.hasOwnProperty('topP')) {
+            if ('topP' in input) {
                 m.set('top_p', input.topP);
             }
 
-            if (input.hasOwnProperty('topK')) {
+            if ('topK' in input) {
                 m.set('top_k', input.topK);
             }
 
-            if (input.hasOwnProperty('frequencyPenalty')) {
+            if ('frequencyPenalty' in input) {
                 m.set('frequency_penalty', input.frequencyPenalty);
             }
 
-            if (input.hasOwnProperty('presencePenalty')) {
+            if ('presencePenalty' in input) {
                 m.set('presence_penalty', input.presencePenalty);
             }
 
-            if (input.hasOwnProperty('logitBias')) {
+            if ('logitBias' in input) {
                 m.set('logit_bias', input.logitBias);
             }
 
-            if (input.hasOwnProperty('stop')) {
+            if ('stop' in input) {
                 m.set('stop', input.stop);
             }
 
-            if (input.hasOwnProperty('inputExtension')) {
-                if (input.inputExtension.hasOwnProperty('blockPromptInjection') || input.inputExtension.hasOwnProperty('pii') || input.inputExtension.hasOwnProperty('piiReplaceMethod')) {
-                    let blockPromptInjection = false;
-                    if (input.inputExtension.hasOwnProperty('blockPromptInjection')) {
-                        blockPromptInjection = input.inputExtension.blockPromptInjection;
-                    }
-
-                    let pii = '';
-                    if (input.inputExtension.hasOwnProperty('pii')) {
-                        pii = input.inputExtension.pii;
-                    }
-
-                    let replaceMethod = '';
-                    if (input.inputExtension.hasOwnProperty('piiReplaceMethod')) {
-                        replaceMethod = input.inputExtension.piiReplaceMethod;
-                    }
-
-                    const inp = {
-                        block_prompt_injection: blockPromptInjection,
-                        pii: pii,
-                        pii_replace_method: replaceMethod,
-                    };
-
-                    m.set('input', inp);
-                }
+            // ---- FIX: inputExtension safe narrowing
+            const ie = (input as any).inputExtension;
+            if (ie && (ie.blockPromptInjection != null || ie.pii != null || ie.piiReplaceMethod != null)) {
+                const inp = {
+                    block_prompt_injection: ie.blockPromptInjection ?? false,
+                    pii: ie.pii ?? '',
+                    pii_replace_method: ie.piiReplaceMethod ?? '',
+                };
+                m.set('input', inp);
             }
 
             const body = Object.fromEntries(m.entries());
@@ -1657,19 +1544,19 @@ export class Client {
         };
 
         try {
-            if (!input.hasOwnProperty('model')) {
+            if (!('model' in input)) {
                 return [zero, {error: 'model is a mandatory input'}];
             }
 
-            if (!input.hasOwnProperty('file')) {
+            if (!('file' in input)) {
                 return [zero, {error: 'file is a mandatory input'}];
             }
 
             const [result, err] = await this.RawDoMultipartPost('audio/transcriptions', input, {
-                toxicity: input.toxicity,
-                pii: input.pii,
-                replaceMethod: input.replaceMethod,
-                injection: input.injection,
+                toxicity: (input as any).toxicity,
+                pii: (input as any).pii,
+                replaceMethod: (input as any).replaceMethod,
+                injection: (input as any).injection,
             });
 
             if (err != null) {
@@ -1729,15 +1616,15 @@ export class Client {
         };
 
         try {
-            if (!input.hasOwnProperty('file')) {
+            if (!('file' in input)) {
                 return [zero, {error: 'file is a mandatory input'}];
             }
 
             const [result, err] = await this.RawDoMultipartPost('documents/extract', input, {
-                toxicity: input.toxicity,
-                pii: input.pii,
-                replaceMethod: input.replaceMethod,
-                injection: input.injection,
+                toxicity: (input as any).toxicity,
+                pii: (input as any).pii,
+                replaceMethod: (input as any).replaceMethod,
+                injection: (input as any).injection,
             });
 
             if (err != null) {
@@ -1790,13 +1677,13 @@ export class Client {
 
             const contextType = response.headers.get('content-type');
 
-            let result;
+            let result: any;
             switch (true) {
-                case contextType?.startsWith('text/plain'):
+                case !!contextType && contextType.startsWith('text/plain'):
                     result = await response.text();
                     break;
 
-                case contextType?.startsWith('application/json'):
+                case !!contextType && contextType.startsWith('application/json'):
                     result = await response.json();
                     break;
             }
@@ -1848,13 +1735,13 @@ export class Client {
 
             const contextType = response.headers.get('content-type');
 
-            let result;
+            let result: any;
             switch (true) {
-                case contextType?.startsWith('text/plain'):
+                case !!contextType && contextType.startsWith('text/plain'):
                     result = await response.text();
                     break;
 
-                case contextType?.startsWith('application/json'):
+                case !!contextType && contextType.startsWith('application/json'):
                     result = await response.json();
                     break;
             }
@@ -1907,22 +1794,30 @@ export class Client {
                         switch (response.status) {
                             case 404:
                                 onMessage(null, {error: 'url not found'});
+                                break;
 
                             case 403:
                                 onMessage(null, {error: 'api understands the request but refuses to authorize it'});
+                                break;
 
                             case 503:
                                 onMessage(null, {error: 'service unavilable'});
+                                break;
 
                             default:
-                                const result = await response.json();
-                                onMessage(null, result as model.Error);
+                                try {
+                                    const result = await response.json();
+                                    onMessage(null, result as model.Error);
+                                } catch {
+                                    onMessage(null, {error: `http ${response.status}`});
+                                }
+                                break;
                         }
                     }
                 },
 
                 onError: (e) => {
-                    if (Object.keys(e).length === 0) {
+                    if (Object.keys(e as any).length === 0) {
                         onMessage(null, {error: 'EOF'});
                         return;
                     }
@@ -1958,8 +1853,8 @@ export class Client {
                     // In Node.js environment, we need to read the file
                     const fs = await import('fs');
                     const path = await import('path');
-                    const fileBuffer = fs.readFileSync(input.file);
-                    const fileName = path.basename(input.file);
+                    const fileBuffer = (fs as any).readFileSync(input.file);
+                    const fileName = (path as any).basename(input.file);
                     const blob = new Blob([fileBuffer]);
                     formData.append('file', blob, fileName);
                 } else {
@@ -1973,7 +1868,7 @@ export class Client {
                 if (input.model) formData.append('model', input.model);
                 if (input.language) formData.append('language', input.language);
                 if (input.prompt) formData.append('prompt', input.prompt);
-                if (input.temperature !== undefined) formData.append('temperature', input.temperature.toString());
+                if (input.temperature !== undefined) formData.append('temperature', String(input.temperature));
                 if (input.timestampGranularities) {
                     if (Array.isArray(input.timestampGranularities)) {
                         input.timestampGranularities.forEach((g: string) => formData.append('timestamps_granularities[]', g));
@@ -1981,14 +1876,14 @@ export class Client {
                         formData.append('timestamps_granularities[]', input.timestampGranularities);
                     }
                 }
-                if (input.diarization !== undefined) formData.append('diarization', input.diarization.toString());
+                if (input.diarization !== undefined) formData.append('diarization', String(input.diarization));
                 if (input.responseFormat) formData.append('response_format', input.responseFormat);
             } else if (endpoint === 'documents/extract') {
-                if (input.embedImages !== undefined) formData.append('embedImages', input.embedImages.toString());
+                if (input.embedImages !== undefined) formData.append('embedImages', String(input.embedImages));
                 if (input.outputFormat) formData.append('outputFormat', input.outputFormat);
-                if (input.chunkDocument !== undefined) formData.append('chunkDocument', input.chunkDocument.toString());
-                if (input.chunkSize !== undefined) formData.append('chunkSize', input.chunkSize.toString());
-                if (input.enableOCR !== undefined) formData.append('enableOCR', input.enableOCR.toString());
+                if (input.chunkDocument !== undefined) formData.append('chunkDocument', String(input.chunkDocument));
+                if (input.chunkSize !== undefined) formData.append('chunkSize', String(input.chunkSize));
+                if (input.enableOCR !== undefined) formData.append('enableOCR', String(input.enableOCR));
             }
 
             const requestHeaders: any = {
@@ -1997,23 +1892,23 @@ export class Client {
             };
 
             // Add optional headers for PII, toxicity, injection
-            if (headers.toxicity !== undefined) {
-                requestHeaders['Toxicity'] = headers.toxicity.toString();
+            if (headers && headers.toxicity !== undefined) {
+                requestHeaders['Toxicity'] = String(headers.toxicity);
             }
-            if (headers.pii) {
+            if (headers && headers.pii != null) {
                 requestHeaders['Pii'] = headers.pii;
             }
-            if (headers.replaceMethod) {
+            if (headers && headers.replaceMethod != null) {
                 requestHeaders['Replace-Method'] = headers.replaceMethod;
             }
-            if (headers.injection !== undefined) {
-                requestHeaders['Injection'] = headers.injection.toString();
+            if (headers && headers.injection !== undefined) {
+                requestHeaders['Injection'] = String(headers.injection);
             }
 
             const response = await fetch(`${this.url}/${endpoint}`, {
                 method: 'post',
                 headers: requestHeaders,
-                body: formData,
+                body: formData as any,
             });
 
             if (response.status != 200) {
@@ -2035,13 +1930,13 @@ export class Client {
 
             const contextType = response.headers.get('content-type');
 
-            let result;
+            let result: any;
             switch (true) {
-                case contextType?.startsWith('text/plain'):
+                case !!contextType && contextType.startsWith('text/plain'):
                     result = await response.text();
                     break;
 
-                case contextType?.startsWith('application/json'):
+                case !!contextType && contextType.startsWith('application/json'):
                     result = await response.json();
                     break;
             }

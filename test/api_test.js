@@ -1,161 +1,102 @@
-import mockServer from 'mockttp';
+// tests/client.test.js
+
+import { getLocal } from 'mockttp';
 import assert from 'assert';
 import * as pg from '../dist/index.js';
 
-const proxy = mockServer.getLocal({
+// Use a local mock server for deterministic unit tests
+const proxy = getLocal({
     cors: false,
     debug: false,
     recordTraffic: false,
 });
 
 // =============================================================================
+// Mocked API Endpoints (Unit Tests)
+// =============================================================================
 
-describe('Test_Client', () => {
-    before(() => {
-        proxy.start(8080);
+describe('Test_Client (mocked API)', () => {
+    before(async () => {
+        await proxy.start(8080);
 
-        proxy.forPost('/chat/completions').thenCallback((request) => {
+        // Helper: Authorization must be "Bearer <non-empty>"
+        const isInvalidAuth = (auth) => !auth || /^Bearer\s*$/.test(auth);
+
+        // ---------------------- Chat (incl. Vision) ----------------------
+        await proxy.forPost('/chat/completions').thenCallback(async (request) => {
             const auth = request.headers['authorization'];
-            if (typeof auth == 'undefined' || auth == 'Bearer') {
-                return {
-                    statusCode: 403,
-                };
+            if (isInvalidAuth(auth)) return { statusCode: 403 };
+
+            const body = await request.body.getJson();
+            if (body && body.model === 'llava-1.5-7b-hf') {
+                return { statusCode: 200, json: chatVisionResp };
             }
-
-            const result = request.body.getJson().then((body) => {
-                if (body.model == 'llava-1.5-7b-hf') {
-                    return {
-                        statusCode: 200,
-                        json: chatVisionResp,
-                    };
-                }
-
-                return {
-                    statusCode: 200,
-                    json: chatResp,
-                };
-            });
-
-            return result;
+            return { statusCode: 200, json: chatResp };
         });
 
-        proxy.forPost('/completions').thenCallback((request) => {
+        // ---------------------- Completion ----------------------
+        await proxy.forPost('/completions').thenCallback(async (request) => {
             const auth = request.headers['authorization'];
-            if (typeof auth == 'undefined' || auth == 'Bearer') {
-                return {
-                    statusCode: 403,
-                };
-            }
-
-            return {
-                statusCode: 200,
-                json: completionResp,
-            };
+            if (isInvalidAuth(auth)) return { statusCode: 403 };
+            return { statusCode: 200, json: completionResp };
         });
 
-        proxy.forPost('/embeddings').thenCallback((request) => {
+        // ---------------------- Embeddings ----------------------
+        await proxy.forPost('/embeddings').thenCallback(async (request) => {
             const auth = request.headers['authorization'];
-            if (typeof auth == 'undefined' || auth == 'Bearer') {
-                return {
-                    statusCode: 403,
-                };
-            }
-
-            return {
-                statusCode: 200,
-                json: embeddingResp,
-            };
+            if (isInvalidAuth(auth)) return { statusCode: 403 };
+            return { statusCode: 200, json: embeddingResp };
         });
 
-        proxy.forPost('/factuality').thenCallback((request) => {
+        // ---------------------- Factuality ----------------------
+        await proxy.forPost('/factuality').thenCallback(async (request) => {
             const auth = request.headers['authorization'];
-            if (typeof auth == 'undefined' || auth == 'Bearer') {
-                return {
-                    statusCode: 403,
-                };
-            }
-
-            return {
-                statusCode: 200,
-                json: factualityResp,
-            };
+            if (isInvalidAuth(auth)) return { statusCode: 403 };
+            return { statusCode: 200, json: factualityResp };
         });
 
-        proxy.forPost('/injection').thenCallback((request) => {
+        // ---------------------- Injection ----------------------
+        await proxy.forPost('/injection').thenCallback(async (request) => {
             const auth = request.headers['authorization'];
-            if (typeof auth == 'undefined' || auth == 'Bearer') {
-                return {
-                    statusCode: 403,
-                };
-            }
-
-            return {
-                statusCode: 200,
-                json: injectionResp,
-            };
+            if (isInvalidAuth(auth)) return { statusCode: 403 };
+            return { statusCode: 200, json: injectionResp };
         });
 
-        proxy.forPost('/PII').thenCallback((request) => {
+        // ---------------------- PII Replace ----------------------
+        await proxy.forPost('/PII').thenCallback(async (request) => {
             const auth = request.headers['authorization'];
-            if (typeof auth == 'undefined' || auth == 'Bearer') {
-                return {
-                    statusCode: 403,
-                };
-            }
-
-            return {
-                statusCode: 200,
-                json: replacePIResp,
-            };
+            if (isInvalidAuth(auth)) return { statusCode: 403 };
+            return { statusCode: 200, json: replacePIResp };
         });
 
-        proxy.forPost('/rerank').thenCallback((request) => {
+        // ---------------------- Rerank ----------------------
+        await proxy.forPost('/rerank').thenCallback(async (request) => {
             const auth = request.headers['authorization'];
-            if (typeof auth == 'undefined' || auth == 'Bearer') {
-                return {
-                    statusCode: 403,
-                };
-            }
-
-            return {
-                statusCode: 200,
-                json: rerankResp,
-            };
+            if (isInvalidAuth(auth)) return { statusCode: 403 };
+            return { statusCode: 200, json: rerankResp };
         });
 
-        proxy.forPost('/toxicity').thenCallback((request) => {
+        // ---------------------- Toxicity ----------------------
+        await proxy.forPost('/toxicity').thenCallback(async (request) => {
             const auth = request.headers['authorization'];
-            if (typeof auth == 'undefined' || auth == 'Bearer') {
-                return {
-                    statusCode: 403,
-                };
-            }
-
-            return {
-                statusCode: 200,
-                json: toxicityResp,
-            };
+            if (isInvalidAuth(auth)) return { statusCode: 403 };
+            return { statusCode: 200, json: toxicityResp };
         });
 
-        proxy.forPost('/translate').thenCallback((request) => {
+        // ---------------------- Translate ----------------------
+        await proxy.forPost('/translate').thenCallback(async (request) => {
             const auth = request.headers['authorization'];
-            if (typeof auth == 'undefined' || auth == 'Bearer') {
-                return {
-                    statusCode: 403,
-                };
-            }
-
-            return {
-                statusCode: 200,
-                json: translateResp,
-            };
+            if (isInvalidAuth(auth)) return { statusCode: 403 };
+            return { statusCode: 200, json: translateResp };
         });
     });
 
+    after(async () => {
+        await proxy.stop();
+    });
+
     // -------------------------------------------------------------------------
-
-    after(() => proxy.stop());
-
+    // Chat
     // -------------------------------------------------------------------------
 
     it('chat-basic', async () => {
@@ -175,6 +116,8 @@ describe('Test_Client', () => {
     });
 
     // -------------------------------------------------------------------------
+    // Completion
+    // -------------------------------------------------------------------------
 
     it('completion-basic', async () => {
         await testCompletionBasic();
@@ -184,6 +127,8 @@ describe('Test_Client', () => {
         await testCompletionBadkey();
     });
 
+    // -------------------------------------------------------------------------
+    // Embedding
     // -------------------------------------------------------------------------
 
     it('embedding-basic', async () => {
@@ -195,6 +140,8 @@ describe('Test_Client', () => {
     });
 
     // -------------------------------------------------------------------------
+    // Factuality
+    // -------------------------------------------------------------------------
 
     it('factuality-basic', async () => {
         await testFactualityBasic();
@@ -204,6 +151,8 @@ describe('Test_Client', () => {
         await testFactualityBadkey();
     });
 
+    // -------------------------------------------------------------------------
+    // Injection
     // -------------------------------------------------------------------------
 
     it('injection-basic', async () => {
@@ -215,6 +164,8 @@ describe('Test_Client', () => {
     });
 
     // -------------------------------------------------------------------------
+    // Replace PII
+    // -------------------------------------------------------------------------
 
     it('replacePI-basic', async () => {
         await testReplacePIIBasic();
@@ -224,6 +175,8 @@ describe('Test_Client', () => {
         await testReplacePIIBadkey();
     });
 
+    // -------------------------------------------------------------------------
+    // Rerank
     // -------------------------------------------------------------------------
 
     it('rerank-basic', async () => {
@@ -235,6 +188,8 @@ describe('Test_Client', () => {
     });
 
     // -------------------------------------------------------------------------
+    // Toxicity
+    // -------------------------------------------------------------------------
 
     it('toxicity-basic', async () => {
         await testToxicityBasic();
@@ -244,6 +199,8 @@ describe('Test_Client', () => {
         await testToxicityBadkey();
     });
 
+    // -------------------------------------------------------------------------
+    // Translate
     // -------------------------------------------------------------------------
 
     it('translate-basic', async () => {
@@ -255,6 +212,8 @@ describe('Test_Client', () => {
     });
 });
 
+// =============================================================================
+// Fixtures (mock responses)
 // =============================================================================
 
 const chatResp = {
@@ -292,134 +251,6 @@ const chatVisionResp = {
     ],
 };
 
-async function testChatBasic() {
-    const client = new pg.Client('http://localhost:8080', 'any key');
-
-    const input = {
-        model: 'Neural-Chat-7B',
-        messages: [
-            {
-                role: pg.Roles.User,
-                content: 'How do you feel about the world in general',
-            },
-        ],
-        maxTokens: 1000,
-        temperature: 0.1,
-        topP: 0.1,
-        options: {
-            factuality: true,
-            toxicity: true,
-            pii: pg.PIIs.Replace,
-            piiReplaceMethod: pg.ReplaceMethods.Random,
-        },
-    };
-
-    var [result, err] = await client.Chat(input);
-    if (err != null) {
-        assert.fail('ERROR:' + err.error);
-    }
-
-    const got = JSON.stringify(result);
-    const exp = JSON.stringify(chatResp);
-
-    assert.equal(got, exp);
-}
-
-async function testChatMulti() {
-    const client = new pg.Client('http://localhost:8080', 'any key');
-
-    const input = {
-        model: 'Neural-Chat-7B',
-        messages: 'How do you feel about the world in general',
-        maxTokens: 1000,
-        temperature: 0.1,
-        topP: 0.1,
-        options: {
-            factuality: true,
-            toxicity: true,
-            pii: pg.PIIs.Replace,
-            piiReplaceMethod: pg.ReplaceMethods.Random,
-        },
-    };
-
-    var [result, err] = await client.Chat(input);
-    if (err != null) {
-        assert.fail('ERROR:' + err.error);
-    }
-
-    const got = JSON.stringify(result);
-    const exp = JSON.stringify(chatResp);
-
-    assert.equal(got, exp);
-}
-
-async function testChatVision() {
-    const client = new pg.Client('http://localhost:8080', 'any key');
-
-    const imageMock = {
-        EncodeBase64: function () {
-            return ['', null];
-        },
-    };
-
-    const input = {
-        model: 'llava-1.5-7b-hf',
-        role: pg.Roles.User,
-        question: 'is there a deer in this picture',
-        image: imageMock,
-        maxTokens: 1000,
-        temperature: 0.1,
-        topP: 0.1,
-    };
-
-    var [result, err] = await client.ChatVision(input);
-    if (err != null) {
-        assert.fail('ERROR:' + err.error);
-    }
-
-    const got = JSON.stringify(result);
-    const exp = JSON.stringify(chatVisionResp);
-
-    assert.equal(got, exp);
-}
-
-async function testChatBadkey() {
-    const client = new pg.Client('http://localhost:8080', '');
-
-    const input = {
-        model: 'Neural-Chat-7B',
-        messages: [
-            {
-                role: pg.Roles.User,
-                content: 'How do you feel about the world in general',
-            },
-        ],
-        maxTokens: 1000,
-        temperature: 0.1,
-        topP: 0.1,
-        options: {
-            factuality: true,
-            toxicity: true,
-            pii: pg.PIIs.Replace,
-            piiReplaceMethod: pg.ReplaceMethods.Random,
-        },
-    };
-
-    var [, err] = await client.Chat(input);
-    if (err == null) {
-        assert.fail("didn't get an error");
-    }
-
-    const got = JSON.stringify(err);
-    const exp = JSON.stringify({
-        error: 'api understands the request but refuses to authorize it',
-    });
-
-    assert.equal(got, exp);
-}
-
-// =============================================================================
-
 const completionResp = {
     id: 'chat-ShL1yk0N0h1lzmrJDQCpCz3WQFQh9',
     object: 'text_completion',
@@ -438,54 +269,6 @@ const completionResp = {
     ],
 };
 
-async function testCompletionBasic() {
-    const client = new pg.Client('http://localhost:8080', 'any key');
-
-    const input = {
-        model: 'Neural-Chat-7B',
-        prompt: 'Will I lose my hair',
-        maxTokens: 1000,
-        temperature: 0.1,
-        topP: 0.1,
-    };
-
-    var [result, err] = await client.Completion(input);
-    if (err != null) {
-        assert.fail('ERROR:' + err.error);
-    }
-
-    const got = JSON.stringify(result);
-    const exp = JSON.stringify(completionResp);
-
-    assert.equal(got, exp);
-}
-
-async function testCompletionBadkey() {
-    const client = new pg.Client('http://localhost:8080', '');
-
-    const input = {
-        model: 'Neural-Chat-7B',
-        prompt: 'Will I lose my hair',
-        maxTokens: 1000,
-        temperature: 0.1,
-        topP: 0.1,
-    };
-
-    var [, err] = await client.Completion(input);
-    if (err == null) {
-        assert.fail("didn't get an error");
-    }
-
-    const got = JSON.stringify(err);
-    const exp = JSON.stringify({
-        error: 'api understands the request but refuses to authorize it',
-    });
-
-    assert.equal(got, exp);
-}
-
-// =============================================================================
-
 const embeddingResp = {
     id: 'emb - 0qU4sYEutZvkHskxXwzYDgZVOhtLw',
     object: 'list',
@@ -500,64 +283,6 @@ const embeddingResp = {
     ],
 };
 
-async function testEmbeddingBasic() {
-    const client = new pg.Client('http://localhost:8080', 'any key');
-
-    const imageMock = {
-        EncodeBase64: function () {
-            return ['', null];
-        },
-    };
-
-    const input = [
-        {
-            text: 'This is Bill Kennedy, a decent Go developer.',
-            image: imageMock,
-        },
-    ];
-
-    var [result, err] = await client.Embedding('bridgetower-large-itm-mlm-itc', input);
-    if (err != null) {
-        assert.fail('ERROR:' + err.error);
-    }
-
-    const got = JSON.stringify(result);
-    const exp = JSON.stringify(embeddingResp);
-
-    assert.equal(got, exp);
-}
-
-async function testEmbeddingBadkey() {
-    const client = new pg.Client('http://localhost:8080', '');
-
-    const imageMock = {
-        EncodeBase64: function () {
-            return ['', null];
-        },
-    };
-
-    const input = [
-        {
-            text: 'This is Bill Kennedy, a decent Go developer.',
-            image: imageMock,
-        },
-    ];
-
-    var [, err] = await client.Embedding('bridgetower-large-itm-mlm-itc', input);
-    if (err == null) {
-        assert.fail("didn't get an error");
-    }
-
-    const got = JSON.stringify(err);
-    const exp = JSON.stringify({
-        error: 'api understands the request but refuses to authorize it',
-    });
-
-    assert.equal(got, exp);
-}
-
-// =============================================================================
-
 const factualityResp = {
     id: 'fact-GK9kueuMw0NQLc0sYEIVlkGsPH31R',
     object: 'factuality.check',
@@ -569,46 +294,6 @@ const factualityResp = {
         },
     ],
 };
-
-async function testFactualityBasic() {
-    const client = new pg.Client('http://localhost:8080', 'any key');
-
-    const fact =
-        'The President shall receive in full for his services during the term for which he shall have been elected compensation in the aggregate amount of 400,000 a year, to be paid monthly, and in addition an expense allowance of 50,000 to assist in defraying expenses relating to or resulting from the discharge of his official duties. Any unused amount of such expense allowance shall revert to the Treasury pursuant to section 1552 of title 31, United States Code. No amount of such expense allowance shall be included in the gross income of the President. He shall be entitled also to the use of the furniture and other effects belonging to the United States and kept in the Executive Residence at the White House.';
-    const text = 'The president of the united states can take a salary of one million dollars';
-
-    var [result, err] = await client.Factuality(fact, text);
-    if (err != null) {
-        assert.fail('ERROR:' + err.error);
-    }
-
-    const got = JSON.stringify(result);
-    const exp = JSON.stringify(factualityResp);
-
-    assert.equal(got, exp);
-}
-
-async function testFactualityBadkey() {
-    const client = new pg.Client('http://localhost:8080', '');
-
-    const fact =
-        'The President shall receive in full for his services during the term for which he shall have been elected compensation in the aggregate amount of 400,000 a year, to be paid monthly, and in addition an expense allowance of 50,000 to assist in defraying expenses relating to or resulting from the discharge of his official duties. Any unused amount of such expense allowance shall revert to the Treasury pursuant to section 1552 of title 31, United States Code. No amount of such expense allowance shall be included in the gross income of the President. He shall be entitled also to the use of the furniture and other effects belonging to the United States and kept in the Executive Residence at the White House.';
-    const text = 'The president of the united states can take a salary of one million dollars';
-
-    var [, err] = await client.Factuality(fact, text);
-    if (err == null) {
-        assert.fail("didn't get an error");
-    }
-
-    const got = JSON.stringify(err);
-    const exp = JSON.stringify({
-        error: 'api understands the request but refuses to authorize it',
-    });
-
-    assert.equal(got, exp);
-}
-
-// =============================================================================
 
 const injectionResp = {
     id: 'injection-Nb817UlEMTog2YOe1JHYbq2oUyZAW7Lk',
@@ -623,42 +308,6 @@ const injectionResp = {
     ],
 };
 
-async function testInjectionBasic() {
-    const client = new pg.Client('http://localhost:8080', 'any key');
-
-    const prompt = 'A short poem may be a stylistic choice or it may be that you have said what you intended to say in a more concise way.';
-
-    var [result, err] = await client.Injection(prompt);
-    if (err != null) {
-        assert.fail('ERROR:' + err.error);
-    }
-
-    const got = JSON.stringify(result);
-    const exp = JSON.stringify(injectionResp);
-
-    assert.equal(got, exp);
-}
-
-async function testInjectionBadkey() {
-    const client = new pg.Client('http://localhost:8080', '');
-
-    const prompt = 'A short poem may be a stylistic choice or it may be that you have said what you intended to say in a more concise way.';
-
-    var [, err] = await client.Injection(prompt);
-    if (err == null) {
-        assert.fail("didn't get an error");
-    }
-
-    const got = JSON.stringify(err);
-    const exp = JSON.stringify({
-        error: 'api understands the request but refuses to authorize it',
-    });
-
-    assert.equal(got, exp);
-}
-
-// =============================================================================
-
 const replacePIResp = {
     id: 'pii-ax9rE9ld3W5yxN1Sz7OKxXkMTMo736jJ',
     object: 'pii_check',
@@ -671,42 +320,6 @@ const replacePIResp = {
         },
     ],
 };
-
-async function testReplacePIIBasic() {
-    const client = new pg.Client('http://localhost:8080', 'any key');
-
-    const prompt = 'My email is bill@ardanlabs.com and my number is 954-123-4567.';
-
-    var [result, err] = await client.ReplacePII(pg.ReplaceMethods.Mask, prompt);
-    if (err != null) {
-        assert.fail('ERROR:' + err.error);
-    }
-
-    const got = JSON.stringify(result);
-    const exp = JSON.stringify(replacePIResp);
-
-    assert.equal(got, exp);
-}
-
-async function testReplacePIIBadkey() {
-    const client = new pg.Client('http://localhost:8080', '');
-
-    const prompt = 'My email is bill@ardanlabs.com and my number is 954-123-4567.';
-
-    var [, err] = await client.ReplacePII(pg.ReplaceMethods.Mask, prompt);
-    if (err == null) {
-        assert.fail("didn't get an error");
-    }
-
-    const got = JSON.stringify(err);
-    const exp = JSON.stringify({
-        error: 'api understands the request but refuses to authorize it',
-    });
-
-    assert.equal(got, exp);
-}
-
-// =============================================================================
 
 const rerankResp = {
     id: 'rerank-67b1cdc7-bd15-4728-9482-d0d36c1b59f2',
@@ -727,52 +340,6 @@ const rerankResp = {
     ],
 };
 
-async function testRerankBasic() {
-    const client = new pg.Client('http://localhost:8080', 'any key');
-
-    const input = {
-        model: 'bge-reranker-v2-m3',
-        query: 'What is Deep Learning?',
-        documents: ['Deep Learning is not pizza.', 'Deep Learning is pizza.'],
-        returnDocuments: true,
-    };
-
-    var [result, err] = await client.Rerank(input);
-    if (err != null) {
-        assert.fail('ERROR:' + err.error);
-    }
-
-    const got = JSON.stringify(result);
-    const exp = JSON.stringify(rerankResp);
-
-    assert.equal(got, exp);
-}
-
-async function testRerankBadkey() {
-    const client = new pg.Client('http://localhost:8080', '');
-
-    const input = {
-        model: 'bge-reranker-v2-m3',
-        query: 'What is Deep Learning?',
-        documents: ['Deep Learning is not pizza.', 'Deep Learning is pizza.'],
-        returnDocuments: true,
-    };
-
-    var [, err] = await client.Rerank(input);
-    if (err == null) {
-        assert.fail("didn't get an error");
-    }
-
-    const got = JSON.stringify(err);
-    const exp = JSON.stringify({
-        error: 'api understands the request but refuses to authorize it',
-    });
-
-    assert.equal(got, exp);
-}
-
-// =============================================================================
-
 const toxicityResp = {
     id: 'toxi-vRvkxJHmAiSh3NvuuSc48HQ669g7y',
     object: 'toxicity.check',
@@ -784,42 +351,6 @@ const toxicityResp = {
         },
     ],
 };
-
-async function testToxicityBasic() {
-    const client = new pg.Client('http://localhost:8080', 'any key');
-
-    const text = 'Every flight I have is late and I am very angry. I want to hurt someone.';
-
-    var [result, err] = await client.Toxicity(text);
-    if (err != null) {
-        assert.fail('ERROR:' + err.error);
-    }
-
-    const got = JSON.stringify(result);
-    const exp = JSON.stringify(toxicityResp);
-
-    assert.equal(got, exp);
-}
-
-async function testToxicityBadkey() {
-    const client = new pg.Client('http://localhost:8080', '');
-
-    const text = 'Every flight I have is late and I am very angry. I want to hurt someone.';
-
-    var [, err] = await client.Toxicity(text);
-    if (err == null) {
-        assert.fail("didn't get an error");
-    }
-
-    const got = JSON.stringify(err);
-    const exp = JSON.stringify({
-        error: 'api understands the request but refuses to authorize it',
-    });
-
-    assert.equal(got, exp);
-}
-
-// =============================================================================
 
 const translateResp = {
     id: 'translation-0210cae4da704099b58471876ffa3d2e',
@@ -856,6 +387,338 @@ const translateResp = {
     ],
 };
 
+// =============================================================================
+// Mocked test helpers
+// =============================================================================
+
+async function testChatBasic() {
+    const client = new pg.Client('http://localhost:8080', 'any key');
+
+    const input = {
+        model: 'Neural-Chat-7B',
+        messages: [
+            {
+                role: pg.Roles.User,
+                content: 'How do you feel about the world in general',
+            },
+        ],
+        maxTokens: 1000,
+        temperature: 0.1,
+        topP: 0.1,
+
+        // NOTE: legacy "options" is ignored by client, but harmless to include
+        options: {
+            factuality: true,
+            toxicity: true,
+            pii: pg.PIIs.Replace,
+            piiReplaceMethod: pg.ReplaceMethods.Random,
+        },
+    };
+
+    const [result, err] = await client.Chat(input);
+    if (err != null) assert.fail('ERROR:' + err.error);
+
+    assert.equal(JSON.stringify(result), JSON.stringify(chatResp));
+}
+
+async function testChatMulti() {
+    const client = new pg.Client('http://localhost:8080', 'any key');
+
+    const input = {
+        model: 'Neural-Chat-7B',
+        messages: 'How do you feel about the world in general',
+        maxTokens: 1000,
+        temperature: 0.1,
+        topP: 0.1,
+        options: {
+            factuality: true,
+            toxicity: true,
+            pii: pg.PIIs.Replace,
+            piiReplaceMethod: pg.ReplaceMethods.Random,
+        },
+    };
+
+    const [result, err] = await client.Chat(input);
+    if (err != null) assert.fail('ERROR:' + err.error);
+
+    assert.equal(JSON.stringify(result), JSON.stringify(chatResp));
+}
+
+async function testChatVision() {
+    const client = new pg.Client('http://localhost:8080', 'any key');
+
+    const imageMock = {
+        EncodeBase64: () => ['', null],
+    };
+
+    const input = {
+        model: 'llava-1.5-7b-hf',
+        role: pg.Roles.User,
+        question: 'is there a deer in this picture',
+        image: imageMock,
+        maxTokens: 1000,
+        temperature: 0.1,
+        topP: 0.1,
+    };
+
+    const [result, err] = await client.ChatVision(input);
+    if (err != null) assert.fail('ERROR:' + err.error);
+
+    assert.equal(JSON.stringify(result), JSON.stringify(chatVisionResp));
+}
+
+async function testChatBadkey() {
+    const client = new pg.Client('http://localhost:8080', '');
+
+    const input = {
+        model: 'Neural-Chat-7B',
+        messages: [
+            {
+                role: pg.Roles.User,
+                content: 'How do you feel about the world in general',
+            },
+        ],
+        maxTokens: 1000,
+        temperature: 0.1,
+        topP: 0.1,
+        options: {
+            factuality: true,
+            toxicity: true,
+            pii: pg.PIIs.Replace,
+            piiReplaceMethod: pg.ReplaceMethods.Random,
+        },
+    };
+
+    const [, err] = await client.Chat(input);
+    if (err == null) assert.fail("didn't get an error");
+
+    assert.equal(
+        JSON.stringify(err),
+        JSON.stringify({ error: 'api understands the request but refuses to authorize it' }),
+    );
+}
+
+async function testCompletionBasic() {
+    const client = new pg.Client('http://localhost:8080', 'any key');
+
+    const input = {
+        model: 'Neural-Chat-7B',
+        prompt: 'Will I lose my hair',
+        maxTokens: 1000,
+        temperature: 0.1,
+        topP: 0.1,
+    };
+
+    const [result, err] = await client.Completion(input);
+    if (err != null) assert.fail('ERROR:' + err.error);
+
+    assert.equal(JSON.stringify(result), JSON.stringify(completionResp));
+}
+
+async function testCompletionBadkey() {
+    const client = new pg.Client('http://localhost:8080', '');
+
+    const input = {
+        model: 'Neural-Chat-7B',
+        prompt: 'Will I lose my hair',
+        maxTokens: 1000,
+        temperature: 0.1,
+        topP: 0.1,
+    };
+
+    const [, err] = await client.Completion(input);
+    if (err == null) assert.fail("didn't get an error");
+
+    assert.equal(
+        JSON.stringify(err),
+        JSON.stringify({ error: 'api understands the request but refuses to authorize it' }),
+    );
+}
+
+async function testEmbeddingBasic() {
+    const client = new pg.Client('http://localhost:8080', 'any key');
+
+    const imageMock = {
+        EncodeBase64: () => ['', null],
+    };
+
+    const input = [
+        {
+            text: 'This is Bill Kennedy, a decent Go developer.',
+            image: imageMock,
+        },
+    ];
+
+    const [result, err] = await client.Embedding('bridgetower-large-itm-mlm-itc', input);
+    if (err != null) assert.fail('ERROR:' + err.error);
+
+    assert.equal(JSON.stringify(result), JSON.stringify(embeddingResp));
+}
+
+async function testEmbeddingBadkey() {
+    const client = new pg.Client('http://localhost:8080', '');
+
+    const imageMock = {
+        EncodeBase64: () => ['', null],
+    };
+
+    const input = [
+        {
+            text: 'This is Bill Kennedy, a decent Go developer.',
+            image: imageMock,
+        },
+    ];
+
+    const [, err] = await client.Embedding('bridgetower-large-itm-mlm-itc', input);
+    if (err == null) assert.fail("didn't get an error");
+
+    assert.equal(
+        JSON.stringify(err),
+        JSON.stringify({ error: 'api understands the request but refuses to authorize it' }),
+    );
+}
+
+async function testFactualityBasic() {
+    const client = new pg.Client('http://localhost:8080', 'any key');
+
+    const fact =
+        'The President shall receive in full for his services during the term for which he shall have been elected compensation in the aggregate amount of 400,000 a year, to be paid monthly, and in addition an expense allowance of 50,000 to assist in defraying expenses relating to or resulting from the discharge of his official duties. Any unused amount of such expense allowance shall revert to the Treasury pursuant to section 1552 of title 31, United States Code. No amount of such expense allowance shall be included in the gross income of the President. He shall be entitled also to the use of the furniture and other effects belonging to the United States and kept in the Executive Residence at the White House.';
+    const text = 'The president of the united states can take a salary of one million dollars';
+
+    const [result, err] = await client.Factuality(fact, text);
+    if (err != null) assert.fail('ERROR:' + err.error);
+
+    assert.equal(JSON.stringify(result), JSON.stringify(factualityResp));
+}
+
+async function testFactualityBadkey() {
+    const client = new pg.Client('http://localhost:8080', '');
+
+    const fact =
+        'The President shall receive in full for his services during the term for which he shall have been elected compensation in the aggregate amount of 400,000 a year, to be paid monthly, and in addition an expense allowance of 50,000 to assist in defraying expenses relating to or resulting from the discharge of his official duties. Any unused amount of such expense allowance shall revert to the Treasury pursuant to section 1552 of title 31, United States Code. No amount of such expense allowance shall be included in the gross income of the President. He shall be entitled also to the use of the furniture and other effects belonging to the United States and kept in the Executive Residence at the White House.';
+    const text = 'The president of the united states can take a salary of one million dollars';
+
+    const [, err] = await client.Factuality(fact, text);
+    if (err == null) assert.fail("didn't get an error");
+
+    assert.equal(
+        JSON.stringify(err),
+        JSON.stringify({ error: 'api understands the request but refuses to authorize it' }),
+    );
+}
+
+async function testInjectionBasic() {
+    const client = new pg.Client('http://localhost:8080', 'any key');
+
+    const prompt =
+        'A short poem may be a stylistic choice or it may be that you have said what you intended to say in a more concise way.';
+
+    const [result, err] = await client.Injection(prompt);
+    if (err != null) assert.fail('ERROR:' + err.error);
+
+    assert.equal(JSON.stringify(result), JSON.stringify(injectionResp));
+}
+
+async function testInjectionBadkey() {
+    const client = new pg.Client('http://localhost:8080', '');
+
+    const prompt =
+        'A short poem may be a stylistic choice or it may be that you have said what you intended to say in a more concise way.';
+
+    const [, err] = await client.Injection(prompt);
+    if (err == null) assert.fail("didn't get an error");
+
+    assert.equal(
+        JSON.stringify(err),
+        JSON.stringify({ error: 'api understands the request but refuses to authorize it' }),
+    );
+}
+
+async function testReplacePIIBasic() {
+    const client = new pg.Client('http://localhost:8080', 'any key');
+
+    const prompt = 'My email is bill@ardanlabs.com and my number is 954-123-4567.';
+
+    const [result, err] = await client.ReplacePII(pg.ReplaceMethods.Mask, prompt);
+    if (err != null) assert.fail('ERROR:' + err.error);
+
+    assert.equal(JSON.stringify(result), JSON.stringify(replacePIResp));
+}
+
+async function testReplacePIIBadkey() {
+    const client = new pg.Client('http://localhost:8080', '');
+
+    const prompt = 'My email is bill@ardanlabs.com and my number is 954-123-4567.';
+
+    const [, err] = await client.ReplacePII(pg.ReplaceMethods.Mask, prompt);
+    if (err == null) assert.fail("didn't get an error");
+
+    assert.equal(
+        JSON.stringify(err),
+        JSON.stringify({ error: 'api understands the request but refuses to authorize it' }),
+    );
+}
+
+async function testRerankBasic() {
+    const client = new pg.Client('http://localhost:8080', 'any key');
+
+    const input = {
+        model: 'bge-reranker-v2-m3',
+        query: 'What is Deep Learning?',
+        documents: ['Deep Learning is not pizza.', 'Deep Learning is pizza.'],
+        returnDocuments: true,
+    };
+
+    const [result, err] = await client.Rerank(input);
+    if (err != null) assert.fail('ERROR:' + err.error);
+
+    assert.equal(JSON.stringify(result), JSON.stringify(rerankResp));
+}
+
+async function testRerankBadkey() {
+    const client = new pg.Client('http://localhost:8080', '');
+
+    const input = {
+        model: 'bge-reranker-v2-m3',
+        query: 'What is Deep Learning?',
+        documents: ['Deep Learning is not pizza.', 'Deep Learning is pizza.'],
+        returnDocuments: true,
+    };
+
+    const [, err] = await client.Rerank(input);
+    if (err == null) assert.fail("didn't get an error");
+
+    assert.equal(
+        JSON.stringify(err),
+        JSON.stringify({ error: 'api understands the request but refuses to authorize it' }),
+    );
+}
+
+async function testToxicityBasic() {
+    const client = new pg.Client('http://localhost:8080', 'any key');
+
+    const text = 'Every flight I have is late and I am very angry. I want to hurt someone.';
+
+    const [result, err] = await client.Toxicity(text);
+    if (err != null) assert.fail('ERROR:' + err.error);
+
+    assert.equal(JSON.stringify(result), JSON.stringify(toxicityResp));
+}
+
+async function testToxicityBadkey() {
+    const client = new pg.Client('http://localhost:8080', '');
+
+    const text = 'Every flight I have is late and I am very angry. I want to hurt someone.';
+
+    const [, err] = await client.Toxicity(text);
+    if (err == null) assert.fail("didn't get an error");
+
+    assert.equal(
+        JSON.stringify(err),
+        JSON.stringify({ error: 'api understands the request but refuses to authorize it' }),
+    );
+}
+
 async function testTranslateBasic() {
     const client = new pg.Client('http://localhost:8080', 'any key');
 
@@ -864,15 +727,10 @@ async function testTranslateBasic() {
     const targetLang = pg.Languages.Spanish;
     const useThirdPartyEngine = false;
 
-    var [result, err] = await client.Translate(text, sourceLang, targetLang, useThirdPartyEngine);
-    if (err != null) {
-        assert.fail('ERROR:' + err.error);
-    }
+    const [result, err] = await client.Translate(text, sourceLang, targetLang, useThirdPartyEngine);
+    if (err != null) assert.fail('ERROR:' + err.error);
 
-    const got = JSON.stringify(result);
-    const exp = JSON.stringify(translateResp);
-
-    assert.equal(got, exp);
+    assert.equal(JSON.stringify(result), JSON.stringify(translateResp));
 }
 
 async function testTranslateBadkey() {
@@ -883,15 +741,159 @@ async function testTranslateBadkey() {
     const targetLang = pg.Languages.Spanish;
     const useThirdPartyEngine = false;
 
-    var [, err] = await client.Translate(text, sourceLang, targetLang, useThirdPartyEngine);
-    if (err == null) {
-        assert.fail("didn't get an error");
+    const [, err] = await client.Translate(text, sourceLang, targetLang, useThirdPartyEngine);
+    if (err == null) assert.fail("didn't get an error");
+
+    assert.equal(
+        JSON.stringify(err),
+        JSON.stringify({ error: 'api understands the request but refuses to authorize it' }),
+    );
+}
+
+// =============================================================================
+// Quick Feature Test (Live API) - merged from provided script
+// Runs only when PREDICTIONGUARD_API_KEY is set to avoid CI failures
+// =============================================================================
+
+describe('Quick Feature Test (live API, optional)', function () {
+    // Live calls can take a bit longer
+    this.timeout(30000);
+
+    const apiKey = process.env.PREDICTIONGUARD_API_KEY;
+
+    if (!apiKey) {
+        it('skipped - set PREDICTIONGUARD_API_KEY to run live tests', function () {
+            this.skip();
+        });
+        return;
     }
 
-    const got = JSON.stringify(err);
-    const exp = JSON.stringify({
-        error: 'api understands the request but refuses to authorize it',
+    const client = new pg.Client('https://api.predictionguard.com', apiKey);
+
+    // Health endpoint can be 404 in some deployments -> skip in that case
+    it('Health Check', async function () {
+        const [result, err] = await client.HealthCheck();
+
+        if (err) {
+            if (typeof err.error === 'string' && /not found/i.test(err.error)) {
+                this.skip(); // treat missing root health endpoint as "not applicable"
+                return;
+            }
+            assert.fail(err.error);
+        }
+
+        assert.ok(typeof result === 'string' || result === null);
     });
 
-    assert.equal(got, exp);
-}
+    it('Advanced Chat Parameters', async () => {
+        const [result, err] = await client.Chat({
+            model: 'Neural-Chat-7B',
+            messages: [{ role: pg.Roles.User, content: 'Say hello in 5 words' }],
+            maxCompletionTokens: 20,
+            temperature: 0.7,
+            frequencyPenalty: 0.5,
+            presencePenalty: 0.3,
+            stop: ['goodbye', '\n\n'],
+        });
+        if (err) assert.fail(err.error);
+        assert.ok(result.choices?.[0]?.message?.content?.length >= 1);
+    });
+
+    it('Function/Tool Calling', async () => {
+        const [result, err] = await client.Chat({
+            model: 'Neural-Chat-7B',
+            messages: [{ role: pg.Roles.User, content: 'What is 15 + 27?' }],
+            maxCompletionTokens: 100,
+            tools: [
+                {
+                    type: 'function',
+                    function: {
+                        name: 'calculator',
+                        description: 'Perform basic arithmetic',
+                        parameters: {
+                            type: 'object',
+                            properties: {
+                                operation: { type: 'string', enum: ['add', 'subtract', 'multiply', 'divide'] },
+                                a: { type: 'number' },
+                                b: { type: 'number' },
+                            },
+                            required: ['operation', 'a', 'b'],
+                        },
+                    },
+                },
+            ],
+            toolChoice: 'auto',
+        });
+        if (err) assert.fail(err.error);
+        assert.ok(result.choices?.[0]?.message);
+    });
+
+    it('Streaming Completion', async () => {
+        let receivedChunks = 0;
+        let fullText = '';
+
+        const err = await client.CompletionSSE({
+            model: 'Neural-Chat-7B',
+            prompt: 'Count from 1 to 5:',
+            maxTokens: 30,
+            temperature: 0.5,
+            frequencyPenalty: 0.3,
+            onMessage: (event, error) => {
+                if (error && error.error !== 'EOF') return;
+                if (!event) return;
+                receivedChunks++;
+                fullText += event.choices?.[0]?.text ?? '';
+            },
+        });
+
+        if (err) assert.fail(err.error);
+        assert.ok(receivedChunks >= 1);
+        assert.ok(fullText.length >= 1);
+    });
+
+    it('Logit Bias', async () => {
+        const [result, err] = await client.Chat({
+            model: 'Neural-Chat-7B',
+            messages: [{ role: pg.Roles.User, content: 'Give me a one word answer: yes or no?' }],
+            maxCompletionTokens: 10,
+            logitBias: {
+                128000: 10,
+                128001: -10,
+            },
+        });
+        if (err) assert.fail(err.error);
+        assert.ok(result.choices?.[0]?.message?.content?.length >= 1);
+    });
+
+    it('Audio Transcription (skips if no file)', async function () {
+        const fs = await import('fs');
+        if (!(fs.existsSync('./audio.wav') || fs.existsSync('./examples/audio.wav'))) {
+            this.skip();
+            return;
+        }
+        const filePath = fs.existsSync('./audio.wav') ? './audio.wav' : './examples/audio.wav';
+        const [result, err] = await client.AudioTranscription({
+            model: 'whisper-1',
+            file: filePath,
+            language: 'en',
+        });
+        if (err) assert.fail(err.error);
+        assert.ok(result.text && result.text.length >= 0);
+    });
+
+    it('Document Extraction (skips if no file)', async function () {
+        const fs = await import('fs');
+        if (!(fs.existsSync('./document.pdf') || fs.existsSync('./examples/document.pdf'))) {
+            this.skip();
+            return;
+        }
+        const filePath = fs.existsSync('./document.pdf') ? './document.pdf' : './examples/document.pdf';
+        const [result, err] = await client.DocumentExtract({
+            file: filePath,
+            enableOCR: true,
+        });
+        if (err) assert.fail(err.error);
+        assert.ok(typeof result.title === 'string');
+        assert.ok(typeof result.count === 'number');
+    });
+});
