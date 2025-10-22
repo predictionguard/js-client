@@ -163,8 +163,6 @@ $ export PREDICTIONGUARD_API_KEY='your-key-here'
 $ node test/integration_test.js
 ```
 
-For detailed testing instructions, see [TESTING.md](TESTING.md).
-
 ### Licensing
 
 ```
