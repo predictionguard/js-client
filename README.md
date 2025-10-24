@@ -60,6 +60,58 @@ async function Chat() {
 
 Chat();
 ```
+
+### Advanced Features
+
+This client supports all Prediction Guard API features including:
+
+**Chat & Completions:**
+- Streaming completions with Server-Sent Events (SSE)
+- Function/tool calling with JSON Schema
+- Advanced parameters: frequency penalty, presence penalty, logit bias, stop sequences
+- Reasoning models with configurable effort levels
+
+**Audio & Documents:**
+- Audio transcription with timestamps and speaker diarization
+- Document extraction with OCR support
+
+**Example Usage:**
+
+```js
+// Streaming completion
+await client.CompletionSSE({
+    model: 'Neural-Chat-7B',
+    prompt: 'Count to 10',
+    maxTokens: 100,
+    onMessage: (event, err) => {
+        if (err) return;
+        process.stdout.write(event.choices[0].text);
+    }
+});
+
+// Function calling
+const [result, err] = await client.Chat({
+    model: 'Neural-Chat-7B',
+    messages: [{ role: pg.Roles.User, content: 'What is 25 * 4?' }],
+    tools: [{
+        type: 'function',
+        function: {
+            name: 'calculator',
+            description: 'Perform calculations',
+            parameters: {
+                type: 'object',
+                properties: {
+                    operation: { type: 'string' },
+                    a: { type: 'number' },
+                    b: { type: 'number' }
+                }
+            }
+        }
+    }],
+    toolChoice: 'auto'
+});
+```
+
 Take a look at the [examples](https://github.com/predictionguard/js-client/tree/main/examples) directory for more examples.
 
 ### Docs
@@ -95,7 +147,20 @@ $ make test
 Finally you can try running one of the JS examples.
 
 ```
-$ make js-chat
+$ make js-chat-basic
+```
+
+**Testing Your Installation**
+
+To verify all features are working correctly:
+
+```bash
+# Build verification (no API key needed)
+$ node test/build_verification_test.js
+
+# Full integration test (requires API key)
+$ export PREDICTIONGUARD_API_KEY='your-key-here'
+$ node test/integration_test.js
 ```
 
 ### Licensing
