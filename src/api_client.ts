@@ -2,9 +2,22 @@ import fetch from 'node-fetch';
 import * as sse from 'fetch-sse';
 import * as model from './api_model.js';
 
-const version = '0.32.1';
+const version = '0.33.0';
 
-/** Client provides access the PredictionGuard API. */
+const deprecationMessage =
+    'The predictionguard package is deprecated and no longer maintained. ' +
+    'Some features may be broken or missing. Use an OpenAI-compatible or ' +
+    'Anthropic-compatible client pointed at the Prediction Guard API instead. ' +
+    'See https://github.com/predictionguard/js-client#readme for migration details.';
+
+let deprecationWarned = false;
+
+/** Client provides access the PredictionGuard API.
+ *
+ * @deprecated This package is no longer maintained. Use an OpenAI-compatible
+ * or Anthropic-compatible client pointed at the Prediction Guard API instead.
+ * See https://github.com/predictionguard/js-client#readme.
+ */
 export class Client {
     private url: string;
     private apiKey: string;
@@ -17,6 +30,11 @@ export class Client {
      * @param {string} apiKey - apiKey represents PG api key.
      */
     constructor(url: string, apiKey: string) {
+        if (!deprecationWarned) {
+            deprecationWarned = true;
+            process.emitWarning(deprecationMessage, 'DeprecationWarning');
+        }
+
         this.url = url;
         this.apiKey = apiKey;
     }
